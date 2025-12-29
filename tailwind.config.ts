@@ -65,11 +65,19 @@ export default {
         },
         kpi: {
           blue: "hsl(var(--kpi-blue))",
-          teal: "hsl(var(--kpi-teal))",
+          cyan: "hsl(var(--kpi-cyan))",
           green: "hsl(var(--kpi-green))",
-          gold: "hsl(var(--kpi-gold))",
           orange: "hsl(var(--kpi-orange))",
+          pink: "hsl(var(--kpi-pink))",
           purple: "hsl(var(--kpi-purple))",
+        },
+        vibrant: {
+          pink: "#E30E7F",
+          cyan: "#0DD9F4",
+          orange: "#FC7200",
+          green: "#0FE316",
+          purple: "#9A24AF",
+          blue: "#329CF2",
         },
         chart: {
           1: "hsl(var(--chart-1))",
@@ -112,10 +120,30 @@ export default {
             height: "0",
           },
         },
+        fadeInUp: {
+          from: {
+            opacity: "0",
+            transform: "translateY(30px)",
+          },
+          to: {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
+        pulse: {
+          "0%, 100%": {
+            transform: "scale(1)",
+          },
+          "50%": {
+            transform: "scale(1.05)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in-up": "fadeInUp 0.6s ease-out",
+        "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
     },
   },

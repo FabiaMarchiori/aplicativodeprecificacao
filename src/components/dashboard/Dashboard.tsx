@@ -6,8 +6,6 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { 
-  LineChart, 
-  Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -30,29 +28,29 @@ import {
   mockProducts 
 } from '@/data/mockData';
 
-// Premium vibrant chart colors
+// Vibrant chart colors matching the new palette
 const CHART_COLORS = {
-  primary: 'hsl(190, 80%, 45%)',
-  success: 'hsl(145, 70%, 50%)',
-  gold: 'hsl(42, 95%, 55%)',
-  orange: 'hsl(25, 95%, 55%)',
-  teal: 'hsl(175, 70%, 45%)',
-  info: 'hsl(205, 85%, 55%)',
+  cyan: '#0DD9F4',
+  green: '#0FE316',
+  orange: '#FC7200',
+  blue: '#329CF2',
+  pink: '#E30E7F',
+  purple: '#9A24AF',
 };
 
 const PIE_COLORS = [
-  'hsl(175, 70%, 45%)',
-  'hsl(145, 70%, 50%)',
-  'hsl(42, 95%, 55%)',
-  'hsl(25, 95%, 55%)',
+  '#329CF2', // Blue - Custos Fixos
+  '#0FE316', // Green - Custos Variáveis
+  '#FC7200', // Orange - Impostos
+  '#0DD9F4', // Cyan - Margem
 ];
 
 // Color function based on margin value
 const getMarginColor = (margin: number) => {
-  if (margin >= 35) return 'hsl(145, 70%, 50%)';
-  if (margin >= 25) return 'hsl(175, 70%, 45%)';
-  if (margin >= 15) return 'hsl(42, 95%, 55%)';
-  return 'hsl(25, 95%, 55%)';
+  if (margin >= 35) return CHART_COLORS.green;
+  if (margin >= 25) return CHART_COLORS.cyan;
+  if (margin >= 15) return CHART_COLORS.orange;
+  return CHART_COLORS.pink;
 };
 
 export const Dashboard = () => {
@@ -108,7 +106,7 @@ export const Dashboard = () => {
               style={{ backgroundColor: payload[0].payload.fill }}
             />
             <span className="text-foreground font-medium">{payload[0].name}</span>
-            <span className="font-bold text-kpi-gold">{payload[0].value}%</span>
+            <span className="font-bold text-vibrant-orange">{payload[0].value}%</span>
           </div>
         </div>
       );
@@ -143,7 +141,7 @@ export const Dashboard = () => {
           trend="up"
           trendValue="+2.4%"
           icon={Percent}
-          variant="teal"
+          variant="orange"
         />
         <KPICard
           title="Lucro Total"
@@ -158,14 +156,14 @@ export const Dashboard = () => {
           value={mostProfitable.name}
           subtitle={formatCurrency(mostProfitable.currentPrice - mostProfitable.purchaseCost - mostProfitable.variableCost) + ' /un'}
           icon={Package}
-          variant="blue"
+          variant="cyan"
         />
         <KPICard
           title="Menor Margem"
           value={lowestMargin.name}
           subtitle={`${(((lowestMargin.currentPrice - lowestMargin.purchaseCost - lowestMargin.variableCost) / lowestMargin.currentPrice) * 100).toFixed(1)}%`}
           icon={AlertTriangle}
-          variant="orange"
+          variant="pink"
         />
       </div>
 
@@ -178,23 +176,23 @@ export const Dashboard = () => {
             <AreaChart data={mockRevenueData}>
               <defs>
                 <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={CHART_COLORS.info} stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor={CHART_COLORS.info} stopOpacity={0}/>
+                  <stop offset="5%" stopColor={CHART_COLORS.cyan} stopOpacity={0.4}/>
+                  <stop offset="95%" stopColor={CHART_COLORS.cyan} stopOpacity={0}/>
                 </linearGradient>
                 <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={CHART_COLORS.success} stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor={CHART_COLORS.success} stopOpacity={0}/>
+                  <stop offset="5%" stopColor={CHART_COLORS.green} stopOpacity={0.4}/>
+                  <stop offset="95%" stopColor={CHART_COLORS.green} stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(210, 30%, 22%)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
               <XAxis 
                 dataKey="month" 
-                stroke="hsl(210, 15%, 60%)"
+                stroke="rgba(255,255,255,0.5)"
                 fontSize={12}
                 tickLine={false}
               />
               <YAxis 
-                stroke="hsl(210, 15%, 60%)"
+                stroke="rgba(255,255,255,0.5)"
                 fontSize={12}
                 tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
                 tickLine={false}
@@ -204,7 +202,7 @@ export const Dashboard = () => {
               <Area
                 type="monotone"
                 dataKey="revenue"
-                stroke={CHART_COLORS.info}
+                stroke={CHART_COLORS.cyan}
                 strokeWidth={3}
                 fillOpacity={1}
                 fill="url(#colorRevenue)"
@@ -213,7 +211,7 @@ export const Dashboard = () => {
               <Area
                 type="monotone"
                 dataKey="profit"
-                stroke={CHART_COLORS.success}
+                stroke={CHART_COLORS.green}
                 strokeWidth={3}
                 fillOpacity={1}
                 fill="url(#colorProfit)"
@@ -263,10 +261,10 @@ export const Dashboard = () => {
           <h3 className="text-lg font-semibold text-foreground mb-4">Margem por Produto</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={coloredMargins} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(210, 30%, 22%)" horizontal={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" horizontal={false} />
               <XAxis 
                 type="number" 
-                stroke="hsl(210, 15%, 60%)"
+                stroke="rgba(255,255,255,0.5)"
                 fontSize={12}
                 tickFormatter={(value) => `${value}%`}
                 tickLine={false}
@@ -274,7 +272,7 @@ export const Dashboard = () => {
               <YAxis 
                 type="category" 
                 dataKey="name" 
-                stroke="hsl(210, 15%, 60%)"
+                stroke="rgba(255,255,255,0.5)"
                 fontSize={11}
                 width={120}
                 tickLine={false}
@@ -283,12 +281,12 @@ export const Dashboard = () => {
               <Tooltip 
                 formatter={(value: number) => [`${value}%`, 'Margem']}
                 contentStyle={{
-                  backgroundColor: 'hsl(210, 40%, 8%)',
-                  border: '1px solid hsl(210, 30%, 22%)',
+                  backgroundColor: 'hsl(234, 35%, 12%)',
+                  border: '1px solid hsl(234, 25%, 28%)',
                   borderRadius: '12px',
                   boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
                 }}
-                labelStyle={{ color: 'hsl(210, 20%, 98%)', fontWeight: 600 }}
+                labelStyle={{ color: '#fff', fontWeight: 600 }}
               />
               <Bar 
                 dataKey="margin" 
@@ -310,14 +308,14 @@ export const Dashboard = () => {
             <BarChart data={sortedProfits}>
               <defs>
                 <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={CHART_COLORS.success} stopOpacity={1}/>
-                  <stop offset="100%" stopColor={CHART_COLORS.teal} stopOpacity={0.8}/>
+                  <stop offset="0%" stopColor={CHART_COLORS.cyan} stopOpacity={1}/>
+                  <stop offset="100%" stopColor={CHART_COLORS.green} stopOpacity={0.8}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(210, 30%, 22%)" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
               <XAxis 
                 dataKey="name" 
-                stroke="hsl(210, 15%, 60%)"
+                stroke="rgba(255,255,255,0.5)"
                 fontSize={10}
                 angle={-20}
                 textAnchor="end"
@@ -325,7 +323,7 @@ export const Dashboard = () => {
                 tickLine={false}
               />
               <YAxis 
-                stroke="hsl(210, 15%, 60%)"
+                stroke="rgba(255,255,255,0.5)"
                 fontSize={12}
                 tickFormatter={(value) => `R$${value}`}
                 tickLine={false}
@@ -334,12 +332,12 @@ export const Dashboard = () => {
               <Tooltip 
                 formatter={(value: number) => [formatCurrency(value), 'Lucro/Un']}
                 contentStyle={{
-                  backgroundColor: 'hsl(210, 40%, 8%)',
-                  border: '1px solid hsl(210, 30%, 22%)',
+                  backgroundColor: 'hsl(234, 35%, 12%)',
+                  border: '1px solid hsl(234, 25%, 28%)',
                   borderRadius: '12px',
                   boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
                 }}
-                labelStyle={{ color: 'hsl(210, 20%, 98%)', fontWeight: 600 }}
+                labelStyle={{ color: '#fff', fontWeight: 600 }}
               />
               <Bar 
                 dataKey="profit" 
