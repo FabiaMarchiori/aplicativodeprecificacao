@@ -18,7 +18,9 @@ import {
   PieChart,
   Pie,
   Cell,
-  Legend
+  Legend,
+  Area,
+  AreaChart
 } from 'recharts';
 import { KPICard } from './KPICard';
 import { 
@@ -28,12 +30,30 @@ import {
   mockProducts 
 } from '@/data/mockData';
 
-const CHART_COLORS = [
-  'hsl(190, 70%, 35%)',
-  'hsl(145, 63%, 42%)',
-  'hsl(38, 92%, 50%)',
-  'hsl(210, 60%, 50%)',
+// Premium vibrant chart colors
+const CHART_COLORS = {
+  primary: 'hsl(190, 80%, 45%)',
+  success: 'hsl(145, 70%, 50%)',
+  gold: 'hsl(42, 95%, 55%)',
+  orange: 'hsl(25, 95%, 55%)',
+  teal: 'hsl(175, 70%, 45%)',
+  info: 'hsl(205, 85%, 55%)',
+};
+
+const PIE_COLORS = [
+  'hsl(175, 70%, 45%)',
+  'hsl(145, 70%, 50%)',
+  'hsl(42, 95%, 55%)',
+  'hsl(25, 95%, 55%)',
 ];
+
+// Color function based on margin value
+const getMarginColor = (margin: number) => {
+  if (margin >= 35) return 'hsl(145, 70%, 50%)';
+  if (margin >= 25) return 'hsl(175, 70%, 45%)';
+  if (margin >= 15) return 'hsl(42, 95%, 55%)';
+  return 'hsl(25, 95%, 55%)';
+};
 
 export const Dashboard = () => {
   const totalRevenue = mockRevenueData.reduce((sum, d) => sum + d.revenue, 0);
@@ -58,18 +78,51 @@ export const Dashboard = () => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-popover border border-border rounded-lg p-3 shadow-lg">
-          <p className="text-sm font-medium text-foreground mb-2">{label}</p>
+        <div className="bg-popover/95 backdrop-blur-lg border border-border rounded-xl p-4 shadow-lg">
+          <p className="text-sm font-semibold text-foreground mb-2">{label}</p>
           {payload.map((entry: any, index: number) => (
-            <p key={index} className="text-sm" style={{ color: entry.color }}>
-              {entry.name}: {formatCurrency(entry.value)}
-            </p>
+            <div key={index} className="flex items-center gap-2 text-sm">
+              <div 
+                className="w-3 h-3 rounded-full" 
+                style={{ backgroundColor: entry.color }}
+              />
+              <span className="text-muted-foreground">{entry.name}:</span>
+              <span className="font-semibold" style={{ color: entry.color }}>
+                {formatCurrency(entry.value)}
+              </span>
+            </div>
           ))}
         </div>
       );
     }
     return null;
   };
+
+  const CustomPieTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-popover/95 backdrop-blur-lg border border-border rounded-xl p-3 shadow-lg">
+          <div className="flex items-center gap-2">
+            <div 
+              className="w-3 h-3 rounded-full" 
+              style={{ backgroundColor: payload[0].payload.fill }}
+            />
+            <span className="text-foreground font-medium">{payload[0].name}</span>
+            <span className="font-bold text-kpi-gold">{payload[0].value}%</span>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Add colors to margin data
+  const coloredMargins = productMargins.map(item => ({
+    ...item,
+    fill: getMarginColor(item.margin)
+  }));
+
+  const sortedProfits = [...productMargins].sort((a, b) => b.profit - a.profit);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -82,6 +135,7 @@ export const Dashboard = () => {
           trendValue="+15.3%"
           icon={DollarSign}
           subtitle="Últimos 12 meses"
+          variant="blue"
         />
         <KPICard
           title="Margem Média"
@@ -89,7 +143,7 @@ export const Dashboard = () => {
           trend="up"
           trendValue="+2.4%"
           icon={Percent}
-          variant="success"
+          variant="teal"
         />
         <KPICard
           title="Lucro Total"
@@ -97,59 +151,75 @@ export const Dashboard = () => {
           trend="up"
           trendValue="+18.7%"
           icon={TrendingUp}
-          variant="success"
+          variant="green"
         />
         <KPICard
           title="Mais Lucrativo"
-          value={mostProfitable.name.length > 15 ? mostProfitable.name.substring(0, 15) + '...' : mostProfitable.name}
+          value={mostProfitable.name}
           subtitle={formatCurrency(mostProfitable.currentPrice - mostProfitable.purchaseCost - mostProfitable.variableCost) + ' /un'}
           icon={Package}
+          variant="blue"
         />
         <KPICard
           title="Menor Margem"
-          value={lowestMargin.name.length > 15 ? lowestMargin.name.substring(0, 15) + '...' : lowestMargin.name}
+          value={lowestMargin.name}
           subtitle={`${(((lowestMargin.currentPrice - lowestMargin.purchaseCost - lowestMargin.variableCost) / lowestMargin.currentPrice) * 100).toFixed(1)}%`}
           icon={AlertTriangle}
-          variant="warning"
+          variant="orange"
         />
       </div>
 
       {/* Charts Row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Revenue Line Chart */}
+        {/* Revenue Area Chart */}
         <div className="chart-container">
           <h3 className="text-lg font-semibold text-foreground mb-4">Evolução do Faturamento</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={mockRevenueData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            <AreaChart data={mockRevenueData}>
+              <defs>
+                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={CHART_COLORS.info} stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor={CHART_COLORS.info} stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={CHART_COLORS.success} stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor={CHART_COLORS.success} stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(210, 30%, 22%)" />
               <XAxis 
                 dataKey="month" 
-                stroke="hsl(var(--muted-foreground))"
+                stroke="hsl(210, 15%, 60%)"
                 fontSize={12}
+                tickLine={false}
               />
               <YAxis 
-                stroke="hsl(var(--muted-foreground))"
+                stroke="hsl(210, 15%, 60%)"
                 fontSize={12}
                 tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
+                tickLine={false}
+                axisLine={false}
               />
               <Tooltip content={<CustomTooltip />} />
-              <Line 
-                type="monotone" 
-                dataKey="revenue" 
-                stroke="hsl(190, 70%, 35%)" 
+              <Area
+                type="monotone"
+                dataKey="revenue"
+                stroke={CHART_COLORS.info}
                 strokeWidth={3}
-                dot={{ fill: 'hsl(190, 70%, 35%)', strokeWidth: 2 }}
+                fillOpacity={1}
+                fill="url(#colorRevenue)"
                 name="Faturamento"
               />
-              <Line 
-                type="monotone" 
-                dataKey="profit" 
-                stroke="hsl(145, 63%, 42%)" 
+              <Area
+                type="monotone"
+                dataKey="profit"
+                stroke={CHART_COLORS.success}
                 strokeWidth={3}
-                dot={{ fill: 'hsl(145, 63%, 42%)', strokeWidth: 2 }}
+                fillOpacity={1}
+                fill="url(#colorProfit)"
                 name="Lucro"
               />
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
 
@@ -162,26 +232,24 @@ export const Dashboard = () => {
                 data={costComposition}
                 cx="50%"
                 cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                paddingAngle={4}
+                innerRadius={70}
+                outerRadius={110}
+                paddingAngle={3}
                 dataKey="value"
+                stroke="none"
               >
                 {costComposition.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={PIE_COLORS[index % PIE_COLORS.length]}
+                    style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }}
+                  />
                 ))}
               </Pie>
-              <Tooltip 
-                formatter={(value: number) => `${value}%`}
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--popover))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
-                }}
-              />
+              <Tooltip content={<CustomPieTooltip />} />
               <Legend 
-                wrapperStyle={{ fontSize: '12px' }}
-                formatter={(value) => <span className="text-foreground">{value}</span>}
+                wrapperStyle={{ fontSize: '13px', paddingTop: '20px' }}
+                formatter={(value) => <span className="text-foreground font-medium">{value}</span>}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -190,74 +258,93 @@ export const Dashboard = () => {
 
       {/* Charts Row 2 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Margin by Product */}
+        {/* Margin by Product - Colored bars */}
         <div className="chart-container">
           <h3 className="text-lg font-semibold text-foreground mb-4">Margem por Produto</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={productMargins} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            <BarChart data={coloredMargins} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(210, 30%, 22%)" horizontal={false} />
               <XAxis 
                 type="number" 
-                stroke="hsl(var(--muted-foreground))"
+                stroke="hsl(210, 15%, 60%)"
                 fontSize={12}
                 tickFormatter={(value) => `${value}%`}
+                tickLine={false}
               />
               <YAxis 
                 type="category" 
                 dataKey="name" 
-                stroke="hsl(var(--muted-foreground))"
+                stroke="hsl(210, 15%, 60%)"
                 fontSize={11}
                 width={120}
+                tickLine={false}
+                axisLine={false}
               />
               <Tooltip 
-                formatter={(value: number) => `${value}%`}
+                formatter={(value: number) => [`${value}%`, 'Margem']}
                 contentStyle={{
-                  backgroundColor: 'hsl(var(--popover))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
+                  backgroundColor: 'hsl(210, 40%, 8%)',
+                  border: '1px solid hsl(210, 30%, 22%)',
+                  borderRadius: '12px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
                 }}
+                labelStyle={{ color: 'hsl(210, 20%, 98%)', fontWeight: 600 }}
               />
               <Bar 
                 dataKey="margin" 
-                fill="hsl(190, 70%, 35%)" 
-                radius={[0, 4, 4, 0]}
+                radius={[0, 6, 6, 0]}
                 name="Margem"
-              />
+              >
+                {coloredMargins.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.fill} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Profit Ranking */}
+        {/* Profit Ranking - Gradient bars */}
         <div className="chart-container">
           <h3 className="text-lg font-semibold text-foreground mb-4">Ranking de Lucro por Produto</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={productMargins.sort((a, b) => b.profit - a.profit)}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            <BarChart data={sortedProfits}>
+              <defs>
+                <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={CHART_COLORS.success} stopOpacity={1}/>
+                  <stop offset="100%" stopColor={CHART_COLORS.teal} stopOpacity={0.8}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(210, 30%, 22%)" vertical={false} />
               <XAxis 
                 dataKey="name" 
-                stroke="hsl(var(--muted-foreground))"
+                stroke="hsl(210, 15%, 60%)"
                 fontSize={10}
                 angle={-20}
                 textAnchor="end"
                 height={60}
+                tickLine={false}
               />
               <YAxis 
-                stroke="hsl(var(--muted-foreground))"
+                stroke="hsl(210, 15%, 60%)"
                 fontSize={12}
                 tickFormatter={(value) => `R$${value}`}
+                tickLine={false}
+                axisLine={false}
               />
               <Tooltip 
-                formatter={(value: number) => formatCurrency(value)}
+                formatter={(value: number) => [formatCurrency(value), 'Lucro/Un']}
                 contentStyle={{
-                  backgroundColor: 'hsl(var(--popover))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
+                  backgroundColor: 'hsl(210, 40%, 8%)',
+                  border: '1px solid hsl(210, 30%, 22%)',
+                  borderRadius: '12px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
                 }}
+                labelStyle={{ color: 'hsl(210, 20%, 98%)', fontWeight: 600 }}
               />
               <Bar 
                 dataKey="profit" 
-                fill="hsl(145, 63%, 42%)" 
-                radius={[4, 4, 0, 0]}
+                fill="url(#profitGradient)"
+                radius={[6, 6, 0, 0]}
                 name="Lucro/Un"
               />
             </BarChart>
