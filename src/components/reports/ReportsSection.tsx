@@ -202,7 +202,7 @@ export const ReportsSection = () => {
               />
               <Bar 
                 dataKey="margin" 
-                fill="#0DD9F4"
+                fill="#0FE316"
                 radius={[8, 8, 0, 0]}
                 name="Margem"
                 onMouseOver={(data, index, e) => {
@@ -212,7 +212,7 @@ export const ReportsSection = () => {
                 }}
                 onMouseOut={(data, index, e) => {
                   if (e && e.target) {
-                    (e.target as SVGElement).style.fill = '#0DD9F4';
+                    (e.target as SVGElement).style.fill = '#0FE316';
                   }
                 }}
               />
