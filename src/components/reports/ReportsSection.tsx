@@ -151,10 +151,10 @@ export const ReportsSection = () => {
               <Line 
                 type="monotone" 
                 dataKey="revenue" 
-                stroke="#0DD9F4"
+                stroke="#E30E7F"
                 strokeWidth={3}
-                dot={{ fill: '#0DD9F4', strokeWidth: 2, r: 5 }}
-                activeDot={{ r: 7, fill: '#0DD9F4', stroke: '#fff', strokeWidth: 2 }}
+                dot={{ fill: '#E30E7F', strokeWidth: 2, r: 5 }}
+                activeDot={{ r: 7, fill: '#E30E7F', stroke: '#fff', strokeWidth: 2 }}
                 name="Faturamento"
               />
               <Line 
@@ -197,7 +197,8 @@ export const ReportsSection = () => {
                   borderRadius: '8px',
                   color: '#FFFFFF'
                 }}
-                labelStyle={{ color: '#FFFFFF' }}
+                labelStyle={{ color: '#FFFFFF', fontWeight: 600 }}
+                itemStyle={{ color: '#FFFFFF' }}
                 cursor={{ fill: 'rgba(252, 114, 0, 0.1)' }}
               />
               <Bar 
