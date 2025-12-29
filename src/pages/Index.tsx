@@ -48,17 +48,17 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <TopNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       
-      <main className="pt-20 pb-8 px-4 lg:px-6 max-w-[1600px] mx-auto">
+      <main className="pt-16 md:pt-18 lg:pt-24 pb-20 md:pb-8 px-3 md:px-4 lg:px-6 max-w-[1600px] mx-auto">
         {renderContent()}
         
         {/* Clear Data Button - Fixed at bottom */}
-        <div className="fixed bottom-6 right-6">
+        <div className="fixed bottom-4 md:bottom-6 right-3 md:right-6 z-40">
           <button 
             onClick={handleClearData}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-card border border-border shadow-lg hover:bg-secondary transition-all duration-200 text-sm text-muted-foreground hover:text-foreground"
+            className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2.5 rounded-lg md:rounded-xl bg-card border border-border shadow-lg hover:bg-secondary transition-all duration-200 text-xs md:text-sm text-muted-foreground hover:text-foreground"
           >
             <Trash2 className="w-4 h-4" />
             <span className="hidden sm:inline">Limpar dados e começar do zero</span>

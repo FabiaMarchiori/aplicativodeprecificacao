@@ -22,11 +22,11 @@ export const KPICard = ({
   const getTrendIcon = () => {
     switch (trend) {
       case 'up':
-        return <TrendingUp className="w-4 h-4 text-white" />;
+        return <TrendingUp className="w-3 h-3 md:w-4 md:h-4 text-white" />;
       case 'down':
-        return <TrendingDown className="w-4 h-4 text-white" />;
+        return <TrendingDown className="w-3 h-3 md:w-4 md:h-4 text-white" />;
       default:
-        return <Minus className="w-4 h-4 text-white" />;
+        return <Minus className="w-3 h-3 md:w-4 md:h-4 text-white" />;
     }
   };
 
@@ -63,12 +63,12 @@ export const KPICard = ({
   return (
     <div className={`kpi-card animate-fade-in ${getCardClass()}`}>
       <div className="relative z-10">
-        <div className="flex items-start justify-between mb-4">
+        <div className="flex items-start justify-between mb-3 md:mb-4">
           <div className={`kpi-icon ${getIconClass()}`}>
-            <Icon className="w-7 h-7 text-white" />
+            <Icon className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-white" />
           </div>
           {trend && trendValue && (
-            <div className="flex items-center gap-1.5 text-sm bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
+            <div className="flex items-center gap-1 md:gap-1.5 text-xs md:text-sm bg-white/20 backdrop-blur-sm px-2 py-1 md:px-3 md:py-1.5 rounded-full">
               {getTrendIcon()}
               <span className="font-bold text-white">
                 {trendValue}
@@ -77,11 +77,11 @@ export const KPICard = ({
           )}
         </div>
         
-        <h3 className="kpi-title mb-2">{title}</h3>
+        <h3 className="kpi-title mb-1 md:mb-2">{title}</h3>
         <p className="kpi-value mono truncate" title={value}>{value}</p>
         
         {subtitle && (
-          <p className="kpi-subtitle mt-2 truncate" title={subtitle}>{subtitle}</p>
+          <p className="kpi-subtitle mt-1 md:mt-2 truncate" title={subtitle}>{subtitle}</p>
         )}
       </div>
     </div>
