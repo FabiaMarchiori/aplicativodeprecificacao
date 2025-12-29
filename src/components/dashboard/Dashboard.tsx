@@ -286,7 +286,9 @@ export const Dashboard = () => {
                   borderRadius: '12px',
                   boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
                 }}
-                labelStyle={{ color: '#fff', fontWeight: 600 }}
+                labelStyle={{ color: '#FFFFFF', fontWeight: 600 }}
+                itemStyle={{ color: '#FFFFFF' }}
+                cursor={{ fill: 'rgba(227, 14, 127, 0.2)' }}
               />
               <Bar 
                 dataKey="margin" 
@@ -337,7 +339,9 @@ export const Dashboard = () => {
                   borderRadius: '12px',
                   boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
                 }}
-                labelStyle={{ color: '#fff', fontWeight: 600 }}
+                labelStyle={{ color: '#FFFFFF', fontWeight: 600 }}
+                itemStyle={{ color: '#FFFFFF' }}
+                cursor={{ fill: 'rgba(252, 114, 0, 0.25)' }}
               />
               <Bar 
                 dataKey="profit" 
