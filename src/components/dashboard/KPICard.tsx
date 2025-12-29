@@ -22,11 +22,11 @@ export const KPICard = ({
   const getTrendIcon = () => {
     switch (trend) {
       case 'up':
-        return <TrendingUp className="w-4 h-4 text-vibrant-green" />;
+        return <TrendingUp className="w-4 h-4 text-white" />;
       case 'down':
-        return <TrendingDown className="w-4 h-4 text-vibrant-pink" />;
+        return <TrendingDown className="w-4 h-4 text-white" />;
       default:
-        return <Minus className="w-4 h-4 text-white/60" />;
+        return <Minus className="w-4 h-4 text-white" />;
     }
   };
 
@@ -70,11 +70,7 @@ export const KPICard = ({
           {trend && trendValue && (
             <div className="flex items-center gap-1.5 text-sm bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
               {getTrendIcon()}
-              <span className={`font-bold ${
-                trend === 'up' ? 'text-vibrant-green' : 
-                trend === 'down' ? 'text-vibrant-pink' : 
-                'text-white/80'
-              }`}>
+              <span className="font-bold text-white">
                 {trendValue}
               </span>
             </div>
