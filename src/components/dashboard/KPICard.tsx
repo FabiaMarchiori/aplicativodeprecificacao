@@ -7,7 +7,7 @@ interface KPICardProps {
   trend?: 'up' | 'down' | 'neutral';
   trendValue?: string;
   icon: React.ElementType;
-  variant?: 'blue' | 'teal' | 'green' | 'gold' | 'orange';
+  variant?: 'blue' | 'orange' | 'green' | 'cyan' | 'pink';
 }
 
 export const KPICard = ({ 
@@ -22,24 +22,24 @@ export const KPICard = ({
   const getTrendIcon = () => {
     switch (trend) {
       case 'up':
-        return <TrendingUp className="w-4 h-4 text-success" />;
+        return <TrendingUp className="w-4 h-4 text-vibrant-green" />;
       case 'down':
-        return <TrendingDown className="w-4 h-4 text-danger" />;
+        return <TrendingDown className="w-4 h-4 text-vibrant-pink" />;
       default:
-        return <Minus className="w-4 h-4 text-muted-foreground" />;
+        return <Minus className="w-4 h-4 text-white/60" />;
     }
   };
 
   const getIconClass = () => {
     switch (variant) {
-      case 'teal':
-        return 'icon-teal';
-      case 'green':
-        return 'icon-green';
-      case 'gold':
-        return 'icon-gold';
       case 'orange':
         return 'icon-orange';
+      case 'green':
+        return 'icon-green';
+      case 'cyan':
+        return 'icon-cyan';
+      case 'pink':
+        return 'icon-pink';
       default:
         return 'icon-blue';
     }
@@ -47,14 +47,14 @@ export const KPICard = ({
 
   const getCardClass = () => {
     switch (variant) {
-      case 'teal':
-        return 'kpi-teal';
-      case 'green':
-        return 'kpi-green';
-      case 'gold':
-        return 'kpi-gold';
       case 'orange':
         return 'kpi-orange';
+      case 'green':
+        return 'kpi-green';
+      case 'cyan':
+        return 'kpi-cyan';
+      case 'pink':
+        return 'kpi-pink';
       default:
         return 'kpi-blue';
     }
@@ -65,15 +65,15 @@ export const KPICard = ({
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-4">
           <div className={`kpi-icon ${getIconClass()}`}>
-            <Icon className="w-6 h-6 text-white" />
+            <Icon className="w-7 h-7 text-white" />
           </div>
           {trend && trendValue && (
-            <div className="flex items-center gap-1.5 text-sm bg-background/30 px-2 py-1 rounded-lg">
+            <div className="flex items-center gap-1.5 text-sm bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
               {getTrendIcon()}
-              <span className={`font-semibold ${
-                trend === 'up' ? 'text-success' : 
-                trend === 'down' ? 'text-danger' : 
-                'text-muted-foreground'
+              <span className={`font-bold ${
+                trend === 'up' ? 'text-vibrant-green' : 
+                trend === 'down' ? 'text-vibrant-pink' : 
+                'text-white/80'
               }`}>
                 {trendValue}
               </span>
@@ -81,11 +81,11 @@ export const KPICard = ({
           )}
         </div>
         
-        <h3 className="text-sm font-medium text-muted-foreground mb-1 uppercase tracking-wide">{title}</h3>
-        <p className="text-2xl lg:text-3xl font-bold text-foreground mono truncate" title={value}>{value}</p>
+        <h3 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide">{title}</h3>
+        <p className="text-2xl lg:text-3xl font-bold text-white mono truncate" title={value}>{value}</p>
         
         {subtitle && (
-          <p className="text-sm text-muted-foreground mt-2 truncate" title={subtitle}>{subtitle}</p>
+          <p className="text-sm text-white/70 mt-2 truncate" title={subtitle}>{subtitle}</p>
         )}
       </div>
     </div>
