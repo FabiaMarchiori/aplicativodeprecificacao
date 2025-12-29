@@ -63,14 +63,26 @@ export const ReportsSection = () => {
         <div className="flex items-center gap-2">
           <button 
             onClick={() => handleExport('Excel')}
-            className="btn-secondary flex items-center gap-2"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 hover:-translate-y-0.5"
+            style={{
+              background: 'linear-gradient(135deg, #0FE316 0%, #5EF366 100%)',
+              boxShadow: '0 4px 15px rgba(15, 227, 22, 0.3)'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 6px 20px rgba(15, 227, 22, 0.4)'}
+            onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 4px 15px rgba(15, 227, 22, 0.3)'}
           >
             <FileSpreadsheet className="w-4 h-4" />
             Excel
           </button>
           <button 
             onClick={() => handleExport('PDF')}
-            className="btn-secondary flex items-center gap-2"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 hover:-translate-y-0.5"
+            style={{
+              background: 'linear-gradient(135deg, #E30E7F 0%, #F84BA6 100%)',
+              boxShadow: '0 4px 15px rgba(227, 14, 127, 0.3)'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 6px 20px rgba(227, 14, 127, 0.4)'}
+            onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 4px 15px rgba(227, 14, 127, 0.3)'}
           >
             <FileText className="w-4 h-4" />
             PDF
@@ -139,17 +151,19 @@ export const ReportsSection = () => {
               <Line 
                 type="monotone" 
                 dataKey="revenue" 
-                stroke="hsl(190, 70%, 35%)" 
+                stroke="#0DD9F4"
                 strokeWidth={3}
-                dot={{ fill: 'hsl(190, 70%, 35%)', strokeWidth: 2 }}
+                dot={{ fill: '#0DD9F4', strokeWidth: 2, r: 5 }}
+                activeDot={{ r: 7, fill: '#0DD9F4', stroke: '#fff', strokeWidth: 2 }}
                 name="Faturamento"
               />
               <Line 
                 type="monotone" 
                 dataKey="profit" 
-                stroke="hsl(145, 63%, 42%)" 
+                stroke="#0FE316"
                 strokeWidth={3}
-                dot={{ fill: 'hsl(145, 63%, 42%)', strokeWidth: 2 }}
+                dot={{ fill: '#0FE316', strokeWidth: 2, r: 5 }}
+                activeDot={{ r: 7, fill: '#0FE316', stroke: '#fff', strokeWidth: 2 }}
                 name="Lucro"
               />
             </LineChart>
@@ -178,16 +192,29 @@ export const ReportsSection = () => {
               <Tooltip 
                 formatter={(value: number) => [`${value}%`, 'Margem']}
                 contentStyle={{
-                  backgroundColor: 'hsl(var(--popover))',
-                  border: '1px solid hsl(var(--border))',
+                  backgroundColor: 'rgba(30, 30, 46, 0.95)',
+                  border: '2px solid #FC7200',
                   borderRadius: '8px',
+                  color: '#FFFFFF'
                 }}
+                labelStyle={{ color: '#FFFFFF' }}
+                cursor={{ fill: 'rgba(252, 114, 0, 0.1)' }}
               />
               <Bar 
                 dataKey="margin" 
-                fill="hsl(190, 70%, 35%)" 
-                radius={[4, 4, 0, 0]}
+                fill="#0DD9F4"
+                radius={[8, 8, 0, 0]}
                 name="Margem"
+                onMouseOver={(data, index, e) => {
+                  if (e && e.target) {
+                    (e.target as SVGElement).style.fill = '#FC7200';
+                  }
+                }}
+                onMouseOut={(data, index, e) => {
+                  if (e && e.target) {
+                    (e.target as SVGElement).style.fill = '#0DD9F4';
+                  }
+                }}
               />
             </BarChart>
           </ResponsiveContainer>
