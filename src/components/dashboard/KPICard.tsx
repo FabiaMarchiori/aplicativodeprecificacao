@@ -81,11 +81,11 @@ export const KPICard = ({
           )}
         </div>
         
-        <h3 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide">{title}</h3>
-        <p className="text-2xl lg:text-3xl font-bold text-white mono truncate" title={value}>{value}</p>
+        <h3 className="kpi-title mb-2">{title}</h3>
+        <p className="kpi-value mono truncate" title={value}>{value}</p>
         
         {subtitle && (
-          <p className="text-sm text-white/70 mt-2 truncate" title={subtitle}>{subtitle}</p>
+          <p className="kpi-subtitle mt-2 truncate" title={subtitle}>{subtitle}</p>
         )}
       </div>
     </div>

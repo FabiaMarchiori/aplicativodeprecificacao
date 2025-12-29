@@ -205,6 +205,35 @@
     box-shadow: var(--shadow-glow-pink);
   }
 
+  /* Navigation scroll container */
+  .nav-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-scroll::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .nav-scroll::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+
+  .nav-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+  }
+
+  .nav-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+
   /* KPI Card base */
   .kpi-card {
     @apply relative overflow-hidden rounded-2xl p-6 transition-all duration-300;
@@ -251,6 +280,71 @@
   .kpi-card.kpi-pink {
     background: linear-gradient(135deg, hsl(330 90% 47%), hsl(330 85% 38%));
     border: 1px solid hsl(var(--color-pink) / 0.3);
+    box-shadow: 0 8px 25px rgba(227, 14, 127, 0.4);
+  }
+
+  .kpi-card.kpi-pink:hover {
+    box-shadow: 0 12px 35px rgba(227, 14, 127, 0.5);
+  }
+
+  .kpi-card.kpi-blue {
+    box-shadow: 0 8px 25px rgba(50, 156, 242, 0.4);
+  }
+
+  .kpi-card.kpi-blue:hover {
+    box-shadow: 0 12px 35px rgba(50, 156, 242, 0.5);
+  }
+
+  .kpi-card.kpi-orange {
+    box-shadow: 0 8px 25px rgba(252, 114, 0, 0.4);
+  }
+
+  .kpi-card.kpi-orange:hover {
+    box-shadow: 0 12px 35px rgba(252, 114, 0, 0.5);
+  }
+
+  .kpi-card.kpi-green {
+    box-shadow: 0 8px 25px rgba(15, 227, 22, 0.4);
+  }
+
+  .kpi-card.kpi-green:hover {
+    box-shadow: 0 12px 35px rgba(15, 227, 22, 0.5);
+  }
+
+  .kpi-card.kpi-cyan {
+    box-shadow: 0 8px 25px rgba(13, 217, 244, 0.4);
+  }
+
+  .kpi-card.kpi-cyan:hover {
+    box-shadow: 0 12px 35px rgba(13, 217, 244, 0.5);
+  }
+
+  /* KPI Card Text - All White */
+  .kpi-card .kpi-title {
+    color: #FFFFFF !important;
+    opacity: 0.95;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .kpi-card .kpi-value {
+    color: #FFFFFF !important;
+    font-size: 1.75rem;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .kpi-card .kpi-subtitle {
+    color: #FFFFFF !important;
+    opacity: 0.9;
+    font-size: 0.875rem;
+  }
+
+  .kpi-card .kpi-trend {
+    color: #FFFFFF !important;
+    font-weight: 600;
   }
 
   /* KPI Icon styles */

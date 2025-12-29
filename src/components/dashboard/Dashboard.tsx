@@ -39,7 +39,7 @@ const CHART_COLORS = {
 };
 
 const PIE_COLORS = [
-  '#329CF2', // Blue - Custos Fixos
+  '#E30E7F', // Pink - Custos Fixos
   '#0FE316', // Green - Custos Variáveis
   '#FC7200', // Orange - Impostos
   '#0DD9F4', // Cyan - Margem
