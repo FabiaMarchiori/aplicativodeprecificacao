@@ -104,6 +104,11 @@
     @apply border-border;
   }
 
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', system-ui, sans-serif;
@@ -114,21 +119,36 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
   }
+
+  /* Responsive Typography */
+  h1 {
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+  }
+
+  h2 {
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+  }
+
+  h3 {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+  }
 }
 
 @layer components {
   .glass-card {
-    @apply backdrop-blur-xl rounded-xl;
+    @apply backdrop-blur-xl rounded-xl p-4 md:p-5 lg:p-6;
     background: linear-gradient(145deg, hsl(234 30% 20%), hsl(234 35% 15%));
     border: 1px solid hsl(var(--glass-border));
     box-shadow: var(--shadow-md);
+    max-width: 100%;
   }
 
   /* Navigation button base styles */
   .nav-button {
-    @apply px-5 py-2.5 text-sm font-semibold transition-all duration-300 rounded-xl;
+    @apply px-3 py-2 md:px-4 md:py-2.5 lg:px-5 text-xs md:text-sm font-semibold transition-all duration-300 rounded-lg md:rounded-xl;
     @apply text-white/80 uppercase tracking-wider;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
   }
 
   .nav-button:hover {
@@ -214,10 +234,11 @@
     scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
   }
 
   .nav-scroll::-webkit-scrollbar {
-    height: 6px;
+    height: 4px;
   }
 
   .nav-scroll::-webkit-scrollbar-track {
@@ -236,7 +257,7 @@
 
   /* KPI Card base */
   .kpi-card {
-    @apply relative overflow-hidden rounded-2xl p-6 transition-all duration-300;
+    @apply relative overflow-hidden rounded-xl md:rounded-2xl p-4 md:p-5 lg:p-6 transition-all duration-300;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   }
 
@@ -252,8 +273,14 @@
   }
 
   .kpi-card:hover {
-    transform: translateY(-8px);
+    transform: translateY(-4px);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  @media (min-width: 768px) {
+    .kpi-card:hover {
+      transform: translateY(-8px);
+    }
   }
 
   /* KPI Card color variants - SOLID gradients */
@@ -323,7 +350,7 @@
   .kpi-card .kpi-title {
     color: #FFFFFF !important;
     opacity: 0.95;
-    font-size: 0.875rem;
+    font-size: clamp(0.7rem, 2vw, 0.875rem);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -331,7 +358,7 @@
 
   .kpi-card .kpi-value {
     color: #FFFFFF !important;
-    font-size: 1.75rem;
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
     font-weight: 700;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   }
@@ -339,7 +366,7 @@
   .kpi-card .kpi-subtitle {
     color: #FFFFFF !important;
     opacity: 0.9;
-    font-size: 0.875rem;
+    font-size: clamp(0.75rem, 2vw, 0.875rem);
   }
 
   .kpi-card .kpi-trend {
@@ -349,8 +376,12 @@
 
   /* KPI Icon styles */
   .kpi-icon {
-    @apply w-14 h-14 rounded-full flex items-center justify-center;
+    @apply w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .kpi-icon svg {
+    @apply w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7;
   }
 
   .kpi-icon.icon-blue {
@@ -375,18 +406,19 @@
 
   /* Data Table */
   .data-table {
-    @apply w-full text-sm;
+    @apply w-full text-xs md:text-sm;
   }
 
   .data-table th {
-    @apply px-4 py-3 text-left font-semibold uppercase tracking-wider text-xs;
+    @apply px-2 py-2 md:px-4 md:py-3 text-left font-semibold uppercase tracking-wider text-xs;
     color: hsl(var(--color-cyan));
     background: hsl(var(--secondary) / 0.6);
     border-bottom: 2px solid hsl(var(--color-cyan) / 0.3);
+    white-space: nowrap;
   }
 
   .data-table td {
-    @apply px-4 py-3;
+    @apply px-2 py-2 md:px-4 md:py-3;
     border-bottom: 1px solid hsl(var(--border) / 0.5);
   }
 
@@ -397,7 +429,8 @@
 
   /* Status badges */
   .status-badge {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold;
+    @apply inline-flex items-center gap-1 md:gap-1.5 px-2 py-0.5 md:px-3 md:py-1 rounded-full text-xs font-semibold;
+    white-space: nowrap;
   }
 
   .status-success {
@@ -426,10 +459,11 @@
 
   /* Input field */
   .input-field {
-    @apply w-full px-4 py-3 rounded-lg;
+    @apply w-full px-3 py-2 md:px-4 md:py-3 rounded-lg text-sm md:text-base;
     background: hsl(var(--input) / 0.5);
     border: 2px solid hsl(var(--border) / 0.5);
     color: hsl(var(--foreground));
+    min-height: 44px;
     @apply placeholder:text-muted-foreground;
     @apply focus:outline-none;
     @apply transition-all duration-300;
@@ -442,10 +476,11 @@
 
   /* Buttons */
   .btn-primary {
-    @apply px-5 py-2.5 font-semibold rounded-xl text-white;
+    @apply px-4 py-2.5 md:px-5 md:py-2.5 font-semibold rounded-lg md:rounded-xl text-white text-sm md:text-base;
     background: linear-gradient(135deg, hsl(var(--color-cyan)), hsl(189 85% 40%));
     @apply transition-all duration-300;
     box-shadow: var(--shadow-glow-cyan);
+    min-height: 44px;
   }
 
   .btn-primary:hover {
@@ -454,29 +489,33 @@
   }
 
   .btn-success {
-    @apply px-5 py-2.5 font-semibold rounded-xl text-white;
+    @apply px-4 py-2.5 md:px-5 md:py-2.5 font-semibold rounded-lg md:rounded-xl text-white text-sm md:text-base;
     background: linear-gradient(135deg, hsl(var(--color-green)), hsl(122 80% 38%));
     box-shadow: var(--shadow-glow-green);
+    min-height: 44px;
   }
 
   .btn-danger {
-    @apply px-5 py-2.5 font-semibold rounded-xl text-white;
+    @apply px-4 py-2.5 md:px-5 md:py-2.5 font-semibold rounded-lg md:rounded-xl text-white text-sm md:text-base;
     background: linear-gradient(135deg, hsl(var(--color-pink)), hsl(330 80% 38%));
     box-shadow: var(--shadow-glow-pink);
+    min-height: 44px;
   }
 
   .btn-warning {
-    @apply px-5 py-2.5 font-semibold rounded-xl text-white;
+    @apply px-4 py-2.5 md:px-5 md:py-2.5 font-semibold rounded-lg md:rounded-xl text-white text-sm md:text-base;
     background: linear-gradient(135deg, hsl(var(--color-orange)), hsl(27 90% 40%));
     box-shadow: var(--shadow-glow-orange);
+    min-height: 44px;
   }
 
   .btn-secondary {
-    @apply px-5 py-2.5 font-semibold rounded-xl;
+    @apply px-4 py-2.5 md:px-5 md:py-2.5 font-semibold rounded-lg md:rounded-xl text-sm md:text-base;
     background: hsl(var(--color-cyan) / 0.1);
     border: 2px solid hsl(var(--color-cyan));
     color: hsl(var(--color-cyan));
     @apply transition-all duration-300;
+    min-height: 44px;
   }
 
   .btn-secondary:hover {
@@ -485,23 +524,41 @@
   }
 
   .btn-ghost {
-    @apply px-4 py-2 text-muted-foreground font-medium rounded-lg;
+    @apply px-3 py-2 md:px-4 md:py-2 text-muted-foreground font-medium rounded-lg text-sm md:text-base;
     @apply hover:bg-secondary hover:text-foreground transition-all duration-200;
+    min-height: 44px;
   }
 
   /* Chart container */
   .chart-container {
-    @apply glass-card p-6;
+    @apply glass-card;
   }
 
   .chart-container h3 {
-    @apply relative inline-flex items-center gap-2;
+    @apply relative inline-flex items-center gap-2 text-sm md:text-base lg:text-lg font-semibold mb-3 md:mb-4;
   }
 
   .chart-container h3::before {
     content: '';
-    @apply w-1 h-5 rounded-full;
+    @apply w-1 h-4 md:h-5 rounded-full;
     background: linear-gradient(135deg, hsl(var(--color-cyan)), hsl(var(--color-green)));
+  }
+
+  /* Responsive chart heights */
+  .chart-responsive {
+    height: 220px !important;
+  }
+
+  @media (min-width: 768px) {
+    .chart-responsive {
+      height: 260px !important;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .chart-responsive {
+      height: 300px !important;
+    }
   }
 
   .mono {
@@ -509,13 +566,23 @@
   }
 
   .section-title {
-    @apply text-lg font-bold relative inline-flex items-center gap-3 mb-4;
+    @apply text-base md:text-lg font-bold relative inline-flex items-center gap-2 md:gap-3 mb-3 md:mb-4;
   }
 
   .section-title::before {
     content: '';
-    @apply w-1.5 h-6 rounded-full;
+    @apply w-1 md:w-1.5 h-5 md:h-6 rounded-full;
     background: linear-gradient(135deg, hsl(var(--color-pink)), hsl(var(--color-cyan)));
+  }
+
+  /* Table action buttons - touch friendly */
+  .table-action-btn {
+    @apply p-2.5 md:p-2 rounded-lg transition-colors;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -589,5 +656,10 @@
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  /* Touch-friendly spacing */
+  .touch-spacing {
+    @apply gap-3 md:gap-4 lg:gap-6;
   }
 }
