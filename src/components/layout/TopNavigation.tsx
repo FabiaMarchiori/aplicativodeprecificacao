@@ -36,25 +36,19 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
     >
       <div className="max-w-[1600px] mx-auto px-4 lg:px-6">
         <div className="flex items-center justify-between h-20">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div 
-              className="w-12 h-12 rounded-xl flex items-center justify-center"
-              style={{ 
-                background: 'linear-gradient(135deg, #E30E7F, #0DD9F4)',
-                boxShadow: '0 6px 20px rgba(227, 14, 127, 0.4)'
-              }}
-            >
-              <TrendingUp className="w-7 h-7 text-white" />
-            </div>
-            <div className="hidden sm:block">
-              <h1 className="text-xl font-bold text-gradient">PrecifyPro</h1>
-              <p className="text-xs text-muted-foreground">Gestão de Precificação</p>
-            </div>
-          </div>
+      {/* Logo - Icon only */}
+      <div 
+        className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+        style={{ 
+          background: 'linear-gradient(135deg, #E30E7F, #0DD9F4)',
+          boxShadow: '0 6px 20px rgba(227, 14, 127, 0.4)'
+        }}
+      >
+        <TrendingUp className="w-7 h-7 text-white" />
+      </div>
 
           {/* Navigation Tabs */}
-          <nav className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+          <nav className="flex items-center gap-2 nav-scroll flex-1 ml-4">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
