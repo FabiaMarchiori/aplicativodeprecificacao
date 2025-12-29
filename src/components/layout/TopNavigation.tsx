@@ -30,16 +30,16 @@ const tabs: { id: TabType; label: string; icon: React.ElementType }[] = [
 
 export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) => {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-b border-border">
+    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b border-border/50" style={{ background: 'linear-gradient(180deg, hsl(210 45% 10% / 0.98), hsl(210 45% 7% / 0.95))' }}>
       <div className="max-w-[1600px] mx-auto px-4 lg:px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-glow">
-              <TrendingUp className="w-5 h-5 text-primary-foreground" />
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, hsl(190 75% 32%), hsl(205 85% 45%))', boxShadow: '0 0 25px hsl(190 75% 45% / 0.4)' }}>
+              <TrendingUp className="w-6 h-6 text-white" />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg font-bold text-foreground">PrecifyPro</h1>
+              <h1 className="text-lg font-bold text-gradient">PrecifyPro</h1>
               <p className="text-xs text-muted-foreground">Gestão de Precificação</p>
             </div>
           </div>
