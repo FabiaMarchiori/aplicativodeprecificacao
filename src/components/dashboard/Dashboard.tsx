@@ -35,20 +35,20 @@ import {
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { DashboardConfig, defaultDashboardConfig, ChartType } from '@/types/dashboard';
 
-// Neon Electric chart colors
+// Refined chart colors (softer, eye-comfort optimized)
 const CHART_COLORS = {
-  cyan: '#00D1FF',    // Ciano Elétrico
-  green: '#39FF14',   // Verde Neon
-  orange: '#FFAC00',  // Laranja Vivo
-  pink: '#FF007A',    // Rosa Choque
-  purple: '#BF00FF',  // Roxo Neon
+  cyan: '#0ABCE8',    // Ciano Principal
+  green: '#2EAA5C',   // Verde para lucro
+  orange: '#F29A1B',  // Laranja para alerta
+  pink: '#D92B5E',    // Rosa para perigo
+  purple: '#9B4DCA',  // Roxo informativo
 };
 
 const PIE_COLORS = [
-  '#FF007A', // Pink - Custos Fixos
-  '#39FF14', // Green - Custos Variáveis
-  '#FFAC00', // Orange - Impostos
-  '#00D1FF', // Cyan - Margem
+  '#D92B5E', // Pink - Custos Fixos
+  '#2EAA5C', // Green - Custos Variáveis
+  '#F29A1B', // Orange - Impostos
+  '#0ABCE8', // Cyan - Margem
 ];
 
 // Color function based on margin value
@@ -88,20 +88,20 @@ export const Dashboard = () => {
       return (
         <div className="backdrop-blur-lg rounded-xl p-3 md:p-4 shadow-lg"
           style={{
-            background: 'rgba(0, 0, 0, 0.9)',
-            border: '1px solid rgba(0, 209, 255, 0.4)',
-            boxShadow: '0 0 20px rgba(0, 209, 255, 0.2)'
+            background: 'hsl(220 12% 10% / 0.95)',
+            border: '1px solid hsl(220 10% 25%)',
+            boxShadow: '0 0 12px rgba(10, 188, 232, 0.1)'
           }}
         >
           <p className="text-xs md:text-sm font-semibold text-foreground mb-2">{label}</p>
           {payload.map((entry: any, index: number) => (
             <div key={index} className="flex items-center gap-2 text-xs md:text-sm">
               <div 
-                className="w-2 h-2 md:w-3 md:h-3 rounded-full" 
-                style={{ backgroundColor: entry.color, boxShadow: `0 0 8px ${entry.color}` }}
+                className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full" 
+                style={{ backgroundColor: entry.color, boxShadow: `0 0 4px ${entry.color}50` }}
               />
               <span className="text-muted-foreground">{entry.name}:</span>
-              <span className="font-semibold" style={{ color: entry.color, textShadow: `0 0 10px ${entry.color}` }}>
+              <span className="font-semibold" style={{ color: entry.color, textShadow: `0 0 6px ${entry.color}40` }}>
                 {formatCurrency(entry.value)}
               </span>
             </div>
@@ -118,18 +118,18 @@ export const Dashboard = () => {
       return (
         <div className="backdrop-blur-lg rounded-xl p-2 md:p-3 shadow-lg"
           style={{
-            background: 'rgba(0, 0, 0, 0.9)',
-            border: `1px solid ${color}`,
-            boxShadow: `0 0 15px ${color}40`
+            background: 'hsl(220 12% 10% / 0.95)',
+            border: `1px solid ${color}60`,
+            boxShadow: `0 0 10px ${color}20`
           }}
         >
           <div className="flex items-center gap-2">
             <div 
-              className="w-2 h-2 md:w-3 md:h-3 rounded-full" 
-              style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}` }}
+              className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full" 
+              style={{ backgroundColor: color, boxShadow: `0 0 4px ${color}50` }}
             />
             <span className="text-foreground font-medium text-xs md:text-sm">{payload[0].name}</span>
-            <span className="font-bold text-xs md:text-sm" style={{ color: color, textShadow: `0 0 10px ${color}` }}>
+            <span className="font-bold text-xs md:text-sm" style={{ color: color, textShadow: `0 0 6px ${color}40` }}>
               {payload[0].value}%
             </span>
           </div>
@@ -251,43 +251,43 @@ export const Dashboard = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={mockRevenueData}>
                     <defs>
-                      {/* Neon gradient - light rising from bottom */}
+                      {/* Refined gradient - softer transparency */}
                       <linearGradient id="neonRevenue" x1="0" y1="1" x2="0" y2="0">
-                        <stop offset="0%" stopColor="#00D1FF" stopOpacity={0}/>
-                        <stop offset="50%" stopColor="#00D1FF" stopOpacity={0.3}/>
-                        <stop offset="100%" stopColor="#00D1FF" stopOpacity={0.7}/>
+                        <stop offset="0%" stopColor="#0ABCE8" stopOpacity={0}/>
+                        <stop offset="60%" stopColor="#0ABCE8" stopOpacity={0.15}/>
+                        <stop offset="100%" stopColor="#0ABCE8" stopOpacity={0.35}/>
                       </linearGradient>
                       <linearGradient id="neonProfit" x1="0" y1="1" x2="0" y2="0">
-                        <stop offset="0%" stopColor="#39FF14" stopOpacity={0}/>
-                        <stop offset="50%" stopColor="#39FF14" stopOpacity={0.3}/>
-                        <stop offset="100%" stopColor="#39FF14" stopOpacity={0.7}/>
+                        <stop offset="0%" stopColor="#2EAA5C" stopOpacity={0}/>
+                        <stop offset="60%" stopColor="#2EAA5C" stopOpacity={0.15}/>
+                        <stop offset="100%" stopColor="#2EAA5C" stopOpacity={0.35}/>
                       </linearGradient>
-                      {/* Glow filter for lines */}
+                      {/* Subtle glow filter for lines */}
                       <filter id="glowCyan" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
                         <feMerge>
                           <feMergeNode in="coloredBlur"/>
                           <feMergeNode in="SourceGraphic"/>
                         </feMerge>
                       </filter>
                       <filter id="glowGreen" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
                         <feMerge>
                           <feMergeNode in="coloredBlur"/>
                           <feMergeNode in="SourceGraphic"/>
                         </feMerge>
                       </filter>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(220 10% 18%)" />
                     <XAxis 
                       dataKey="month" 
-                      stroke="rgba(255,255,255,0.5)"
+                      stroke="hsl(210 10% 45%)"
                       fontSize={10}
                       tickLine={false}
                       interval="preserveStartEnd"
                     />
                     <YAxis 
-                      stroke="rgba(255,255,255,0.5)"
+                      stroke="hsl(210 10% 45%)"
                       fontSize={10}
                       tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
                       tickLine={false}
@@ -298,8 +298,8 @@ export const Dashboard = () => {
                     <Area
                       type="monotone"
                       dataKey="revenue"
-                      stroke="#00D1FF"
-                      strokeWidth={3}
+                      stroke="#0ABCE8"
+                      strokeWidth={2}
                       fillOpacity={1}
                       fill="url(#neonRevenue)"
                       name="Faturamento"
@@ -308,8 +308,8 @@ export const Dashboard = () => {
                     <Area
                       type="monotone"
                       dataKey="profit"
-                      stroke="#39FF14"
-                      strokeWidth={3}
+                      stroke="#2EAA5C"
+                      strokeWidth={2}
                       fillOpacity={1}
                       fill="url(#neonProfit)"
                       name="Lucro"
