@@ -1,11 +1,11 @@
-import { useState, useMemo } from 'react';
-import { Calculator, TrendingUp, TrendingDown, DollarSign, Percent } from 'lucide-react';
+import { useState } from 'react';
+import { Calculator, TrendingUp, TrendingDown } from 'lucide-react';
 import { mockProducts, mockFixedCosts, mockTaxConfig, calculatePricing, Product } from '@/data/mockData';
 
 export const PricingCalculator = () => {
   const [products] = useState(mockProducts.filter(p => p.status === 'active'));
   const [margins, setMargins] = useState<Record<string, number>>(
-    Object.fromEntries(products.map(p => [p.id, 30])) // Default 30% margin
+    Object.fromEntries(products.map(p => [p.id, 30]))
   );
 
   const formatCurrency = (value: number) => {
@@ -21,135 +21,295 @@ export const PricingCalculator = () => {
     return calculatePricing(product, mockFixedCosts, mockTaxConfig, desiredMargin);
   };
 
-  const getMarginColor = (margin: number) => {
-    if (margin >= 25) return 'text-success';
-    if (margin >= 15) return 'text-warning';
-    return 'text-danger';
+  const getMarginNeonConfig = (margin: number) => {
+    if (margin >= 25) return { color: '#39FF14', glow: 'rgba(57, 255, 20, 0.4)', label: 'Saudável' };
+    if (margin >= 15) return { color: '#FFAC00', glow: 'rgba(255, 172, 0, 0.4)', label: 'Atenção' };
+    return { color: '#FF007A', glow: 'rgba(255, 0, 122, 0.4)', label: 'Crítico' };
   };
 
-  const getMarginStatus = (margin: number) => {
-    if (margin >= 25) return { text: 'Saudável', class: 'status-success' };
-    if (margin >= 15) return { text: 'Atenção', class: 'status-warning' };
-    return { text: 'Crítico', class: 'status-danger' };
-  };
+  const totalTax = (mockTaxConfig.salesTax + mockTaxConfig.marketplaceFee + mockTaxConfig.cardFee + mockTaxConfig.otherFees).toFixed(1);
 
   return (
     <div className="animate-fade-in">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Precificação</h2>
-          <p className="text-muted-foreground">Calcule o preço ideal para cada produto em tempo real</p>
+          <h2 
+            className="text-2xl font-bold"
+            style={{ color: '#F8FAFC', textShadow: '0 0 10px rgba(248, 250, 252, 0.3)' }}
+          >
+            Precificação
+          </h2>
+          <p style={{ color: '#94a3b8' }}>Calcule o preço ideal para cada produto em tempo real</p>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/20">
-          <Calculator className="w-4 h-4 text-primary" />
-          <span className="text-sm text-foreground">Taxa total: {(mockTaxConfig.salesTax + mockTaxConfig.marketplaceFee + mockTaxConfig.cardFee + mockTaxConfig.otherFees).toFixed(1)}%</span>
+        <div 
+          className="flex items-center gap-2 px-4 py-2 rounded-lg"
+          style={{
+            background: '#000000',
+            border: '1px solid #00D1FF',
+            boxShadow: '0 0 15px rgba(0, 209, 255, 0.3)'
+          }}
+        >
+          <Calculator 
+            className="w-4 h-4" 
+            style={{ color: '#00D1FF', filter: 'drop-shadow(0 0 5px #00D1FF)' }}
+          />
+          <span 
+            className="text-sm"
+            style={{ color: '#00D1FF', textShadow: '0 0 10px rgba(0, 209, 255, 0.5)' }}
+          >
+            Taxa total: {totalTax}%
+          </span>
         </div>
       </div>
 
       <div className="space-y-4">
         {products.map((product) => {
           const pricing = getPricingData(product);
-          const status = getMarginStatus(pricing.realMargin);
+          const marginConfig = getMarginNeonConfig(pricing.realMargin);
           const priceDiff = pricing.suggestedPrice - product.currentPrice;
           const priceDiffPercent = (priceDiff / product.currentPrice) * 100;
 
           return (
-            <div key={product.id} className="glass-card p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <div 
+              key={product.id} 
+              className="rounded-xl p-6 transition-all duration-300"
+              style={{
+                background: '#000000',
+                border: '1px solid #00D1FF',
+                boxShadow: '0 0 20px rgba(0, 209, 255, 0.2), inset 0 0 30px rgba(0, 0, 0, 0.8)',
+                paddingLeft: '24px',
+                paddingRight: '24px'
+              }}
+            >
+              <div className="grid grid-cols-1 xl:grid-cols-12 lg:grid-cols-6 gap-8 items-start">
                 {/* Product Info */}
-                <div className="lg:col-span-3">
-                  <p className="text-xs text-muted-foreground mono">{product.code}</p>
-                  <h3 className="font-semibold text-foreground">{product.name}</h3>
-                  <p className="text-sm text-muted-foreground">{product.category}</p>
+                <div className="xl:col-span-2 lg:col-span-2">
+                  <p 
+                    className="text-xs mono"
+                    style={{ color: '#00D1FF', textShadow: '0 0 5px rgba(0, 209, 255, 0.3)' }}
+                  >
+                    {product.code}
+                  </p>
+                  <h3 
+                    className="font-semibold"
+                    style={{ color: '#F8FAFC', textShadow: '0 0 8px rgba(248, 250, 252, 0.2)' }}
+                  >
+                    {product.name}
+                  </h3>
+                  <p className="text-sm" style={{ color: '#64748b' }}>{product.category}</p>
                 </div>
 
                 {/* Costs */}
-                <div className="lg:col-span-2 space-y-1">
-                  <p className="text-xs text-muted-foreground">Custo Total</p>
-                  <p className="text-lg font-bold mono text-foreground">{formatCurrency(pricing.totalCost)}</p>
-                  <p className="text-xs text-muted-foreground">
+                <div className="xl:col-span-2 lg:col-span-2 space-y-1">
+                  <p className="text-xs" style={{ color: '#64748b' }}>Custo Total</p>
+                  <p 
+                    className="text-lg font-bold mono"
+                    style={{ 
+                      color: '#F8FAFC',
+                      textShadow: '0 0 10px rgba(248, 250, 252, 0.5)'
+                    }}
+                  >
+                    {formatCurrency(pricing.totalCost)}
+                  </p>
+                  <p className="text-xs" style={{ color: '#475569' }}>
                     Compra: {formatCurrency(product.purchaseCost)} + Var: {formatCurrency(product.variableCost)}
                   </p>
                 </div>
 
                 {/* Taxes */}
-                <div className="lg:col-span-2 space-y-1">
-                  <p className="text-xs text-muted-foreground">Impostos/Taxas</p>
-                  <p className="text-lg font-bold mono text-warning">{formatCurrency(pricing.taxAmount)}</p>
+                <div className="xl:col-span-2 lg:col-span-2 space-y-1">
+                  <p className="text-xs" style={{ color: '#64748b' }}>Impostos/Taxas</p>
+                  <p 
+                    className="text-lg font-bold mono"
+                    style={{ 
+                      color: '#FFAC00',
+                      textShadow: '0 0 15px rgba(255, 172, 0, 0.6)'
+                    }}
+                  >
+                    {formatCurrency(pricing.taxAmount)}
+                  </p>
                 </div>
 
                 {/* Margin Input */}
-                <div className="lg:col-span-2">
-                  <p className="text-xs text-muted-foreground mb-1">Margem Desejada</p>
+                <div className="xl:col-span-2 lg:col-span-2">
+                  <p className="text-xs mb-1" style={{ color: '#64748b' }}>Margem Desejada</p>
                   <div className="relative">
                     <input
                       type="number"
-                      className="input-field text-lg font-bold pr-8 w-full"
+                      className="text-lg font-bold pr-10 w-full rounded-lg transition-all duration-300"
+                      style={{
+                        background: '#000000',
+                        border: '1px solid rgba(0, 209, 255, 0.3)',
+                        color: '#F8FAFC',
+                        padding: '10px 40px 10px 14px',
+                        outline: 'none'
+                      }}
+                      onFocus={(e) => {
+                        e.currentTarget.style.border = '1px solid #00D1FF';
+                        e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 209, 255, 0.5), inset 0 0 10px rgba(0, 209, 255, 0.1)';
+                      }}
+                      onBlur={(e) => {
+                        e.currentTarget.style.border = '1px solid rgba(0, 209, 255, 0.3)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
                       value={margins[product.id]}
                       onChange={(e) => handleMarginChange(product.id, e.target.value)}
                       min="0"
                       max="100"
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                    <span 
+                      className="absolute right-4 top-1/2 -translate-y-1/2 font-bold"
+                      style={{ color: '#00D1FF', textShadow: '0 0 8px rgba(0, 209, 255, 0.5)' }}
+                    >
+                      %
+                    </span>
                   </div>
                 </div>
 
                 {/* Suggested Price */}
-                <div className="lg:col-span-2 space-y-1">
-                  <p className="text-xs text-muted-foreground">Preço Sugerido</p>
-                  <p className="text-xl font-bold mono text-primary">{formatCurrency(pricing.suggestedPrice)}</p>
+                <div className="xl:col-span-2 lg:col-span-2 space-y-1">
+                  <p className="text-xs" style={{ color: '#64748b' }}>Preço Sugerido</p>
+                  <p 
+                    className="text-xl font-bold mono"
+                    style={{ 
+                      color: '#00D1FF',
+                      textShadow: '0 0 20px rgba(0, 209, 255, 0.8), 0 0 40px rgba(0, 209, 255, 0.4)'
+                    }}
+                  >
+                    {formatCurrency(pricing.suggestedPrice)}
+                  </p>
                   <div className="flex items-center gap-1 text-xs">
                     {priceDiff >= 0 ? (
-                      <TrendingUp className="w-3 h-3 text-success" />
+                      <TrendingUp 
+                        className="w-3 h-3" 
+                        style={{ color: '#39FF14', filter: 'drop-shadow(0 0 4px #39FF14)' }}
+                      />
                     ) : (
-                      <TrendingDown className="w-3 h-3 text-danger" />
+                      <TrendingDown 
+                        className="w-3 h-3" 
+                        style={{ color: '#FF007A', filter: 'drop-shadow(0 0 4px #FF007A)' }}
+                      />
                     )}
-                    <span className={priceDiff >= 0 ? 'text-success' : 'text-danger'}>
+                    <span 
+                      style={{ 
+                        color: priceDiff >= 0 ? '#39FF14' : '#FF007A',
+                        textShadow: priceDiff >= 0 
+                          ? '0 0 8px rgba(57, 255, 20, 0.5)' 
+                          : '0 0 8px rgba(255, 0, 122, 0.5)'
+                      }}
+                    >
                       {priceDiff >= 0 ? '+' : ''}{formatCurrency(priceDiff)} ({priceDiffPercent.toFixed(1)}%)
                     </span>
                   </div>
                 </div>
 
                 {/* Results */}
-                <div className="lg:col-span-1 text-right space-y-1">
-                  <p className="text-xs text-muted-foreground">Lucro/Un</p>
-                  <p className={`text-lg font-bold mono ${getMarginColor(pricing.realMargin)}`}>
+                <div className="xl:col-span-2 lg:col-span-2 text-right space-y-1">
+                  <p className="text-xs" style={{ color: '#64748b' }}>Lucro/Un</p>
+                  <p 
+                    className="text-lg font-bold mono"
+                    style={{ 
+                      color: '#39FF14',
+                      textShadow: '0 0 20px rgba(57, 255, 20, 0.8), 0 0 40px rgba(57, 255, 20, 0.4)'
+                    }}
+                  >
                     {formatCurrency(pricing.profitPerUnit)}
                   </p>
-                  <span className={`status-badge ${status.class}`}>
-                    {pricing.realMargin.toFixed(1)}%
+                  <span 
+                    className="inline-block px-3 py-1 rounded-full text-xs font-medium"
+                    style={{
+                      background: 'transparent',
+                      border: `1px solid ${marginConfig.color}`,
+                      color: marginConfig.color,
+                      boxShadow: `0 0 10px ${marginConfig.glow}`,
+                      textShadow: `0 0 8px ${marginConfig.color}`
+                    }}
+                  >
+                    {pricing.realMargin.toFixed(1)}% • {marginConfig.label}
                   </span>
                 </div>
               </div>
 
               {/* Progress bar showing cost breakdown */}
-              <div className="mt-4 pt-4 border-t border-border/50">
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+              <div 
+                className="mt-4 pt-4"
+                style={{ borderTop: '1px solid rgba(0, 209, 255, 0.2)' }}
+              >
+                <div className="flex flex-wrap items-center gap-6 text-xs mb-3">
+                  {/* LED Custo */}
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded bg-secondary"></div>
-                    <span>Custo ({((pricing.totalCost / pricing.suggestedPrice) * 100).toFixed(0)}%)</span>
+                    <div 
+                      className="w-3 h-3 rounded-full"
+                      style={{ 
+                        background: '#4B5563',
+                        boxShadow: '0 0 6px rgba(75, 85, 99, 0.5)'
+                      }}
+                    />
+                    <span style={{ color: '#94a3b8' }}>
+                      Custo <span className="mono font-medium">{((pricing.totalCost / pricing.suggestedPrice) * 100).toFixed(0)}%</span>
+                    </span>
                   </div>
+
+                  {/* LED Taxas */}
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded bg-warning"></div>
-                    <span>Taxas ({((pricing.taxAmount / pricing.suggestedPrice) * 100).toFixed(0)}%)</span>
+                    <div 
+                      className="w-3 h-3 rounded-full"
+                      style={{ 
+                        background: '#FFAC00',
+                        boxShadow: '0 0 8px rgba(255, 172, 0, 0.6)'
+                      }}
+                    />
+                    <span style={{ color: '#FFAC00', textShadow: '0 0 5px rgba(255, 172, 0, 0.3)' }}>
+                      Taxas <span className="mono font-medium">{((pricing.taxAmount / pricing.suggestedPrice) * 100).toFixed(0)}%</span>
+                    </span>
                   </div>
+
+                  {/* LED Lucro */}
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded bg-success"></div>
-                    <span>Lucro ({pricing.realMargin.toFixed(0)}%)</span>
+                    <div 
+                      className="w-3 h-3 rounded-full"
+                      style={{ 
+                        background: '#39FF14',
+                        boxShadow: '0 0 8px rgba(57, 255, 20, 0.6)'
+                      }}
+                    />
+                    <span style={{ color: '#39FF14', textShadow: '0 0 5px rgba(57, 255, 20, 0.3)' }}>
+                      Lucro <span className="mono font-medium">{pricing.realMargin.toFixed(0)}%</span>
+                    </span>
                   </div>
                 </div>
-                <div className="mt-2 h-2 rounded-full bg-secondary overflow-hidden flex">
+
+                <div 
+                  className="overflow-hidden flex"
+                  style={{
+                    height: '12px',
+                    borderRadius: '6px',
+                    background: 'rgba(255, 255, 255, 0.05)'
+                  }}
+                >
+                  {/* Segmento Custo */}
                   <div 
-                    className="h-full bg-muted-foreground/30" 
-                    style={{ width: `${(pricing.totalCost / pricing.suggestedPrice) * 100}%` }}
+                    style={{ 
+                      width: `${(pricing.totalCost / pricing.suggestedPrice) * 100}%`,
+                      background: 'linear-gradient(90deg, #374151, #4B5563)',
+                      boxShadow: 'inset 0 2px 4px rgba(255, 255, 255, 0.1)'
+                    }}
                   />
+                  {/* Segmento Taxas */}
                   <div 
-                    className="h-full bg-warning" 
-                    style={{ width: `${(pricing.taxAmount / pricing.suggestedPrice) * 100}%` }}
+                    style={{ 
+                      width: `${(pricing.taxAmount / pricing.suggestedPrice) * 100}%`,
+                      background: 'linear-gradient(90deg, #FFAC00, #FFD000)',
+                      boxShadow: '0 0 10px rgba(255, 172, 0, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.2)'
+                    }}
                   />
+                  {/* Segmento Lucro */}
                   <div 
-                    className="h-full bg-success" 
-                    style={{ width: `${pricing.realMargin}%` }}
+                    style={{ 
+                      width: `${pricing.realMargin}%`,
+                      background: 'linear-gradient(90deg, #39FF14, #50FF30)',
+                      boxShadow: '0 0 10px rgba(57, 255, 20, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.2)'
+                    }}
                   />
                 </div>
               </div>
