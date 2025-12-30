@@ -21,10 +21,10 @@ export const PricingCalculator = () => {
     return calculatePricing(product, mockFixedCosts, mockTaxConfig, desiredMargin);
   };
 
-  const getMarginNeonConfig = (margin: number) => {
-    if (margin >= 25) return { color: '#39FF14', glow: 'rgba(57, 255, 20, 0.4)', label: 'Saudável' };
-    if (margin >= 15) return { color: '#FFAC00', glow: 'rgba(255, 172, 0, 0.4)', label: 'Atenção' };
-    return { color: '#FF007A', glow: 'rgba(255, 0, 122, 0.4)', label: 'Crítico' };
+const getMarginNeonConfig = (margin: number) => {
+    if (margin >= 25) return { color: '#39FF14', glow: 'rgba(57, 255, 20, 0.2)', label: 'Saudável' };
+    if (margin >= 15) return { color: '#FFAC00', glow: 'rgba(255, 172, 0, 0.2)', label: 'Atenção' };
+    return { color: '#BC13FE', glow: 'rgba(188, 19, 254, 0.2)', label: 'Crítico' };
   };
 
   const totalTax = (mockTaxConfig.salesTax + mockTaxConfig.marketplaceFee + mockTaxConfig.cardFee + mockTaxConfig.otherFees).toFixed(1);
@@ -44,18 +44,18 @@ export const PricingCalculator = () => {
         <div 
           className="flex items-center gap-2 px-4 py-2 rounded-lg"
           style={{
-            background: '#000000',
-            border: '1px solid #00D1FF',
-            boxShadow: '0 0 15px rgba(0, 209, 255, 0.3)'
+            background: 'rgba(0, 209, 255, 0.1)',
+            border: '1px solid rgba(0, 209, 255, 0.3)',
+            boxShadow: '0 0 10px rgba(0, 209, 255, 0.15)'
           }}
         >
           <Calculator 
             className="w-4 h-4" 
-            style={{ color: '#00D1FF', filter: 'drop-shadow(0 0 5px #00D1FF)' }}
+            style={{ color: '#00D1FF', filter: 'drop-shadow(0 0 3px #00D1FF)' }}
           />
           <span 
-            className="text-sm"
-            style={{ color: '#00D1FF', textShadow: '0 0 10px rgba(0, 209, 255, 0.5)' }}
+            className="text-sm font-semibold"
+            style={{ color: '#00D1FF', textShadow: '0 0 6px rgba(0, 209, 255, 0.4)' }}
           >
             Taxa total: {totalTax}%
           </span>
@@ -74,9 +74,9 @@ export const PricingCalculator = () => {
               key={product.id} 
               className="rounded-xl p-6 transition-all duration-300"
               style={{
-                background: '#000000',
-                border: '1px solid #00D1FF',
-                boxShadow: '0 0 20px rgba(0, 209, 255, 0.2), inset 0 0 30px rgba(0, 0, 0, 0.8)',
+                background: '#0a0a0c',
+                border: '1px solid rgba(0, 209, 255, 0.3)',
+                boxShadow: '0 0 12px rgba(0, 209, 255, 0.12), inset 0 0 20px rgba(0, 0, 0, 0.6)',
                 paddingLeft: '24px',
                 paddingRight: '24px'
               }}
@@ -86,7 +86,7 @@ export const PricingCalculator = () => {
                 <div className="xl:col-span-2 lg:col-span-2">
                   <p 
                     className="text-xs mono"
-                    style={{ color: '#00D1FF', textShadow: '0 0 5px rgba(0, 209, 255, 0.3)' }}
+                    style={{ color: '#00D1FF', textShadow: '0 0 4px rgba(0, 209, 255, 0.2)' }}
                   >
                     {product.code}
                   </p>
@@ -123,7 +123,7 @@ export const PricingCalculator = () => {
                     className="text-lg font-bold mono"
                     style={{ 
                       color: '#FFAC00',
-                      textShadow: '0 0 15px rgba(255, 172, 0, 0.6)'
+                      textShadow: '0 0 8px rgba(255, 172, 0, 0.4)'
                     }}
                   >
                     {formatCurrency(pricing.taxAmount)}
@@ -173,7 +173,7 @@ export const PricingCalculator = () => {
                     className="text-xl font-bold mono"
                     style={{ 
                       color: '#00D1FF',
-                      textShadow: '0 0 20px rgba(0, 209, 255, 0.8), 0 0 40px rgba(0, 209, 255, 0.4)'
+                      textShadow: '0 0 12px rgba(0, 209, 255, 0.6), 0 0 24px rgba(0, 209, 255, 0.25)'
                     }}
                   >
                     {formatCurrency(pricing.suggestedPrice)}
@@ -182,22 +182,15 @@ export const PricingCalculator = () => {
                     {priceDiff >= 0 ? (
                       <TrendingUp 
                         className="w-3 h-3" 
-                        style={{ color: '#39FF14', filter: 'drop-shadow(0 0 4px #39FF14)' }}
+                        style={{ color: '#39FF14', filter: 'drop-shadow(0 0 3px #39FF14)' }}
                       />
                     ) : (
                       <TrendingDown 
                         className="w-3 h-3" 
-                        style={{ color: '#FF007A', filter: 'drop-shadow(0 0 4px #FF007A)' }}
+                        style={{ color: '#BC13FE', filter: 'drop-shadow(0 0 3px #BC13FE)' }}
                       />
                     )}
-                    <span 
-                      style={{ 
-                        color: priceDiff >= 0 ? '#39FF14' : '#FF007A',
-                        textShadow: priceDiff >= 0 
-                          ? '0 0 8px rgba(57, 255, 20, 0.5)' 
-                          : '0 0 8px rgba(255, 0, 122, 0.5)'
-                      }}
-                    >
+                    <span style={{ color: priceDiff >= 0 ? '#39FF14' : '#BC13FE' }}>
                       {priceDiff >= 0 ? '+' : ''}{formatCurrency(priceDiff)} ({priceDiffPercent.toFixed(1)}%)
                     </span>
                   </div>
@@ -210,7 +203,7 @@ export const PricingCalculator = () => {
                     className="text-lg font-bold mono"
                     style={{ 
                       color: '#39FF14',
-                      textShadow: '0 0 20px rgba(57, 255, 20, 0.8), 0 0 40px rgba(57, 255, 20, 0.4)'
+                      textShadow: '0 0 10px rgba(57, 255, 20, 0.5), 0 0 20px rgba(57, 255, 20, 0.2)'
                     }}
                   >
                     {formatCurrency(pricing.profitPerUnit)}
@@ -218,11 +211,9 @@ export const PricingCalculator = () => {
                   <span 
                     className="inline-block px-3 py-1 rounded-full text-xs font-medium"
                     style={{
-                      background: 'transparent',
-                      border: `1px solid ${marginConfig.color}`,
-                      color: marginConfig.color,
-                      boxShadow: `0 0 10px ${marginConfig.glow}`,
-                      textShadow: `0 0 8px ${marginConfig.color}`
+                      background: `${marginConfig.color}15`,
+                      border: `1px solid ${marginConfig.color}40`,
+                      color: marginConfig.color
                     }}
                   >
                     {pricing.realMargin.toFixed(1)}% • {marginConfig.label}
@@ -242,7 +233,7 @@ export const PricingCalculator = () => {
                       className="w-3 h-3 rounded-full"
                       style={{ 
                         background: '#4B5563',
-                        boxShadow: '0 0 6px rgba(75, 85, 99, 0.5)'
+                        boxShadow: '0 0 5px rgba(75, 85, 99, 0.4)'
                       }}
                     />
                     <span style={{ color: '#94a3b8' }}>
@@ -256,10 +247,10 @@ export const PricingCalculator = () => {
                       className="w-3 h-3 rounded-full"
                       style={{ 
                         background: '#FFAC00',
-                        boxShadow: '0 0 8px rgba(255, 172, 0, 0.6)'
+                        boxShadow: '0 0 5px rgba(255, 172, 0, 0.4)'
                       }}
                     />
-                    <span style={{ color: '#FFAC00', textShadow: '0 0 5px rgba(255, 172, 0, 0.3)' }}>
+                    <span style={{ color: '#FFAC00' }}>
                       Taxas <span className="mono font-medium">{((pricing.taxAmount / pricing.suggestedPrice) * 100).toFixed(0)}%</span>
                     </span>
                   </div>
@@ -270,10 +261,10 @@ export const PricingCalculator = () => {
                       className="w-3 h-3 rounded-full"
                       style={{ 
                         background: '#39FF14',
-                        boxShadow: '0 0 8px rgba(57, 255, 20, 0.6)'
+                        boxShadow: '0 0 5px rgba(57, 255, 20, 0.4)'
                       }}
                     />
-                    <span style={{ color: '#39FF14', textShadow: '0 0 5px rgba(57, 255, 20, 0.3)' }}>
+                    <span style={{ color: '#39FF14' }}>
                       Lucro <span className="mono font-medium">{pricing.realMargin.toFixed(0)}%</span>
                     </span>
                   </div>
@@ -300,7 +291,7 @@ export const PricingCalculator = () => {
                     style={{ 
                       width: `${(pricing.taxAmount / pricing.suggestedPrice) * 100}%`,
                       background: 'linear-gradient(90deg, #FFAC00, #FFD000)',
-                      boxShadow: '0 0 10px rgba(255, 172, 0, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.2)'
+                      boxShadow: '0 0 6px rgba(255, 172, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.1)'
                     }}
                   />
                   {/* Segmento Lucro */}
@@ -308,7 +299,7 @@ export const PricingCalculator = () => {
                     style={{ 
                       width: `${pricing.realMargin}%`,
                       background: 'linear-gradient(90deg, #39FF14, #50FF30)',
-                      boxShadow: '0 0 10px rgba(57, 255, 20, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.2)'
+                      boxShadow: '0 0 6px rgba(57, 255, 20, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.1)'
                     }}
                   />
                 </div>
