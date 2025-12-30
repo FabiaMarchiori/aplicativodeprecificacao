@@ -65,14 +65,14 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
               
               // Color mapping for each tab
               const colorMap: Record<string, { color: string; glow: string }> = {
-                'nav-dashboard': { color: '#FF007A', glow: 'rgba(255, 0, 122, 0.5)' },
+                'nav-dashboard': { color: '#00D1FF', glow: 'rgba(0, 209, 255, 0.5)' },
                 'nav-produtos': { color: '#00D1FF', glow: 'rgba(0, 209, 255, 0.5)' },
                 'nav-fornecedores': { color: '#FFAC00', glow: 'rgba(255, 172, 0, 0.5)' },
                 'nav-custos': { color: '#39FF14', glow: 'rgba(57, 255, 20, 0.5)' },
                 'nav-impostos': { color: '#BF00FF', glow: 'rgba(191, 0, 255, 0.5)' },
                 'nav-precificacao': { color: '#00D1FF', glow: 'rgba(0, 209, 255, 0.5)' },
                 'nav-concorrencia': { color: '#FFAC00', glow: 'rgba(255, 172, 0, 0.5)' },
-                'nav-relatorios': { color: '#FF007A', glow: 'rgba(255, 0, 122, 0.5)' },
+                'nav-relatorios': { color: '#00D1FF', glow: 'rgba(0, 209, 255, 0.5)' },
               };
               
               const tabColor = colorMap[tab.colorClass] || { color: '#00D1FF', glow: 'rgba(0, 209, 255, 0.5)' };
