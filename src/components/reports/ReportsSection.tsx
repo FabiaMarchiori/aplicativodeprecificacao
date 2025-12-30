@@ -106,26 +106,26 @@ export const ReportsSection = () => {
             <FileSpreadsheet className="w-4 h-4" style={{ filter: 'drop-shadow(0 0 5px #39FF14)' }} />
             Excel
           </button>
-          {/* Botão PDF - Rosa Pink Shock Transparente */}
+          {/* Botão PDF - Roxo Neon Transparente */}
           <button 
             onClick={() => handleExport('PDF')}
             className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:-translate-y-0.5"
             style={{
               background: 'transparent',
-              border: '2px solid #FF007A',
-              color: '#FF007A',
-              boxShadow: '0 0 15px rgba(255, 0, 122, 0.3), inset 0 0 10px rgba(255, 0, 122, 0.1)'
+              border: '2px solid #BC13FE',
+              color: '#BC13FE',
+              boxShadow: '0 0 15px rgba(188, 19, 254, 0.3), inset 0 0 10px rgba(188, 19, 254, 0.1)'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 20px rgba(255, 0, 122, 0.6), 0 0 40px rgba(255, 0, 122, 0.3), inset 0 0 15px rgba(255, 0, 122, 0.2)';
-              e.currentTarget.style.background = 'rgba(255, 0, 122, 0.1)';
+              e.currentTarget.style.boxShadow = '0 0 20px rgba(188, 19, 254, 0.6), 0 0 40px rgba(188, 19, 254, 0.3), inset 0 0 15px rgba(188, 19, 254, 0.2)';
+              e.currentTarget.style.background = 'rgba(188, 19, 254, 0.1)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 0, 122, 0.3), inset 0 0 10px rgba(255, 0, 122, 0.1)';
+              e.currentTarget.style.boxShadow = '0 0 15px rgba(188, 19, 254, 0.3), inset 0 0 10px rgba(188, 19, 254, 0.1)';
               e.currentTarget.style.background = 'transparent';
             }}
           >
-            <FileText className="w-4 h-4" style={{ filter: 'drop-shadow(0 0 5px #FF007A)' }} />
+            <FileText className="w-4 h-4" style={{ filter: 'drop-shadow(0 0 5px #BC13FE)' }} />
             PDF
           </button>
         </div>
@@ -271,10 +271,10 @@ export const ReportsSection = () => {
                 {productMargins.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
-                    fill={entry.margin < 20 ? '#FF007A' : 'url(#marginGradientReport)'} 
+                    fill={entry.margin < 20 ? '#BC13FE' : 'url(#marginGradientReport)'} 
                     style={{ 
                       filter: entry.margin < 20 
-                        ? 'drop-shadow(0 0 8px rgba(255, 0, 122, 0.6))' 
+                        ? 'drop-shadow(0 0 8px rgba(188, 19, 254, 0.6))' 
                         : 'drop-shadow(0 0 8px rgba(0, 209, 255, 0.4))'
                     }}
                   />

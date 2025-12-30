@@ -45,10 +45,10 @@ const CHART_COLORS = {
 };
 
 const PIE_COLORS = [
-  '#D92B5E', // Pink - Custos Fixos
-  '#2EAA5C', // Green - Custos Variáveis
-  '#F29A1B', // Orange - Impostos
-  '#0ABCE8', // Cyan - Margem
+  '#BC13FE', // Roxo Neon - Custos Fixos
+  '#39FF14', // Verde Neon Vibrante - Custos Variáveis
+  '#F29A1B', // Laranja - Impostos
+  '#0ABCE8', // Ciano - Margem
 ];
 
 // Color function based on margin value
@@ -377,7 +377,7 @@ export const Dashboard = () => {
                   <BarChart data={coloredMargins} layout="vertical">
                     <defs>
                       <linearGradient id="marginGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#FF007A" stopOpacity={1}/>
+                        <stop offset="0%" stopColor="#BC13FE" stopOpacity={1}/>
                         <stop offset="100%" stopColor="#00D1FF" stopOpacity={1}/>
                       </linearGradient>
                     </defs>
@@ -435,7 +435,7 @@ export const Dashboard = () => {
                   <BarChart data={sortedProfits}>
                     <defs>
                       <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#FF007A" stopOpacity={1}/>
+                        <stop offset="0%" stopColor="#BC13FE" stopOpacity={1}/>
                         <stop offset="100%" stopColor="#00D1FF" stopOpacity={1}/>
                       </linearGradient>
                       <filter id="glowBar" x="-50%" y="-50%" width="200%" height="200%">

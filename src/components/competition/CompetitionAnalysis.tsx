@@ -29,8 +29,8 @@ export const CompetitionAnalysis = () => {
         return {
           icon: AlertCircle,
           label: 'Acima do Mercado',
-          color: '#FF007A',
-          glowColor: 'rgba(255, 0, 122, 0.5)'
+          color: '#BC13FE',
+          glowColor: 'rgba(188, 19, 254, 0.5)'
         };
     }
   };
@@ -114,29 +114,29 @@ export const CompetitionAnalysis = () => {
           </div>
         </div>
 
-        {/* Card Acima do Mercado - Rosa Pink Shock */}
+        {/* Card Acima do Mercado - Roxo Neon */}
         <div 
           className="p-4 rounded-xl transition-all duration-300 hover:-translate-y-1"
           style={{
             background: '#000000',
-            border: '1px solid #FF007A',
-            boxShadow: '0 0 20px rgba(255, 0, 122, 0.4), 0 0 40px rgba(255, 0, 122, 0.2), 0 0 60px rgba(255, 0, 122, 0.1)'
+            border: '1px solid #BC13FE',
+            boxShadow: '0 0 20px rgba(188, 19, 254, 0.4), 0 0 40px rgba(188, 19, 254, 0.2), 0 0 60px rgba(188, 19, 254, 0.1)'
           }}
         >
           <div className="flex items-center gap-3">
             <AlertCircle 
               className="w-8 h-8" 
               style={{ 
-                color: '#FF007A',
-                filter: 'drop-shadow(0 0 10px #FF007A) drop-shadow(0 0 20px rgba(255, 0, 122, 0.6))'
+                color: '#BC13FE',
+                filter: 'drop-shadow(0 0 10px #BC13FE) drop-shadow(0 0 20px rgba(188, 19, 254, 0.6))'
               }} 
             />
             <div>
               <p 
                 className="text-2xl font-bold"
                 style={{ 
-                  color: '#FF007A',
-                  textShadow: '0 0 10px rgba(255, 0, 122, 0.9), 0 0 20px rgba(255, 0, 122, 0.6), 0 0 30px rgba(255, 0, 122, 0.4)'
+                  color: '#BC13FE',
+                  textShadow: '0 0 10px rgba(188, 19, 254, 0.9), 0 0 20px rgba(188, 19, 254, 0.6), 0 0 30px rgba(188, 19, 254, 0.4)'
                 }}
               >
                 {aboveMarketCount}
@@ -198,8 +198,8 @@ export const CompetitionAnalysis = () => {
                           <TrendingUp 
                             className="w-4 h-4" 
                             style={{ 
-                              color: '#FF007A',
-                              filter: 'drop-shadow(0 0 8px #FF007A)'
+                              color: '#BC13FE',
+                              filter: 'drop-shadow(0 0 8px #BC13FE)'
                             }} 
                           />
                         ) : competitor.difference < 0 ? (
@@ -216,10 +216,10 @@ export const CompetitionAnalysis = () => {
                         <span 
                           className="mono font-medium"
                           style={{
-                            color: competitor.difference > 5 ? '#FF007A' : 
+                            color: competitor.difference > 5 ? '#BC13FE' : 
                                    competitor.difference < -5 ? '#39FF14' : 
                                    'rgba(255, 255, 255, 0.5)',
-                            textShadow: competitor.difference > 5 ? '0 0 10px rgba(255, 0, 122, 0.8)' :
+                            textShadow: competitor.difference > 5 ? '0 0 10px rgba(188, 19, 254, 0.8)' :
                                         competitor.difference < -5 ? '0 0 10px rgba(57, 255, 20, 0.8)' :
                                         'none'
                           }}
@@ -297,16 +297,16 @@ export const CompetitionAnalysis = () => {
             <span style={{ color: '#FFAC00', textShadow: '0 0 8px rgba(255, 172, 0, 0.6)' }}>Atenção</span>
             <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>— Até 10% acima</span>
           </div>
-          {/* LED Rosa */}
+          {/* LED Roxo */}
           <div className="flex items-center gap-3">
             <div 
               className="w-3 h-3 rounded-full"
               style={{
-                background: '#FF007A',
-                boxShadow: '0 0 8px #FF007A, 0 0 16px rgba(255, 0, 122, 0.6), 0 0 24px rgba(255, 0, 122, 0.4)'
+                background: '#BC13FE',
+                boxShadow: '0 0 8px #BC13FE, 0 0 16px rgba(188, 19, 254, 0.6), 0 0 24px rgba(188, 19, 254, 0.4)'
               }}
             />
-            <span style={{ color: '#FF007A', textShadow: '0 0 8px rgba(255, 0, 122, 0.6)' }}>Acima do Mercado</span>
+            <span style={{ color: '#BC13FE', textShadow: '0 0 8px rgba(188, 19, 254, 0.6)' }}>Acima do Mercado</span>
             <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>— Mais de 10% acima</span>
           </div>
         </div>
