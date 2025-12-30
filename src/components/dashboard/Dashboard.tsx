@@ -128,11 +128,8 @@ export const Dashboard = () => {
     return null;
   };
 
-  // Add colors to margin data
-  const coloredMargins = productMargins.map(item => ({
-    ...item,
-    fill: getMarginColor(item.margin)
-  }));
+  // Use productMargins directly - gradient will be applied via fill="url(#marginGradient)"
+  const coloredMargins = productMargins;
 
   const sortedProfits = [...productMargins].sort((a, b) => b.profit - a.profit);
 
