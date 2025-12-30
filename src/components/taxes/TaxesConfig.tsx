@@ -3,6 +3,34 @@ import { Save, Info, Receipt, CreditCard, Store, MoreHorizontal } from 'lucide-r
 import { mockTaxConfig, TaxConfig } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
 
+// Configuração de cores neon por categoria
+const taxCardConfigs = {
+  salesTax: {
+    color: '#00D1FF',
+    label: 'Imposto sobre Venda',
+    description: 'ICMS, PIS, COFINS, etc.',
+    Icon: Receipt
+  },
+  marketplaceFee: {
+    color: '#FFAC00',
+    label: 'Taxa de Marketplace',
+    description: 'Mercado Livre, Amazon, Shopee, etc.',
+    Icon: Store
+  },
+  cardFee: {
+    color: '#39FF14',
+    label: 'Taxa de Cartão',
+    description: 'Débito, Crédito, Pix com taxa',
+    Icon: CreditCard
+  },
+  otherFees: {
+    color: '#BC13FE',
+    label: 'Outras Taxas',
+    description: 'Frete, seguros, devoluções',
+    Icon: MoreHorizontal
+  }
+};
+
 export const TaxesConfig = () => {
   const [taxes, setTaxes] = useState<TaxConfig>(mockTaxConfig);
   const { toast } = useToast();
@@ -17,131 +45,186 @@ export const TaxesConfig = () => {
     setTaxes({ ...taxes, [field]: parseFloat(value) || 0 });
   };
 
+  const renderTaxCard = (field: keyof TaxConfig) => {
+    const config = taxCardConfigs[field];
+    const { color, label, description, Icon } = config;
+
+    return (
+      <div 
+        key={field}
+        className="p-6 rounded-xl transition-all duration-300"
+        style={{
+          background: '#000000',
+          border: `1px solid ${color}`,
+          boxShadow: `0 0 20px ${color}33`
+        }}
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <div 
+            className="p-2.5 rounded-xl"
+            style={{ 
+              background: `${color}1A`,
+              border: `1px solid ${color}4D`
+            }}
+          >
+            <Icon 
+              className="w-5 h-5" 
+              style={{ color, filter: `drop-shadow(0 0 6px ${color})` }}
+            />
+          </div>
+          <div>
+            <h3 className="font-semibold" style={{ color }}>{label}</h3>
+            <p className="text-sm text-muted-foreground">{description}</p>
+          </div>
+        </div>
+        <div className="relative">
+          <input
+            type="number"
+            step="0.1"
+            className="w-full text-2xl font-bold pr-10 rounded-lg transition-all duration-300"
+            style={{
+              background: '#000000',
+              border: `1px solid ${color}4D`,
+              color: '#F8FAFC',
+              padding: '12px 40px 12px 16px',
+              outline: 'none'
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.border = `1px solid ${color}`;
+              e.currentTarget.style.boxShadow = `0 0 20px ${color}80, inset 0 0 15px ${color}1A`;
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.border = `1px solid ${color}4D`;
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+            value={taxes[field]}
+            onChange={(e) => handleChange(field, e.target.value)}
+          />
+          <span 
+            className="absolute right-4 top-1/2 -translate-y-1/2 font-medium"
+            style={{ color, textShadow: `0 0 8px ${color}80` }}
+          >
+            %
+          </span>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="animate-fade-in">
+      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Impostos & Taxas</h2>
+          <h2 
+            className="text-2xl font-bold"
+            style={{ 
+              color: '#F8FAFC',
+              textShadow: '0 0 10px rgba(248, 250, 252, 0.3)'
+            }}
+          >
+            Impostos & Taxas
+          </h2>
           <p className="text-muted-foreground">Configure as alíquotas aplicadas sobre vendas</p>
         </div>
-        <button onClick={handleSave} className="btn-primary flex items-center gap-2">
-          <Save className="w-4 h-4" />
+        <button 
+          onClick={handleSave} 
+          className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all duration-300"
+          style={{
+            background: 'transparent',
+            border: '2px solid #00D1FF',
+            color: '#00D1FF',
+            boxShadow: '0 0 15px rgba(0, 209, 255, 0.3)'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(0, 209, 255, 0.15)';
+            e.currentTarget.style.boxShadow = '0 0 25px rgba(0, 209, 255, 0.5), inset 0 0 20px rgba(0, 209, 255, 0.1)';
+            e.currentTarget.style.textShadow = '0 0 10px rgba(0, 209, 255, 0.8)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'transparent';
+            e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 209, 255, 0.3)';
+            e.currentTarget.style.textShadow = 'none';
+          }}
+        >
+          <Save 
+            className="w-4 h-4" 
+            style={{ filter: 'drop-shadow(0 0 4px #00D1FF)' }}
+          />
           Salvar Alterações
         </button>
       </div>
 
-      {/* Total Card */}
-      <div className="kpi-card mb-6 max-w-md">
+      {/* Total Tax Card - Destaque Ciano Intenso */}
+      <div 
+        className="mb-6 max-w-md p-6 rounded-xl"
+        style={{
+          background: '#000000',
+          border: '2px solid #00D1FF',
+          boxShadow: '0 0 30px rgba(0, 209, 255, 0.4), 0 0 60px rgba(0, 209, 255, 0.2), inset 0 0 40px rgba(0, 0, 0, 0.8)'
+        }}
+      >
         <div className="flex items-center gap-3 mb-2">
-          <Info className="w-5 h-5 text-primary" />
-          <h3 className="text-sm font-medium text-muted-foreground">Taxa Total sobre Venda</h3>
+          <Info 
+            className="w-5 h-5" 
+            style={{ color: '#00D1FF', filter: 'drop-shadow(0 0 8px #00D1FF)' }}
+          />
+          <h3 
+            className="text-sm font-medium"
+            style={{ color: '#00D1FF', textShadow: '0 0 10px rgba(0, 209, 255, 0.5)' }}
+          >
+            Taxa Total sobre Venda
+          </h3>
         </div>
-        <p className="text-3xl font-bold text-foreground mono">{totalTaxes.toFixed(2)}%</p>
-        <p className="text-sm text-muted-foreground mt-2">
+        <p 
+          className="text-4xl font-bold mono"
+          style={{ 
+            color: '#00D1FF',
+            textShadow: '0 0 20px rgba(0, 209, 255, 0.8), 0 0 40px rgba(0, 209, 255, 0.4), 0 0 60px rgba(0, 209, 255, 0.2)'
+          }}
+        >
+          {totalTaxes.toFixed(2)}%
+        </p>
+        <p 
+          className="text-sm mt-2"
+          style={{ color: '#64748b' }}
+        >
           Este percentual será aplicado sobre o preço de venda
         </p>
       </div>
 
+      {/* Tax Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Sales Tax */}
-        <div className="glass-card p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2.5 rounded-xl bg-primary/20">
-              <Receipt className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-foreground">Imposto sobre Venda</h3>
-              <p className="text-sm text-muted-foreground">ICMS, PIS, COFINS, etc.</p>
-            </div>
-          </div>
-          <div className="relative">
-            <input
-              type="number"
-              step="0.1"
-              className="input-field text-2xl font-bold pr-8"
-              value={taxes.salesTax}
-              onChange={(e) => handleChange('salesTax', e.target.value)}
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">%</span>
-          </div>
-        </div>
-
-        {/* Marketplace Fee */}
-        <div className="glass-card p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2.5 rounded-xl bg-warning/20">
-              <Store className="w-5 h-5 text-warning" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-foreground">Taxa de Marketplace</h3>
-              <p className="text-sm text-muted-foreground">Mercado Livre, Amazon, Shopee, etc.</p>
-            </div>
-          </div>
-          <div className="relative">
-            <input
-              type="number"
-              step="0.1"
-              className="input-field text-2xl font-bold pr-8"
-              value={taxes.marketplaceFee}
-              onChange={(e) => handleChange('marketplaceFee', e.target.value)}
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">%</span>
-          </div>
-        </div>
-
-        {/* Card Fee */}
-        <div className="glass-card p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2.5 rounded-xl bg-success/20">
-              <CreditCard className="w-5 h-5 text-success" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-foreground">Taxa de Cartão</h3>
-              <p className="text-sm text-muted-foreground">Débito, Crédito, Pix com taxa</p>
-            </div>
-          </div>
-          <div className="relative">
-            <input
-              type="number"
-              step="0.1"
-              className="input-field text-2xl font-bold pr-8"
-              value={taxes.cardFee}
-              onChange={(e) => handleChange('cardFee', e.target.value)}
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">%</span>
-          </div>
-        </div>
-
-        {/* Other Fees */}
-        <div className="glass-card p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2.5 rounded-xl bg-muted">
-              <MoreHorizontal className="w-5 h-5 text-muted-foreground" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-foreground">Outras Taxas</h3>
-              <p className="text-sm text-muted-foreground">Frete, seguros, devoluções</p>
-            </div>
-          </div>
-          <div className="relative">
-            <input
-              type="number"
-              step="0.1"
-              className="input-field text-2xl font-bold pr-8"
-              value={taxes.otherFees}
-              onChange={(e) => handleChange('otherFees', e.target.value)}
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">%</span>
-          </div>
-        </div>
+        {renderTaxCard('salesTax')}
+        {renderTaxCard('marketplaceFee')}
+        {renderTaxCard('cardFee')}
+        {renderTaxCard('otherFees')}
       </div>
 
-      {/* Info Box */}
-      <div className="mt-6 p-4 rounded-xl bg-primary/10 border border-primary/20">
+      {/* Info Box - Sutil com ícone brilhante */}
+      <div 
+        className="mt-6 p-4 rounded-xl"
+        style={{
+          background: '#000000',
+          border: '1px solid rgba(75, 85, 99, 0.5)',
+          boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)'
+        }}
+      >
         <div className="flex items-start gap-3">
-          <Info className="w-5 h-5 text-primary mt-0.5" />
+          <Info 
+            className="w-5 h-5 mt-0.5" 
+            style={{ 
+              color: '#00D1FF',
+              filter: 'drop-shadow(0 0 8px #00D1FF)'
+            }}
+          />
           <div>
-            <h4 className="font-medium text-foreground">Como funciona o cálculo</h4>
+            <h4 
+              className="font-medium"
+              style={{ color: '#94a3b8' }}
+            >
+              Como funciona o cálculo
+            </h4>
             <p className="text-sm text-muted-foreground mt-1">
               As taxas configuradas aqui são automaticamente incluídas no cálculo de precificação. 
               O preço sugerido considera todos estes percentuais para garantir que sua margem desejada seja atingida.
