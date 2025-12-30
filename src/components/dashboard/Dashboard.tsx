@@ -296,12 +296,18 @@ export const Dashboard = () => {
 
       {/* Charts Row 2 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-        {/* Margin by Product - Colored bars */}
+        {/* Margin by Product - Gradient bars */}
         <div className="chart-container">
           <h3 className="text-foreground">Margem por Produto</h3>
           <div className="h-[220px] md:h-[260px] lg:h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={coloredMargins} layout="vertical">
+                <defs>
+                  <linearGradient id="marginGradient" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#00D1FF" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="#FF007A" stopOpacity={1}/>
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" horizontal={false} />
                 <XAxis 
                   type="number" 
@@ -334,13 +340,10 @@ export const Dashboard = () => {
                 />
                 <Bar 
                   dataKey="margin" 
+                  fill="url(#marginGradient)"
                   radius={[0, 6, 6, 0]}
                   name="Margem"
-                >
-                  {coloredMargins.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-                </Bar>
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -354,8 +357,8 @@ export const Dashboard = () => {
               <BarChart data={sortedProfits}>
                 <defs>
                   <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#00D1FF" stopOpacity={1}/>
-                    <stop offset="100%" stopColor="#39FF14" stopOpacity={0.9}/>
+                    <stop offset="0%" stopColor="#FF007A" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="#00D1FF" stopOpacity={1}/>
                   </linearGradient>
                   <filter id="glowBar" x="-50%" y="-50%" width="200%" height="200%">
                     <feGaussianBlur stdDeviation="2" result="coloredBlur"/>

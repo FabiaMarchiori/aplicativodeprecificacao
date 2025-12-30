@@ -161,102 +161,88 @@
     max-width: 100%;
   }
 
-  /* Navigation button base styles - Glass Neon Effect */
+  /* Navigation button base styles - Solid Gradient */
   .nav-button {
     @apply px-3 py-2 md:px-4 md:py-2.5 lg:px-5 text-xs md:text-sm font-semibold transition-all duration-300 rounded-lg md:rounded-xl;
     @apply uppercase tracking-wider;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
+    color: white !important;
+    border: none;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
     flex-shrink: 0;
   }
 
   .nav-button:hover {
-    transform: translateY(-2px) scale(1.02);
+    transform: translateY(-2px);
+    filter: brightness(1.1);
   }
 
   .nav-button:active {
     transform: translateY(0) scale(0.98);
   }
 
-  /* Navigation button neon color variants */
+  /* Navigation button solid gradient variants */
   .nav-dashboard {
-    color: #FF007A;
-    border: 1px solid rgba(255, 0, 122, 0.6);
-    box-shadow: 0 0 15px rgba(255, 0, 122, 0.4);
+    background: linear-gradient(135deg, #E30E7F 0%, #F84BA6 100%);
+    box-shadow: 0 4px 15px rgba(227, 14, 127, 0.4);
   }
   .nav-dashboard:hover {
-    box-shadow: var(--glow-pink);
-    border-color: #FF007A;
+    box-shadow: 0 6px 20px rgba(227, 14, 127, 0.6);
   }
 
   .nav-produtos {
-    color: #00D1FF;
-    border: 1px solid rgba(0, 209, 255, 0.6);
-    box-shadow: 0 0 15px rgba(0, 209, 255, 0.4);
+    background: linear-gradient(135deg, #0DD9F4 0%, #5CE8F9 100%);
+    box-shadow: 0 4px 15px rgba(13, 217, 244, 0.4);
   }
   .nav-produtos:hover {
-    box-shadow: var(--glow-cyan);
-    border-color: #00D1FF;
+    box-shadow: 0 6px 20px rgba(13, 217, 244, 0.6);
   }
 
   .nav-fornecedores {
-    color: #FFAC00;
-    border: 1px solid rgba(255, 172, 0, 0.6);
-    box-shadow: 0 0 15px rgba(255, 172, 0, 0.4);
+    background: linear-gradient(135deg, #FC7200 0%, #FD9F4D 100%);
+    box-shadow: 0 4px 15px rgba(252, 114, 0, 0.4);
   }
   .nav-fornecedores:hover {
-    box-shadow: var(--glow-orange);
-    border-color: #FFAC00;
+    box-shadow: 0 6px 20px rgba(252, 114, 0, 0.6);
   }
 
   .nav-custos {
-    color: #39FF14;
-    border: 1px solid rgba(57, 255, 20, 0.6);
-    box-shadow: 0 0 15px rgba(57, 255, 20, 0.4);
+    background: linear-gradient(135deg, #0FE316 0%, #5EF366 100%);
+    box-shadow: 0 4px 15px rgba(15, 227, 22, 0.4);
   }
   .nav-custos:hover {
-    box-shadow: var(--glow-green);
-    border-color: #39FF14;
+    box-shadow: 0 6px 20px rgba(15, 227, 22, 0.6);
   }
 
   .nav-impostos {
-    color: #BF00FF;
-    border: 1px solid rgba(191, 0, 255, 0.6);
-    box-shadow: 0 0 15px rgba(191, 0, 255, 0.4);
+    background: linear-gradient(135deg, #9A24AF 0%, #C15DD4 100%);
+    box-shadow: 0 4px 15px rgba(154, 36, 175, 0.4);
   }
   .nav-impostos:hover {
-    box-shadow: var(--glow-purple);
-    border-color: #BF00FF;
+    box-shadow: 0 6px 20px rgba(154, 36, 175, 0.6);
   }
 
   .nav-precificacao {
-    color: #00D1FF;
-    border: 1px solid rgba(0, 209, 255, 0.6);
-    box-shadow: 0 0 15px rgba(0, 209, 255, 0.4);
+    background: linear-gradient(135deg, #329CF2 0%, #6EBFF7 100%);
+    box-shadow: 0 4px 15px rgba(50, 156, 242, 0.4);
   }
   .nav-precificacao:hover {
-    box-shadow: var(--glow-cyan);
-    border-color: #00D1FF;
+    box-shadow: 0 6px 20px rgba(50, 156, 242, 0.6);
   }
 
   .nav-concorrencia {
-    color: #FFAC00;
-    border: 1px solid rgba(255, 172, 0, 0.6);
-    box-shadow: 0 0 15px rgba(255, 172, 0, 0.4);
+    background: linear-gradient(135deg, #FC7200 0%, #FD9F4D 100%);
+    box-shadow: 0 4px 15px rgba(252, 114, 0, 0.4);
   }
   .nav-concorrencia:hover {
-    box-shadow: var(--glow-orange);
-    border-color: #FFAC00;
+    box-shadow: 0 6px 20px rgba(252, 114, 0, 0.6);
   }
 
   .nav-relatorios {
-    color: #FF007A;
-    border: 1px solid rgba(255, 0, 122, 0.6);
-    box-shadow: 0 0 15px rgba(255, 0, 122, 0.4);
+    background: linear-gradient(135deg, #E30E7F 0%, #F84BA6 100%);
+    box-shadow: 0 4px 15px rgba(227, 14, 127, 0.4);
   }
   .nav-relatorios:hover {
-    box-shadow: var(--glow-pink);
-    border-color: #FF007A;
+    box-shadow: 0 6px 20px rgba(227, 14, 127, 0.6);
   }
 
   /* Navigation scroll container */
