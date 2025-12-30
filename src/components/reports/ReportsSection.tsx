@@ -10,7 +10,8 @@ import {
   ResponsiveContainer,
   BarChart,
   Bar,
-  Legend
+  Legend,
+  Cell
 } from 'recharts';
 import { mockProducts, mockRevenueData, productMargins } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
@@ -40,10 +41,32 @@ export const ReportsSection = () => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-popover border border-border rounded-lg p-3 shadow-lg">
-          <p className="text-sm font-medium text-foreground mb-2">{label}</p>
+        <div 
+          style={{
+            background: 'rgba(0, 0, 0, 0.95)',
+            border: '2px solid #00D1FF',
+            borderRadius: '8px',
+            padding: '12px',
+            boxShadow: '0 0 20px rgba(0, 209, 255, 0.4), 0 0 40px rgba(0, 209, 255, 0.2)'
+          }}
+        >
+          <p style={{ 
+            color: '#FFFFFF', 
+            fontWeight: 600, 
+            marginBottom: '8px',
+            textShadow: '0 0 10px rgba(255, 255, 255, 0.5)'
+          }}>
+            {label}
+          </p>
           {payload.map((entry: any, index: number) => (
-            <p key={index} className="text-sm" style={{ color: entry.color }}>
+            <p 
+              key={index} 
+              style={{ 
+                color: entry.color,
+                fontSize: '14px',
+                textShadow: `0 0 8px ${entry.color}`
+              }}
+            >
               {entry.name}: {formatCurrency(entry.value)}
             </p>
           ))}
@@ -61,30 +84,48 @@ export const ReportsSection = () => {
           <p className="text-muted-foreground">Visualize e exporte seus dados</p>
         </div>
         <div className="flex items-center gap-2">
+          {/* Botão Excel - Verde Neon Transparente */}
           <button 
             onClick={() => handleExport('Excel')}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 hover:-translate-y-0.5"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:-translate-y-0.5"
             style={{
-              background: 'linear-gradient(135deg, #0FE316 0%, #5EF366 100%)',
-              boxShadow: '0 4px 15px rgba(15, 227, 22, 0.3)'
+              background: 'transparent',
+              border: '2px solid #39FF14',
+              color: '#39FF14',
+              boxShadow: '0 0 15px rgba(57, 255, 20, 0.3), inset 0 0 10px rgba(57, 255, 20, 0.1)'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 6px 20px rgba(15, 227, 22, 0.4)'}
-            onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 4px 15px rgba(15, 227, 22, 0.3)'}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = '0 0 20px rgba(57, 255, 20, 0.6), 0 0 40px rgba(57, 255, 20, 0.3), inset 0 0 15px rgba(57, 255, 20, 0.2)';
+              e.currentTarget.style.background = 'rgba(57, 255, 20, 0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = '0 0 15px rgba(57, 255, 20, 0.3), inset 0 0 10px rgba(57, 255, 20, 0.1)';
+              e.currentTarget.style.background = 'transparent';
+            }}
           >
-            <FileSpreadsheet className="w-4 h-4" />
+            <FileSpreadsheet className="w-4 h-4" style={{ filter: 'drop-shadow(0 0 5px #39FF14)' }} />
             Excel
           </button>
+          {/* Botão PDF - Rosa Pink Shock Transparente */}
           <button 
             onClick={() => handleExport('PDF')}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 hover:-translate-y-0.5"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:-translate-y-0.5"
             style={{
-              background: 'linear-gradient(135deg, #E30E7F 0%, #F84BA6 100%)',
-              boxShadow: '0 4px 15px rgba(227, 14, 127, 0.3)'
+              background: 'transparent',
+              border: '2px solid #FF007A',
+              color: '#FF007A',
+              boxShadow: '0 0 15px rgba(255, 0, 122, 0.3), inset 0 0 10px rgba(255, 0, 122, 0.1)'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 6px 20px rgba(227, 14, 127, 0.4)'}
-            onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 4px 15px rgba(227, 14, 127, 0.3)'}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = '0 0 20px rgba(255, 0, 122, 0.6), 0 0 40px rgba(255, 0, 122, 0.3), inset 0 0 15px rgba(255, 0, 122, 0.2)';
+              e.currentTarget.style.background = 'rgba(255, 0, 122, 0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 0, 122, 0.3), inset 0 0 10px rgba(255, 0, 122, 0.1)';
+              e.currentTarget.style.background = 'transparent';
+            }}
           >
-            <FileText className="w-4 h-4" />
+            <FileText className="w-4 h-4" style={{ filter: 'drop-shadow(0 0 5px #FF007A)' }} />
             PDF
           </button>
         </div>
@@ -130,11 +171,21 @@ export const ReportsSection = () => {
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Revenue Chart */}
+        {/* Revenue Chart - Faturamento vs Lucro */}
         <div className="chart-container">
           <h3 className="text-lg font-semibold text-foreground mb-4">Faturamento vs Lucro</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={filteredData}>
+              <defs>
+                <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#00D1FF" stopOpacity={0.4}/>
+                  <stop offset="100%" stopColor="#00D1FF" stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#39FF14" stopOpacity={0.4}/>
+                  <stop offset="100%" stopColor="#39FF14" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis 
                 dataKey="month" 
@@ -148,33 +199,43 @@ export const ReportsSection = () => {
               />
               <Tooltip content={<CustomTooltip />} />
               <Legend />
+              {/* Linha Faturamento - Ciano Elétrico */}
               <Line 
                 type="monotone" 
                 dataKey="revenue" 
-                stroke="#E30E7F"
+                stroke="#00D1FF"
                 strokeWidth={3}
-                dot={{ fill: '#E30E7F', strokeWidth: 2, r: 5 }}
-                activeDot={{ r: 7, fill: '#E30E7F', stroke: '#fff', strokeWidth: 2 }}
+                dot={{ fill: '#00D1FF', strokeWidth: 2, r: 5 }}
+                activeDot={{ r: 7, fill: '#00D1FF', stroke: '#fff', strokeWidth: 2 }}
                 name="Faturamento"
+                style={{ filter: 'drop-shadow(0 0 10px rgba(0, 209, 255, 0.8))' }}
               />
+              {/* Linha Lucro - Verde Neon */}
               <Line 
                 type="monotone" 
                 dataKey="profit" 
-                stroke="#0FE316"
+                stroke="#39FF14"
                 strokeWidth={3}
-                dot={{ fill: '#0FE316', strokeWidth: 2, r: 5 }}
-                activeDot={{ r: 7, fill: '#0FE316', stroke: '#fff', strokeWidth: 2 }}
+                dot={{ fill: '#39FF14', strokeWidth: 2, r: 5 }}
+                activeDot={{ r: 7, fill: '#39FF14', stroke: '#fff', strokeWidth: 2 }}
                 name="Lucro"
+                style={{ filter: 'drop-shadow(0 0 10px rgba(57, 255, 20, 0.8))' }}
               />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
-        {/* Margin by Product */}
+        {/* Margin by Product - Degradê Ciano→Verde + Rosa para baixa margem */}
         <div className="chart-container">
           <h3 className="text-lg font-semibold text-foreground mb-4">Margem por Produto</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={productMargins}>
+              <defs>
+                <linearGradient id="marginGradientReport" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#00D1FF" stopOpacity={1}/>
+                  <stop offset="100%" stopColor="#39FF14" stopOpacity={1}/>
+                </linearGradient>
+              </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis 
                 dataKey="name" 
@@ -192,49 +253,62 @@ export const ReportsSection = () => {
               <Tooltip 
                 formatter={(value: number) => [`${value}%`, 'Margem']}
                 contentStyle={{
-                  backgroundColor: 'rgba(30, 30, 46, 0.95)',
-                  border: '2px solid #FC7200',
+                  backgroundColor: 'rgba(0, 0, 0, 0.95)',
+                  border: '2px solid #00D1FF',
                   borderRadius: '8px',
-                  color: '#FFFFFF'
+                  color: '#FFFFFF',
+                  boxShadow: '0 0 20px rgba(0, 209, 255, 0.4)'
                 }}
-                labelStyle={{ color: '#FFFFFF', fontWeight: 600 }}
-                itemStyle={{ color: '#FFFFFF' }}
-                cursor={{ fill: 'rgba(252, 114, 0, 0.1)' }}
+                labelStyle={{ color: '#FFFFFF', fontWeight: 600, textShadow: '0 0 8px rgba(255, 255, 255, 0.5)' }}
+                itemStyle={{ color: '#00D1FF', textShadow: '0 0 8px #00D1FF' }}
+                cursor={{ fill: 'rgba(0, 209, 255, 0.1)' }}
               />
               <Bar 
                 dataKey="margin" 
-                fill="#0FE316"
                 radius={[8, 8, 0, 0]}
                 name="Margem"
-                onMouseOver={(data, index, e) => {
-                  if (e && e.target) {
-                    (e.target as SVGElement).style.fill = '#FC7200';
-                  }
-                }}
-                onMouseOut={(data, index, e) => {
-                  if (e && e.target) {
-                    (e.target as SVGElement).style.fill = '#0FE316';
-                  }
-                }}
-              />
+              >
+                {productMargins.map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={entry.margin < 20 ? '#FF007A' : 'url(#marginGradientReport)'} 
+                    style={{ 
+                      filter: entry.margin < 20 
+                        ? 'drop-shadow(0 0 8px rgba(255, 0, 122, 0.6))' 
+                        : 'drop-shadow(0 0 8px rgba(0, 209, 255, 0.4))'
+                    }}
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      {/* Summary Table */}
+      {/* Summary Table - Cores Neon por Coluna */}
       <div className="glass-card overflow-hidden">
-        <div className="p-4 border-b border-border">
-          <h3 className="font-semibold text-foreground">Resumo por Período</h3>
+        <div 
+          className="p-4 border-b border-border"
+          style={{ background: 'rgba(0, 209, 255, 0.05)' }}
+        >
+          <h3 
+            className="font-semibold"
+            style={{ 
+              color: '#00D1FF',
+              textShadow: '0 0 10px rgba(0, 209, 255, 0.5)'
+            }}
+          >
+            Resumo por Período
+          </h3>
         </div>
         <div className="overflow-x-auto">
           <table className="data-table">
             <thead>
               <tr>
                 <th>Mês</th>
-                <th className="text-right">Faturamento</th>
-                <th className="text-right">Lucro</th>
-                <th className="text-right">Margem</th>
+                <th className="text-right" style={{ color: '#00D1FF', textShadow: '0 0 8px rgba(0, 209, 255, 0.5)' }}>Faturamento</th>
+                <th className="text-right" style={{ color: '#39FF14', textShadow: '0 0 8px rgba(57, 255, 20, 0.5)' }}>Lucro</th>
+                <th className="text-right" style={{ color: '#FFAC00', textShadow: '0 0 8px rgba(255, 172, 0, 0.5)' }}>Margem</th>
               </tr>
             </thead>
             <tbody>
@@ -243,14 +317,35 @@ export const ReportsSection = () => {
                 return (
                   <tr key={data.month}>
                     <td className="font-medium">{data.month}</td>
-                    <td className="text-right mono">{formatCurrency(data.revenue)}</td>
-                    <td className="text-right mono text-success">{formatCurrency(data.profit)}</td>
+                    {/* Faturamento - Ciano Elétrico */}
+                    <td 
+                      className="text-right mono"
+                      style={{ 
+                        color: '#00D1FF',
+                        textShadow: '0 0 10px rgba(0, 209, 255, 0.6), 0 0 20px rgba(0, 209, 255, 0.3)'
+                      }}
+                    >
+                      {formatCurrency(data.revenue)}
+                    </td>
+                    {/* Lucro - Verde Neon */}
+                    <td 
+                      className="text-right mono"
+                      style={{ 
+                        color: '#39FF14',
+                        textShadow: '0 0 10px rgba(57, 255, 20, 0.6), 0 0 20px rgba(57, 255, 20, 0.3)'
+                      }}
+                    >
+                      {formatCurrency(data.profit)}
+                    </td>
+                    {/* Margem - Laranja Plasma */}
                     <td className="text-right">
-                      <span className={`mono font-medium ${
-                        margin >= 25 ? 'text-success' :
-                        margin >= 15 ? 'text-warning' :
-                        'text-danger'
-                      }`}>
+                      <span 
+                        className="mono font-medium"
+                        style={{ 
+                          color: '#FFAC00',
+                          textShadow: '0 0 10px rgba(255, 172, 0, 0.6), 0 0 20px rgba(255, 172, 0, 0.3)'
+                        }}
+                      >
                         {margin.toFixed(1)}%
                       </span>
                     </td>
@@ -262,12 +357,33 @@ export const ReportsSection = () => {
         </div>
       </div>
 
-      {/* Export Notice */}
-      <div className="mt-6 p-4 rounded-xl bg-primary/10 border border-primary/20">
+      {/* Export Notice - Estilo Neon */}
+      <div 
+        className="mt-6 p-4 rounded-xl"
+        style={{
+          background: 'rgba(0, 209, 255, 0.05)',
+          border: '1px solid rgba(0, 209, 255, 0.3)',
+          boxShadow: '0 0 15px rgba(0, 209, 255, 0.1), inset 0 0 20px rgba(0, 0, 0, 0.5)'
+        }}
+      >
         <div className="flex items-center gap-3">
-          <Download className="w-5 h-5 text-primary" />
+          <Download 
+            className="w-5 h-5" 
+            style={{ 
+              color: '#00D1FF',
+              filter: 'drop-shadow(0 0 8px #00D1FF)'
+            }} 
+          />
           <div>
-            <h4 className="font-medium text-foreground">Exportação de Dados</h4>
+            <h4 
+              className="font-medium"
+              style={{ 
+                color: '#00D1FF',
+                textShadow: '0 0 8px rgba(0, 209, 255, 0.5)'
+              }}
+            >
+              Exportação de Dados
+            </h4>
             <p className="text-sm text-muted-foreground">
               A funcionalidade de exportação para Excel e PDF será disponibilizada em breve. 
               Você poderá baixar relatórios completos com todos os filtros aplicados.
