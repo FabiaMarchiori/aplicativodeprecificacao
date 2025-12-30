@@ -31,20 +31,25 @@ const tabs: { id: TabType; label: string; icon: React.ElementType; colorClass: s
 export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) => {
   return (
     <header 
-      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b border-border/30"
-      style={{ background: 'linear-gradient(180deg, hsl(234 30% 18% / 0.98), hsl(234 35% 12% / 0.95))' }}
+      className="fixed top-0 left-0 right-0 z-50 border-b"
+      style={{ 
+        background: 'rgba(0, 0, 0, 0.8)',
+        backdropFilter: 'blur(20px)',
+        borderColor: 'rgba(0, 209, 255, 0.15)'
+      }}
     >
       <div className="max-w-[1600px] mx-auto px-3 md:px-4 lg:px-6">
         <div className="flex items-center justify-between h-14 md:h-16 lg:h-20 gap-3">
-          {/* Logo - Icon only */}
+          {/* Logo - Neon Glow */}
           <div 
             className="w-9 h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-lg md:rounded-xl flex items-center justify-center flex-shrink-0"
             style={{ 
-              background: 'linear-gradient(135deg, #E30E7F, #0DD9F4)',
-              boxShadow: '0 6px 20px rgba(227, 14, 127, 0.4)'
+              background: '#000000',
+              border: '2px solid #FF007A',
+              boxShadow: '0 0 15px rgba(255, 0, 122, 0.5), 0 0 30px rgba(255, 0, 122, 0.3)'
             }}
           >
-            <TrendingUp className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-white" />
+            <TrendingUp className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" style={{ color: '#FF007A', filter: 'drop-shadow(0 0 5px #FF007A)' }} />
           </div>
 
           {/* Navigation Tabs */}
