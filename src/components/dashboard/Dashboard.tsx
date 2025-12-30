@@ -28,21 +28,20 @@ import {
   mockProducts 
 } from '@/data/mockData';
 
-// Vibrant chart colors matching the new palette
+// Neon Electric chart colors
 const CHART_COLORS = {
-  cyan: '#0DD9F4',
-  green: '#0FE316',
-  orange: '#FC7200',
-  blue: '#329CF2',
-  pink: '#E30E7F',
-  purple: '#9A24AF',
+  cyan: '#00D1FF',    // Ciano Elétrico
+  green: '#39FF14',   // Verde Neon
+  orange: '#FFAC00',  // Laranja Vivo
+  pink: '#FF007A',    // Rosa Choque
+  purple: '#BF00FF',  // Roxo Neon
 };
 
 const PIE_COLORS = [
-  '#E30E7F', // Pink - Custos Fixos
-  '#0FE316', // Green - Custos Variáveis
-  '#FC7200', // Orange - Impostos
-  '#0DD9F4', // Cyan - Margem
+  '#FF007A', // Pink - Custos Fixos
+  '#39FF14', // Green - Custos Variáveis
+  '#FFAC00', // Orange - Impostos
+  '#00D1FF', // Cyan - Margem
 ];
 
 // Color function based on margin value
@@ -76,16 +75,22 @@ export const Dashboard = () => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-popover/95 backdrop-blur-lg border border-border rounded-xl p-3 md:p-4 shadow-lg">
+        <div className="backdrop-blur-lg rounded-xl p-3 md:p-4 shadow-lg"
+          style={{
+            background: 'rgba(0, 0, 0, 0.9)',
+            border: '1px solid rgba(0, 209, 255, 0.4)',
+            boxShadow: '0 0 20px rgba(0, 209, 255, 0.2)'
+          }}
+        >
           <p className="text-xs md:text-sm font-semibold text-foreground mb-2">{label}</p>
           {payload.map((entry: any, index: number) => (
             <div key={index} className="flex items-center gap-2 text-xs md:text-sm">
               <div 
                 className="w-2 h-2 md:w-3 md:h-3 rounded-full" 
-                style={{ backgroundColor: entry.color }}
+                style={{ backgroundColor: entry.color, boxShadow: `0 0 8px ${entry.color}` }}
               />
               <span className="text-muted-foreground">{entry.name}:</span>
-              <span className="font-semibold" style={{ color: entry.color }}>
+              <span className="font-semibold" style={{ color: entry.color, textShadow: `0 0 10px ${entry.color}` }}>
                 {formatCurrency(entry.value)}
               </span>
             </div>
@@ -98,15 +103,24 @@ export const Dashboard = () => {
 
   const CustomPieTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
+      const color = payload[0].payload.fill;
       return (
-        <div className="bg-popover/95 backdrop-blur-lg border border-border rounded-xl p-2 md:p-3 shadow-lg">
+        <div className="backdrop-blur-lg rounded-xl p-2 md:p-3 shadow-lg"
+          style={{
+            background: 'rgba(0, 0, 0, 0.9)',
+            border: `1px solid ${color}`,
+            boxShadow: `0 0 15px ${color}40`
+          }}
+        >
           <div className="flex items-center gap-2">
             <div 
               className="w-2 h-2 md:w-3 md:h-3 rounded-full" 
-              style={{ backgroundColor: payload[0].payload.fill }}
+              style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}` }}
             />
             <span className="text-foreground font-medium text-xs md:text-sm">{payload[0].name}</span>
-            <span className="font-bold text-vibrant-orange text-xs md:text-sm">{payload[0].value}%</span>
+            <span className="font-bold text-xs md:text-sm" style={{ color: color, textShadow: `0 0 10px ${color}` }}>
+              {payload[0].value}%
+            </span>
           </div>
         </div>
       );
@@ -176,14 +190,32 @@ export const Dashboard = () => {
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={mockRevenueData}>
                 <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={CHART_COLORS.cyan} stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor={CHART_COLORS.cyan} stopOpacity={0}/>
+                  {/* Neon gradient - light rising from bottom */}
+                  <linearGradient id="neonRevenue" x1="0" y1="1" x2="0" y2="0">
+                    <stop offset="0%" stopColor="#00D1FF" stopOpacity={0}/>
+                    <stop offset="50%" stopColor="#00D1FF" stopOpacity={0.3}/>
+                    <stop offset="100%" stopColor="#00D1FF" stopOpacity={0.7}/>
                   </linearGradient>
-                  <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={CHART_COLORS.green} stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor={CHART_COLORS.green} stopOpacity={0}/>
+                  <linearGradient id="neonProfit" x1="0" y1="1" x2="0" y2="0">
+                    <stop offset="0%" stopColor="#39FF14" stopOpacity={0}/>
+                    <stop offset="50%" stopColor="#39FF14" stopOpacity={0.3}/>
+                    <stop offset="100%" stopColor="#39FF14" stopOpacity={0.7}/>
                   </linearGradient>
+                  {/* Glow filter for lines */}
+                  <filter id="glowCyan" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feMerge>
+                      <feMergeNode in="coloredBlur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+                  <filter id="glowGreen" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feMerge>
+                      <feMergeNode in="coloredBlur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                 <XAxis 
@@ -205,20 +237,22 @@ export const Dashboard = () => {
                 <Area
                   type="monotone"
                   dataKey="revenue"
-                  stroke={CHART_COLORS.cyan}
-                  strokeWidth={2}
+                  stroke="#00D1FF"
+                  strokeWidth={3}
                   fillOpacity={1}
-                  fill="url(#colorRevenue)"
+                  fill="url(#neonRevenue)"
                   name="Faturamento"
+                  filter="url(#glowCyan)"
                 />
                 <Area
                   type="monotone"
                   dataKey="profit"
-                  stroke={CHART_COLORS.green}
-                  strokeWidth={2}
+                  stroke="#39FF14"
+                  strokeWidth={3}
                   fillOpacity={1}
-                  fill="url(#colorProfit)"
+                  fill="url(#neonProfit)"
                   name="Lucro"
+                  filter="url(#glowGreen)"
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -320,9 +354,16 @@ export const Dashboard = () => {
               <BarChart data={sortedProfits}>
                 <defs>
                   <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={CHART_COLORS.cyan} stopOpacity={1}/>
-                    <stop offset="100%" stopColor={CHART_COLORS.green} stopOpacity={0.8}/>
+                    <stop offset="0%" stopColor="#00D1FF" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="#39FF14" stopOpacity={0.9}/>
                   </linearGradient>
+                  <filter id="glowBar" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                    <feMerge>
+                      <feMergeNode in="coloredBlur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
                 <XAxis 
