@@ -57,21 +57,63 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
             />
           </div>
 
-          {/* Navigation Tabs */}
+          {/* Navigation Tabs - Transparent with Neon Glow */}
           <nav className="flex items-center gap-1.5 md:gap-2 nav-scroll flex-1 ml-2 md:ml-4">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
               
+              // Color mapping for each tab
+              const colorMap: Record<string, { color: string; glow: string }> = {
+                'nav-dashboard': { color: '#FF007A', glow: 'rgba(255, 0, 122, 0.5)' },
+                'nav-produtos': { color: '#00D1FF', glow: 'rgba(0, 209, 255, 0.5)' },
+                'nav-fornecedores': { color: '#FFAC00', glow: 'rgba(255, 172, 0, 0.5)' },
+                'nav-custos': { color: '#39FF14', glow: 'rgba(57, 255, 20, 0.5)' },
+                'nav-impostos': { color: '#BF00FF', glow: 'rgba(191, 0, 255, 0.5)' },
+                'nav-precificacao': { color: '#00D1FF', glow: 'rgba(0, 209, 255, 0.5)' },
+                'nav-concorrencia': { color: '#FFAC00', glow: 'rgba(255, 172, 0, 0.5)' },
+                'nav-relatorios': { color: '#FF007A', glow: 'rgba(255, 0, 122, 0.5)' },
+              };
+              
+              const tabColor = colorMap[tab.colorClass] || { color: '#00D1FF', glow: 'rgba(0, 209, 255, 0.5)' };
+              
               return (
                 <button
                   key={tab.id}
                   onClick={() => onTabChange(tab.id)}
-                  className={`nav-button flex items-center gap-1.5 md:gap-2 whitespace-nowrap ${tab.colorClass} ${
-                    isActive ? 'ring-2 ring-white/30 ring-offset-1 md:ring-offset-2 ring-offset-background' : 'opacity-80 hover:opacity-100'
-                  }`}
+                  className="flex items-center gap-1.5 md:gap-2 whitespace-nowrap px-3 py-2 md:px-4 md:py-2.5 lg:px-5 text-xs md:text-sm font-semibold transition-all duration-300 rounded-lg md:rounded-xl uppercase tracking-wider"
+                  style={{
+                    background: 'transparent',
+                    color: tabColor.color,
+                    border: isActive ? `1px solid ${tabColor.color}` : '1px solid transparent',
+                    borderBottom: isActive ? `2px solid ${tabColor.color}` : '1px solid transparent',
+                    boxShadow: isActive 
+                      ? `0 0 20px ${tabColor.glow}, 0 0 40px ${tabColor.glow}, inset 0 0 15px ${tabColor.glow}`
+                      : 'none',
+                    textShadow: isActive ? `0 0 10px ${tabColor.glow}` : 'none',
+                    opacity: isActive ? 1 : 0.7,
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.opacity = '1';
+                      e.currentTarget.style.boxShadow = `0 0 15px ${tabColor.glow}`;
+                      e.currentTarget.style.borderColor = tabColor.color;
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.opacity = '0.7';
+                      e.currentTarget.style.boxShadow = 'none';
+                      e.currentTarget.style.borderColor = 'transparent';
+                    }
+                  }}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon 
+                    className="w-4 h-4" 
+                    style={{ 
+                      filter: isActive ? `drop-shadow(0 0 8px ${tabColor.color})` : `drop-shadow(0 0 4px ${tabColor.glow})`
+                    }} 
+                  />
                   <span className="hidden md:inline">{tab.label}</span>
                 </button>
               );
