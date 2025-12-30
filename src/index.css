@@ -181,16 +181,16 @@
 
   /* Navigation button transparent variants with hover glow */
   .nav-dashboard {
-    color: #FF007A;
-    border-color: rgba(255, 0, 122, 0.3);
+    color: #00D1FF;
+    border-color: rgba(0, 209, 255, 0.3);
   }
   .nav-dashboard svg {
-    filter: drop-shadow(0 0 8px rgba(255, 0, 122, 0.8));
+    filter: drop-shadow(0 0 8px rgba(0, 209, 255, 0.8));
   }
   .nav-dashboard:hover {
-    border-color: #FF007A;
-    box-shadow: 0 0 20px rgba(255, 0, 122, 0.5), 0 0 40px rgba(255, 0, 122, 0.3);
-    background: rgba(255, 0, 122, 0.1);
+    border-color: #00D1FF;
+    box-shadow: 0 0 20px rgba(0, 209, 255, 0.5), 0 0 40px rgba(0, 209, 255, 0.3);
+    background: rgba(0, 209, 255, 0.1);
   }
 
   .nav-produtos {
@@ -272,16 +272,16 @@
   }
 
   .nav-relatorios {
-    color: #FF007A;
-    border-color: rgba(255, 0, 122, 0.3);
+    color: #00D1FF;
+    border-color: rgba(0, 209, 255, 0.3);
   }
   .nav-relatorios svg {
-    filter: drop-shadow(0 0 8px rgba(255, 0, 122, 0.8));
+    filter: drop-shadow(0 0 8px rgba(0, 209, 255, 0.8));
   }
   .nav-relatorios:hover {
-    border-color: #FF007A;
-    box-shadow: 0 0 20px rgba(255, 0, 122, 0.5), 0 0 40px rgba(255, 0, 122, 0.3);
-    background: rgba(255, 0, 122, 0.1);
+    border-color: #00D1FF;
+    box-shadow: 0 0 20px rgba(0, 209, 255, 0.5), 0 0 40px rgba(0, 209, 255, 0.3);
+    background: rgba(0, 209, 255, 0.1);
   }
 
   /* Navigation scroll container */
@@ -448,6 +448,24 @@
       inset 0 0 30px rgba(255, 0, 122, 0.08);
   }
 
+  /* KPI Card Purple - Roxo Neon #BC13FE */
+  .kpi-card.kpi-purple {
+    border: 2px solid #BC13FE;
+    box-shadow: 
+      0 0 15px rgba(188, 19, 254, 0.4),
+      0 0 30px rgba(188, 19, 254, 0.2),
+      0 0 45px rgba(188, 19, 254, 0.1),
+      inset 0 0 20px rgba(188, 19, 254, 0.05);
+  }
+
+  .kpi-card.kpi-purple:hover {
+    box-shadow: 
+      0 0 20px rgba(188, 19, 254, 0.6),
+      0 0 40px rgba(188, 19, 254, 0.4),
+      0 0 60px rgba(188, 19, 254, 0.2),
+      inset 0 0 30px rgba(188, 19, 254, 0.08);
+  }
+
   /* KPI Card Text - Neon glow effect */
   .kpi-card .kpi-title {
     color: rgba(255, 255, 255, 0.7) !important;
@@ -483,6 +501,11 @@
   .kpi-card.kpi-pink .kpi-value {
     color: #FF007A !important;
     text-shadow: var(--text-glow-pink);
+  }
+
+  .kpi-card.kpi-purple .kpi-value {
+    color: #BC13FE !important;
+    text-shadow: 0 0 10px rgba(188, 19, 254, 0.9), 0 0 20px rgba(188, 19, 254, 0.6), 0 0 30px rgba(188, 19, 254, 0.4);
   }
 
   .kpi-card .kpi-subtitle {
@@ -541,6 +564,16 @@
   .kpi-icon.icon-pink svg {
     color: #FF007A !important;
     filter: drop-shadow(0 0 5px #FF007A);
+  }
+
+  /* Icon Purple - Roxo Neon #BC13FE */
+  .kpi-icon.icon-purple {
+    border: 2px solid #BC13FE;
+    box-shadow: 0 0 10px rgba(188, 19, 254, 0.5);
+  }
+  .kpi-icon.icon-purple svg {
+    color: #BC13FE !important;
+    filter: drop-shadow(0 0 5px #BC13FE);
   }
 
   /* Data Table */

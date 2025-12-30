@@ -174,7 +174,7 @@ export const Dashboard = () => {
           value={lowestMargin.name}
           subtitle={`${(((lowestMargin.currentPrice - lowestMargin.purchaseCost - lowestMargin.variableCost) / lowestMargin.currentPrice) * 100).toFixed(1)}%`}
           icon={AlertTriangle}
-          variant="pink"
+          variant="purple"
         />
       </div>
 

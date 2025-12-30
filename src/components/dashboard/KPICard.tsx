@@ -7,7 +7,7 @@ interface KPICardProps {
   trend?: 'up' | 'down' | 'neutral';
   trendValue?: string;
   icon: React.ElementType;
-  variant?: 'blue' | 'orange' | 'green' | 'cyan' | 'pink';
+  variant?: 'blue' | 'orange' | 'green' | 'cyan' | 'pink' | 'purple';
 }
 
 export const KPICard = ({ 
@@ -40,6 +40,8 @@ export const KPICard = ({
         return 'icon-cyan';
       case 'pink':
         return 'icon-pink';
+      case 'purple':
+        return 'icon-purple';
       default:
         return 'icon-blue';
     }
@@ -55,6 +57,8 @@ export const KPICard = ({
         return 'kpi-cyan';
       case 'pink':
         return 'kpi-pink';
+      case 'purple':
+        return 'kpi-purple';
       default:
         return 'kpi-blue';
     }
