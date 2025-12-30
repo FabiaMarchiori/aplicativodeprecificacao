@@ -6,63 +6,65 @@
 
 @layer base {
   :root {
-    /* === NEON ELECTRIC COLOR PALETTE === */
-    --color-cyan: 189 100% 50%;      /* #00D1FF - Ciano Elétrico */
-    --color-green: 105 100% 54%;     /* #39FF14 - Verde Neon */
-    --color-orange: 40 100% 50%;     /* #FFAC00 - Laranja Vivo */
-    --color-pink: 332 100% 50%;      /* #FF007A - Rosa Choque */
-    --color-purple: 285 100% 50%;    /* #BF00FF - Roxo Neon */
-    --color-blue: 189 100% 50%;      /* #00D1FF - Ciano Elétrico */
+    /* === REFINED NEON COLOR PALETTE (Eye-Comfort Optimized) === */
+    /* Primary: Ciano - Cor dominante */
+    --color-cyan: 189 85% 48%;       /* #0ABCE8 - Ciano Principal (levemente dessaturado) */
+    /* Status colors - usadas semanticamente */
+    --color-green: 142 70% 45%;      /* #2EAA5C - Verde para lucro/positivo */
+    --color-orange: 32 90% 50%;      /* #F29A1B - Laranja para alerta/custo */
+    --color-pink: 340 75% 50%;       /* #D92B5E - Rosa para perigo/crítico */
+    --color-purple: 280 65% 55%;     /* #9B4DCA - Roxo para informativo */
+    --color-blue: 189 85% 48%;       /* Alias para cyan */
 
-    /* Neon RGB values for shadows */
-    --neon-cyan-rgb: 0, 209, 255;
-    --neon-green-rgb: 57, 255, 20;
-    --neon-orange-rgb: 255, 172, 0;
-    --neon-pink-rgb: 255, 0, 122;
-    --neon-purple-rgb: 191, 0, 255;
+    /* Neon RGB values for softer shadows */
+    --neon-cyan-rgb: 10, 188, 232;
+    --neon-green-rgb: 46, 170, 92;
+    --neon-orange-rgb: 242, 154, 27;
+    --neon-pink-rgb: 217, 43, 94;
+    --neon-purple-rgb: 155, 77, 202;
 
-    /* Core colors - Deep Black Theme */
-    --background: 0 0% 3%;
-    --foreground: 0 0% 100%;
+    /* Core colors - Refined Dark Theme (slightly warmer) */
+    --background: 220 10% 6%;
+    --foreground: 210 20% 95%;
 
-    --card: 0 0% 0%;
-    --card-foreground: 0 0% 100%;
+    --card: 220 12% 8%;
+    --card-foreground: 210 20% 95%;
 
-    --popover: 0 0% 5%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 220 12% 10%;
+    --popover-foreground: 210 20% 95%;
 
     --primary: var(--color-cyan);
-    --primary-foreground: 0 0% 100%;
+    --primary-foreground: 210 20% 98%;
 
-    --secondary: 0 0% 8%;
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 220 10% 12%;
+    --secondary-foreground: 210 15% 85%;
 
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 70%;
+    --muted: 220 10% 18%;
+    --muted-foreground: 210 10% 55%;
 
-    --accent: var(--color-pink);
-    --accent-foreground: 0 0% 100%;
+    --accent: var(--color-cyan);
+    --accent-foreground: 210 20% 98%;
 
     --destructive: var(--color-pink);
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 210 20% 98%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 8%;
+    --border: 220 10% 18%;
+    --input: 220 10% 12%;
     --ring: var(--color-cyan);
 
     --radius: 0.75rem;
 
     /* Semantic colors */
     --success: var(--color-green);
-    --success-foreground: 0 0% 100%;
+    --success-foreground: 210 20% 98%;
     --warning: var(--color-orange);
-    --warning-foreground: 0 0% 100%;
+    --warning-foreground: 210 20% 98%;
     --danger: var(--color-pink);
-    --danger-foreground: 0 0% 100%;
+    --danger-foreground: 210 20% 98%;
     --info: var(--color-cyan);
-    --info-foreground: 0 0% 100%;
+    --info-foreground: 210 20% 98%;
 
-    /* Vibrant KPI colors */
+    /* KPI colors (matched to semantic) */
     --kpi-blue: var(--color-cyan);
     --kpi-cyan: var(--color-cyan);
     --kpi-green: var(--color-green);
@@ -78,34 +80,34 @@
     --chart-5: var(--color-purple);
 
     /* Glassmorphism */
-    --glass-bg: 0 0% 5% / 0.8;
-    --glass-border: 0 0% 20%;
+    --glass-bg: 220 12% 8% / 0.85;
+    --glass-border: 220 10% 22%;
 
-    /* === NEON GLOW SHADOWS === */
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.6);
-    --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.7);
-    --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.8);
+    /* === REFINED SHADOWS (Softer Glow) === */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
     
-    /* Neon Glow Effects */
-    --glow-cyan: 0 0 15px rgba(var(--neon-cyan-rgb), 0.5), 0 0 30px rgba(var(--neon-cyan-rgb), 0.3), 0 0 45px rgba(var(--neon-cyan-rgb), 0.15);
-    --glow-green: 0 0 15px rgba(var(--neon-green-rgb), 0.5), 0 0 30px rgba(var(--neon-green-rgb), 0.3), 0 0 45px rgba(var(--neon-green-rgb), 0.15);
-    --glow-orange: 0 0 15px rgba(var(--neon-orange-rgb), 0.5), 0 0 30px rgba(var(--neon-orange-rgb), 0.3), 0 0 45px rgba(var(--neon-orange-rgb), 0.15);
-    --glow-pink: 0 0 15px rgba(var(--neon-pink-rgb), 0.5), 0 0 30px rgba(var(--neon-pink-rgb), 0.3), 0 0 45px rgba(var(--neon-pink-rgb), 0.15);
-    --glow-purple: 0 0 15px rgba(var(--neon-purple-rgb), 0.5), 0 0 30px rgba(var(--neon-purple-rgb), 0.3), 0 0 45px rgba(var(--neon-purple-rgb), 0.15);
+    /* Softer Neon Glow Effects (-40% intensity) */
+    --glow-cyan: 0 0 12px rgba(var(--neon-cyan-rgb), 0.35), 0 0 24px rgba(var(--neon-cyan-rgb), 0.18);
+    --glow-green: 0 0 12px rgba(var(--neon-green-rgb), 0.35), 0 0 24px rgba(var(--neon-green-rgb), 0.18);
+    --glow-orange: 0 0 12px rgba(var(--neon-orange-rgb), 0.35), 0 0 24px rgba(var(--neon-orange-rgb), 0.18);
+    --glow-pink: 0 0 12px rgba(var(--neon-pink-rgb), 0.35), 0 0 24px rgba(var(--neon-pink-rgb), 0.18);
+    --glow-purple: 0 0 12px rgba(var(--neon-purple-rgb), 0.35), 0 0 24px rgba(var(--neon-purple-rgb), 0.18);
 
-    /* Text Glow for Digital Display Effect */
-    --text-glow-cyan: 0 0 10px rgba(var(--neon-cyan-rgb), 0.9), 0 0 20px rgba(var(--neon-cyan-rgb), 0.6), 0 0 30px rgba(var(--neon-cyan-rgb), 0.4);
-    --text-glow-green: 0 0 10px rgba(var(--neon-green-rgb), 0.9), 0 0 20px rgba(var(--neon-green-rgb), 0.6), 0 0 30px rgba(var(--neon-green-rgb), 0.4);
-    --text-glow-orange: 0 0 10px rgba(var(--neon-orange-rgb), 0.9), 0 0 20px rgba(var(--neon-orange-rgb), 0.6), 0 0 30px rgba(var(--neon-orange-rgb), 0.4);
-    --text-glow-pink: 0 0 10px rgba(var(--neon-pink-rgb), 0.9), 0 0 20px rgba(var(--neon-pink-rgb), 0.6), 0 0 30px rgba(var(--neon-pink-rgb), 0.4);
+    /* Softer Text Glow for Digital Display Effect */
+    --text-glow-cyan: 0 0 8px rgba(var(--neon-cyan-rgb), 0.6), 0 0 16px rgba(var(--neon-cyan-rgb), 0.35);
+    --text-glow-green: 0 0 8px rgba(var(--neon-green-rgb), 0.6), 0 0 16px rgba(var(--neon-green-rgb), 0.35);
+    --text-glow-orange: 0 0 8px rgba(var(--neon-orange-rgb), 0.6), 0 0 16px rgba(var(--neon-orange-rgb), 0.35);
+    --text-glow-pink: 0 0 8px rgba(var(--neon-pink-rgb), 0.6), 0 0 16px rgba(var(--neon-pink-rgb), 0.35);
 
-    --sidebar-background: 0 0% 3%;
-    --sidebar-foreground: 0 0% 95%;
+    --sidebar-background: 220 10% 6%;
+    --sidebar-foreground: 210 15% 85%;
     --sidebar-primary: var(--color-cyan);
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 10%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 15%;
+    --sidebar-primary-foreground: 210 20% 98%;
+    --sidebar-accent: 220 10% 14%;
+    --sidebar-accent-foreground: 210 15% 85%;
+    --sidebar-border: 220 10% 18%;
     --sidebar-ring: var(--color-cyan);
   }
 }
@@ -123,11 +125,10 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', system-ui, sans-serif;
-    background: #000000;
+    background: hsl(220 10% 6%);
     background-image: 
-      radial-gradient(ellipse at 20% 80%, rgba(0, 209, 255, 0.08) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 20%, rgba(255, 0, 122, 0.06) 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 50%, rgba(57, 255, 20, 0.03) 0%, transparent 70%);
+      radial-gradient(ellipse at 20% 80%, rgba(10, 188, 232, 0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(155, 77, 202, 0.03) 0%, transparent 50%);
     min-height: 100vh;
   }
 
@@ -152,12 +153,11 @@
 @layer components {
   .glass-card {
     @apply backdrop-blur-xl rounded-xl p-4 md:p-5 lg:p-6;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid rgba(0, 209, 255, 0.2);
+    background: hsl(220 12% 8% / 0.9);
+    border: 1px solid hsl(220 10% 22%);
     box-shadow: 
       var(--shadow-md),
-      0 0 20px rgba(0, 209, 255, 0.05),
-      inset 0 0 30px rgba(0, 0, 0, 0.5);
+      0 0 16px rgba(10, 188, 232, 0.03);
     max-width: 100%;
   }
 
@@ -350,10 +350,10 @@
     scrollbar-color: #00D1FF rgba(0, 0, 0, 0.3);
   }
 
-  /* === KPI CARD - NEON GLOW STYLE === */
+  /* === KPI CARD - REFINED NEON STYLE === */
   .kpi-card {
     @apply relative overflow-hidden rounded-xl md:rounded-2xl p-4 md:p-5 lg:p-6 transition-all duration-300;
-    background: #000000;
+    background: hsl(220 12% 9%);
   }
 
   .kpi-card::before {
@@ -363,217 +363,205 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+    background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, transparent 100%);
     pointer-events: none;
   }
 
   .kpi-card:hover {
-    transform: translateY(-4px) scale(1.02);
+    transform: translateY(-3px) scale(1.01);
   }
 
   @media (min-width: 768px) {
     .kpi-card:hover {
-      transform: translateY(-6px) scale(1.02);
+      transform: translateY(-4px) scale(1.01);
     }
   }
 
-  /* KPI Card Neon Variants - Black background with neon border and glow */
+  /* KPI Card Variants - Refined with softer glow (Ciano as primary) */
   .kpi-card.kpi-blue,
   .kpi-card.kpi-cyan {
-    border: 2px solid #00D1FF;
+    border: 1px solid rgba(10, 188, 232, 0.5);
     box-shadow: 
-      0 0 15px rgba(0, 209, 255, 0.4),
-      0 0 30px rgba(0, 209, 255, 0.2),
-      0 0 45px rgba(0, 209, 255, 0.1),
-      inset 0 0 20px rgba(0, 209, 255, 0.05);
+      0 0 12px rgba(10, 188, 232, 0.2),
+      0 0 24px rgba(10, 188, 232, 0.08);
   }
 
   .kpi-card.kpi-blue:hover,
   .kpi-card.kpi-cyan:hover {
+    border-color: rgba(10, 188, 232, 0.7);
     box-shadow: 
-      0 0 20px rgba(0, 209, 255, 0.6),
-      0 0 40px rgba(0, 209, 255, 0.4),
-      0 0 60px rgba(0, 209, 255, 0.2),
-      inset 0 0 30px rgba(0, 209, 255, 0.08);
+      0 0 16px rgba(10, 188, 232, 0.35),
+      0 0 32px rgba(10, 188, 232, 0.15);
   }
 
+  /* Verde - para lucro/positivo */
   .kpi-card.kpi-green {
-    border: 2px solid #39FF14;
+    border: 1px solid rgba(46, 170, 92, 0.5);
     box-shadow: 
-      0 0 15px rgba(57, 255, 20, 0.4),
-      0 0 30px rgba(57, 255, 20, 0.2),
-      0 0 45px rgba(57, 255, 20, 0.1),
-      inset 0 0 20px rgba(57, 255, 20, 0.05);
+      0 0 12px rgba(46, 170, 92, 0.2),
+      0 0 24px rgba(46, 170, 92, 0.08);
   }
 
   .kpi-card.kpi-green:hover {
+    border-color: rgba(46, 170, 92, 0.7);
     box-shadow: 
-      0 0 20px rgba(57, 255, 20, 0.6),
-      0 0 40px rgba(57, 255, 20, 0.4),
-      0 0 60px rgba(57, 255, 20, 0.2),
-      inset 0 0 30px rgba(57, 255, 20, 0.08);
+      0 0 16px rgba(46, 170, 92, 0.35),
+      0 0 32px rgba(46, 170, 92, 0.15);
   }
 
+  /* Laranja - para alerta/taxa */
   .kpi-card.kpi-orange {
-    border: 2px solid #FFAC00;
+    border: 1px solid rgba(242, 154, 27, 0.5);
     box-shadow: 
-      0 0 15px rgba(255, 172, 0, 0.4),
-      0 0 30px rgba(255, 172, 0, 0.2),
-      0 0 45px rgba(255, 172, 0, 0.1),
-      inset 0 0 20px rgba(255, 172, 0, 0.05);
+      0 0 12px rgba(242, 154, 27, 0.2),
+      0 0 24px rgba(242, 154, 27, 0.08);
   }
 
   .kpi-card.kpi-orange:hover {
+    border-color: rgba(242, 154, 27, 0.7);
     box-shadow: 
-      0 0 20px rgba(255, 172, 0, 0.6),
-      0 0 40px rgba(255, 172, 0, 0.4),
-      0 0 60px rgba(255, 172, 0, 0.2),
-      inset 0 0 30px rgba(255, 172, 0, 0.08);
+      0 0 16px rgba(242, 154, 27, 0.35),
+      0 0 32px rgba(242, 154, 27, 0.15);
   }
 
+  /* Rosa - para perigo/crítico */
   .kpi-card.kpi-pink {
-    border: 2px solid #FF007A;
+    border: 1px solid rgba(217, 43, 94, 0.5);
     box-shadow: 
-      0 0 15px rgba(255, 0, 122, 0.4),
-      0 0 30px rgba(255, 0, 122, 0.2),
-      0 0 45px rgba(255, 0, 122, 0.1),
-      inset 0 0 20px rgba(255, 0, 122, 0.05);
+      0 0 12px rgba(217, 43, 94, 0.2),
+      0 0 24px rgba(217, 43, 94, 0.08);
   }
 
   .kpi-card.kpi-pink:hover {
+    border-color: rgba(217, 43, 94, 0.7);
     box-shadow: 
-      0 0 20px rgba(255, 0, 122, 0.6),
-      0 0 40px rgba(255, 0, 122, 0.4),
-      0 0 60px rgba(255, 0, 122, 0.2),
-      inset 0 0 30px rgba(255, 0, 122, 0.08);
+      0 0 16px rgba(217, 43, 94, 0.35),
+      0 0 32px rgba(217, 43, 94, 0.15);
   }
 
-  /* KPI Card Purple - Roxo Neon #BC13FE */
+  /* Roxo - para informativo secundário */
   .kpi-card.kpi-purple {
-    border: 2px solid #BC13FE;
+    border: 1px solid rgba(155, 77, 202, 0.5);
     box-shadow: 
-      0 0 15px rgba(188, 19, 254, 0.4),
-      0 0 30px rgba(188, 19, 254, 0.2),
-      0 0 45px rgba(188, 19, 254, 0.1),
-      inset 0 0 20px rgba(188, 19, 254, 0.05);
+      0 0 12px rgba(155, 77, 202, 0.2),
+      0 0 24px rgba(155, 77, 202, 0.08);
   }
 
   .kpi-card.kpi-purple:hover {
+    border-color: rgba(155, 77, 202, 0.7);
     box-shadow: 
-      0 0 20px rgba(188, 19, 254, 0.6),
-      0 0 40px rgba(188, 19, 254, 0.4),
-      0 0 60px rgba(188, 19, 254, 0.2),
-      inset 0 0 30px rgba(188, 19, 254, 0.08);
+      0 0 16px rgba(155, 77, 202, 0.35),
+      0 0 32px rgba(155, 77, 202, 0.15);
   }
 
-  /* KPI Card Text - Neon glow effect */
+  /* KPI Card Text - Softer text hierarchy */
   .kpi-card .kpi-title {
-    color: rgba(255, 255, 255, 0.7) !important;
-    font-size: clamp(0.7rem, 2vw, 0.875rem);
-    font-weight: 600;
+    color: hsl(210 10% 55%) !important;
+    font-size: clamp(0.7rem, 2vw, 0.8rem);
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
   }
 
   .kpi-card .kpi-value {
-    font-size: clamp(1.25rem, 4vw, 1.75rem);
+    font-size: clamp(1.25rem, 4vw, 1.6rem);
     font-weight: 700;
     font-family: 'JetBrains Mono', monospace;
   }
 
-  /* Digital display glow effect for values */
+  /* Digital display glow effect for values - refined colors */
   .kpi-card.kpi-blue .kpi-value,
   .kpi-card.kpi-cyan .kpi-value {
-    color: #00D1FF !important;
+    color: hsl(189 85% 55%) !important;
     text-shadow: var(--text-glow-cyan);
   }
 
   .kpi-card.kpi-green .kpi-value {
-    color: #39FF14 !important;
+    color: hsl(142 70% 50%) !important;
     text-shadow: var(--text-glow-green);
   }
 
   .kpi-card.kpi-orange .kpi-value {
-    color: #FFAC00 !important;
+    color: hsl(32 90% 55%) !important;
     text-shadow: var(--text-glow-orange);
   }
 
   .kpi-card.kpi-pink .kpi-value {
-    color: #FF007A !important;
+    color: hsl(340 75% 55%) !important;
     text-shadow: var(--text-glow-pink);
   }
 
   .kpi-card.kpi-purple .kpi-value {
-    color: #BC13FE !important;
-    text-shadow: 0 0 10px rgba(188, 19, 254, 0.9), 0 0 20px rgba(188, 19, 254, 0.6), 0 0 30px rgba(188, 19, 254, 0.4);
+    color: hsl(280 65% 60%) !important;
+    text-shadow: 0 0 8px rgba(155, 77, 202, 0.6), 0 0 16px rgba(155, 77, 202, 0.35);
   }
 
   .kpi-card .kpi-subtitle {
-    color: rgba(255, 255, 255, 0.6) !important;
-    font-size: clamp(0.75rem, 2vw, 0.875rem);
+    color: hsl(210 10% 50%) !important;
+    font-size: clamp(0.7rem, 2vw, 0.8rem);
   }
 
   .kpi-card .kpi-trend {
-    color: #FFFFFF !important;
+    color: hsl(210 20% 90%) !important;
     font-weight: 600;
   }
 
-  /* KPI Icon styles - Neon style */
+  /* KPI Icon styles - Refined */
   .kpi-icon {
-    @apply w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center;
-    background: #000000;
+    @apply w-10 h-10 md:w-11 md:h-11 lg:w-12 lg:h-12 rounded-full flex items-center justify-center;
+    background: hsl(220 12% 12%);
   }
 
   .kpi-icon svg {
-    @apply w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7;
+    @apply w-4 h-4 md:w-5 md:h-5 lg:w-5 lg:h-5;
   }
 
   .kpi-icon.icon-blue,
   .kpi-icon.icon-cyan {
-    border: 2px solid #00D1FF;
-    box-shadow: 0 0 10px rgba(0, 209, 255, 0.5);
+    border: 1px solid rgba(10, 188, 232, 0.5);
+    box-shadow: 0 0 8px rgba(10, 188, 232, 0.25);
   }
   .kpi-icon.icon-blue svg,
   .kpi-icon.icon-cyan svg {
-    color: #00D1FF !important;
-    filter: drop-shadow(0 0 5px #00D1FF);
+    color: hsl(189 85% 55%) !important;
+    filter: drop-shadow(0 0 3px rgba(10, 188, 232, 0.5));
   }
 
   .kpi-icon.icon-orange {
-    border: 2px solid #FFAC00;
-    box-shadow: 0 0 10px rgba(255, 172, 0, 0.5);
+    border: 1px solid rgba(242, 154, 27, 0.5);
+    box-shadow: 0 0 8px rgba(242, 154, 27, 0.25);
   }
   .kpi-icon.icon-orange svg {
-    color: #FFAC00 !important;
-    filter: drop-shadow(0 0 5px #FFAC00);
+    color: hsl(32 90% 55%) !important;
+    filter: drop-shadow(0 0 3px rgba(242, 154, 27, 0.5));
   }
 
   .kpi-icon.icon-green {
-    border: 2px solid #39FF14;
-    box-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+    border: 1px solid rgba(46, 170, 92, 0.5);
+    box-shadow: 0 0 8px rgba(46, 170, 92, 0.25);
   }
   .kpi-icon.icon-green svg {
-    color: #39FF14 !important;
-    filter: drop-shadow(0 0 5px #39FF14);
+    color: hsl(142 70% 50%) !important;
+    filter: drop-shadow(0 0 3px rgba(46, 170, 92, 0.5));
   }
 
   .kpi-icon.icon-pink {
-    border: 2px solid #FF007A;
-    box-shadow: 0 0 10px rgba(255, 0, 122, 0.5);
+    border: 1px solid rgba(217, 43, 94, 0.5);
+    box-shadow: 0 0 8px rgba(217, 43, 94, 0.25);
   }
   .kpi-icon.icon-pink svg {
-    color: #FF007A !important;
-    filter: drop-shadow(0 0 5px #FF007A);
+    color: hsl(340 75% 55%) !important;
+    filter: drop-shadow(0 0 3px rgba(217, 43, 94, 0.5));
   }
 
-  /* Icon Purple - Roxo Neon #BC13FE */
+  /* Icon Purple */
   .kpi-icon.icon-purple {
-    border: 2px solid #BC13FE;
-    box-shadow: 0 0 10px rgba(188, 19, 254, 0.5);
+    border: 1px solid rgba(155, 77, 202, 0.5);
+    box-shadow: 0 0 8px rgba(155, 77, 202, 0.25);
   }
   .kpi-icon.icon-purple svg {
-    color: #BC13FE !important;
-    filter: drop-shadow(0 0 5px #BC13FE);
+    color: hsl(280 65% 60%) !important;
+    filter: drop-shadow(0 0 3px rgba(155, 77, 202, 0.5));
   }
 
   /* Data Table */
@@ -701,28 +689,27 @@
     min-height: 44px;
   }
 
-  /* Chart container - Neon style */
+  /* Chart container - Refined style */
   .chart-container {
     @apply backdrop-blur-xl rounded-xl p-4 md:p-5 lg:p-6;
-    background: rgba(0, 0, 0, 0.8);
-    border: 1px solid rgba(0, 209, 255, 0.25);
+    background: hsl(220 12% 8% / 0.95);
+    border: 1px solid hsl(220 10% 20%);
     box-shadow: 
-      0 0 20px rgba(0, 209, 255, 0.08),
-      inset 0 0 30px rgba(0, 0, 0, 0.5);
+      0 0 16px rgba(10, 188, 232, 0.04);
     max-width: 100%;
   }
 
   .chart-container h3 {
     @apply relative inline-flex items-center gap-2 text-sm md:text-base lg:text-lg font-semibold mb-3 md:mb-4;
-    color: #00D1FF !important;
-    text-shadow: 0 0 10px rgba(0, 209, 255, 0.5);
+    color: hsl(189 85% 55%) !important;
+    text-shadow: 0 0 8px rgba(10, 188, 232, 0.3);
   }
 
   .chart-container h3::before {
     content: '';
     @apply w-1 h-4 md:h-5 rounded-full;
-    background: #00D1FF;
-    box-shadow: 0 0 10px #00D1FF;
+    background: hsl(189 85% 50%);
+    box-shadow: 0 0 6px rgba(10, 188, 232, 0.5);
   }
 
   /* Responsive chart heights */
@@ -845,37 +832,29 @@
   }
 }
 
-/* Custom Neon Scrollbar - Ciano Elétrico */
+/* Custom Scrollbar - Refined */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: hsl(220 10% 12%);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #00D1FF;
+  background: hsl(189 85% 48%);
   border-radius: 10px;
-  box-shadow: 
-    0 0 10px rgba(0, 209, 255, 0.8),
-    0 0 20px rgba(0, 209, 255, 0.6),
-    0 0 30px rgba(0, 209, 255, 0.4),
-    0 0 40px rgba(0, 209, 255, 0.2);
+  box-shadow: 0 0 6px rgba(10, 188, 232, 0.4);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #00E5FF;
-  box-shadow: 
-    0 0 15px rgba(0, 209, 255, 1),
-    0 0 30px rgba(0, 209, 255, 0.8),
-    0 0 45px rgba(0, 209, 255, 0.6),
-    0 0 60px rgba(0, 209, 255, 0.4);
+  background: hsl(189 85% 55%);
+  box-shadow: 0 0 10px rgba(10, 188, 232, 0.6);
 }
 
 /* Firefox scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #00D1FF transparent;
+  scrollbar-color: hsl(189 85% 48%) hsl(220 10% 12%);
 }
