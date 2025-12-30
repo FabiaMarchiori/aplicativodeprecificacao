@@ -304,8 +304,8 @@ export const Dashboard = () => {
               <BarChart data={coloredMargins} layout="vertical">
                 <defs>
                   <linearGradient id="marginGradient" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#00D1FF" stopOpacity={1}/>
-                    <stop offset="100%" stopColor="#FF007A" stopOpacity={1}/>
+                    <stop offset="0%" stopColor="#FF007A" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="#00D1FF" stopOpacity={1}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" horizontal={false} />
