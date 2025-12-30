@@ -40,20 +40,19 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
     >
       <div className="max-w-[1600px] mx-auto px-3 md:px-4 lg:px-6">
         <div className="flex items-center justify-between h-14 md:h-16 lg:h-20 gap-3">
-          {/* Logo - Neon Glow */}
+          {/* Logo - Neon Gradient Glow */}
           <div 
             className="w-9 h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-lg md:rounded-xl flex items-center justify-center flex-shrink-0"
             style={{ 
-              background: 'transparent',
-              border: '2px solid #FF007A',
-              boxShadow: '0 0 15px rgba(255, 0, 122, 0.5), 0 0 30px rgba(255, 0, 122, 0.3)'
+              background: 'linear-gradient(135deg, #FF007A, #00D1FF)',
+              boxShadow: '0 0 15px rgba(255, 0, 122, 0.5), 0 0 30px rgba(0, 209, 255, 0.3)'
             }}
           >
             <TrendingUp 
               className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" 
               style={{ 
-                color: '#FF007A', 
-                filter: 'drop-shadow(0 0 8px rgba(255, 0, 122, 0.8))' 
+                color: '#FFFFFF', 
+                filter: 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.8))' 
               }} 
             />
           </div>
