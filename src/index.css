@@ -161,88 +161,127 @@
     max-width: 100%;
   }
 
-  /* Navigation button base styles - Solid Gradient */
+  /* Navigation button base styles - Transparent with Neon Glow */
   .nav-button {
     @apply px-3 py-2 md:px-4 md:py-2.5 lg:px-5 text-xs md:text-sm font-semibold transition-all duration-300 rounded-lg md:rounded-xl;
     @apply uppercase tracking-wider;
-    color: white !important;
-    border: none;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    background: transparent;
+    backdrop-filter: blur(8px);
+    border: 1px solid transparent;
     flex-shrink: 0;
   }
 
   .nav-button:hover {
     transform: translateY(-2px);
-    filter: brightness(1.1);
   }
 
   .nav-button:active {
     transform: translateY(0) scale(0.98);
   }
 
-  /* Navigation button solid gradient variants */
+  /* Navigation button transparent variants with hover glow */
   .nav-dashboard {
-    background: linear-gradient(135deg, #E30E7F 0%, #F84BA6 100%);
-    box-shadow: 0 4px 15px rgba(227, 14, 127, 0.4);
+    color: #FF007A;
+    border-color: rgba(255, 0, 122, 0.3);
+  }
+  .nav-dashboard svg {
+    filter: drop-shadow(0 0 8px rgba(255, 0, 122, 0.8));
   }
   .nav-dashboard:hover {
-    box-shadow: 0 6px 20px rgba(227, 14, 127, 0.6);
+    border-color: #FF007A;
+    box-shadow: 0 0 20px rgba(255, 0, 122, 0.5), 0 0 40px rgba(255, 0, 122, 0.3);
+    background: rgba(255, 0, 122, 0.1);
   }
 
   .nav-produtos {
-    background: linear-gradient(135deg, #0DD9F4 0%, #5CE8F9 100%);
-    box-shadow: 0 4px 15px rgba(13, 217, 244, 0.4);
+    color: #00D1FF;
+    border-color: rgba(0, 209, 255, 0.3);
+  }
+  .nav-produtos svg {
+    filter: drop-shadow(0 0 8px rgba(0, 209, 255, 0.8));
   }
   .nav-produtos:hover {
-    box-shadow: 0 6px 20px rgba(13, 217, 244, 0.6);
+    border-color: #00D1FF;
+    box-shadow: 0 0 20px rgba(0, 209, 255, 0.5), 0 0 40px rgba(0, 209, 255, 0.3);
+    background: rgba(0, 209, 255, 0.1);
   }
 
   .nav-fornecedores {
-    background: linear-gradient(135deg, #FC7200 0%, #FD9F4D 100%);
-    box-shadow: 0 4px 15px rgba(252, 114, 0, 0.4);
+    color: #FFAC00;
+    border-color: rgba(255, 172, 0, 0.3);
+  }
+  .nav-fornecedores svg {
+    filter: drop-shadow(0 0 8px rgba(255, 172, 0, 0.8));
   }
   .nav-fornecedores:hover {
-    box-shadow: 0 6px 20px rgba(252, 114, 0, 0.6);
+    border-color: #FFAC00;
+    box-shadow: 0 0 20px rgba(255, 172, 0, 0.5), 0 0 40px rgba(255, 172, 0, 0.3);
+    background: rgba(255, 172, 0, 0.1);
   }
 
   .nav-custos {
-    background: linear-gradient(135deg, #0FE316 0%, #5EF366 100%);
-    box-shadow: 0 4px 15px rgba(15, 227, 22, 0.4);
+    color: #39FF14;
+    border-color: rgba(57, 255, 20, 0.3);
+  }
+  .nav-custos svg {
+    filter: drop-shadow(0 0 8px rgba(57, 255, 20, 0.8));
   }
   .nav-custos:hover {
-    box-shadow: 0 6px 20px rgba(15, 227, 22, 0.6);
+    border-color: #39FF14;
+    box-shadow: 0 0 20px rgba(57, 255, 20, 0.5), 0 0 40px rgba(57, 255, 20, 0.3);
+    background: rgba(57, 255, 20, 0.1);
   }
 
   .nav-impostos {
-    background: linear-gradient(135deg, #9A24AF 0%, #C15DD4 100%);
-    box-shadow: 0 4px 15px rgba(154, 36, 175, 0.4);
+    color: #BF00FF;
+    border-color: rgba(191, 0, 255, 0.3);
+  }
+  .nav-impostos svg {
+    filter: drop-shadow(0 0 8px rgba(191, 0, 255, 0.8));
   }
   .nav-impostos:hover {
-    box-shadow: 0 6px 20px rgba(154, 36, 175, 0.6);
+    border-color: #BF00FF;
+    box-shadow: 0 0 20px rgba(191, 0, 255, 0.5), 0 0 40px rgba(191, 0, 255, 0.3);
+    background: rgba(191, 0, 255, 0.1);
   }
 
   .nav-precificacao {
-    background: linear-gradient(135deg, #329CF2 0%, #6EBFF7 100%);
-    box-shadow: 0 4px 15px rgba(50, 156, 242, 0.4);
+    color: #00D1FF;
+    border-color: rgba(0, 209, 255, 0.3);
+  }
+  .nav-precificacao svg {
+    filter: drop-shadow(0 0 8px rgba(0, 209, 255, 0.8));
   }
   .nav-precificacao:hover {
-    box-shadow: 0 6px 20px rgba(50, 156, 242, 0.6);
+    border-color: #00D1FF;
+    box-shadow: 0 0 20px rgba(0, 209, 255, 0.5), 0 0 40px rgba(0, 209, 255, 0.3);
+    background: rgba(0, 209, 255, 0.1);
   }
 
   .nav-concorrencia {
-    background: linear-gradient(135deg, #FC7200 0%, #FD9F4D 100%);
-    box-shadow: 0 4px 15px rgba(252, 114, 0, 0.4);
+    color: #FFAC00;
+    border-color: rgba(255, 172, 0, 0.3);
+  }
+  .nav-concorrencia svg {
+    filter: drop-shadow(0 0 8px rgba(255, 172, 0, 0.8));
   }
   .nav-concorrencia:hover {
-    box-shadow: 0 6px 20px rgba(252, 114, 0, 0.6);
+    border-color: #FFAC00;
+    box-shadow: 0 0 20px rgba(255, 172, 0, 0.5), 0 0 40px rgba(255, 172, 0, 0.3);
+    background: rgba(255, 172, 0, 0.1);
   }
 
   .nav-relatorios {
-    background: linear-gradient(135deg, #E30E7F 0%, #F84BA6 100%);
-    box-shadow: 0 4px 15px rgba(227, 14, 127, 0.4);
+    color: #FF007A;
+    border-color: rgba(255, 0, 122, 0.3);
+  }
+  .nav-relatorios svg {
+    filter: drop-shadow(0 0 8px rgba(255, 0, 122, 0.8));
   }
   .nav-relatorios:hover {
-    box-shadow: 0 6px 20px rgba(227, 14, 127, 0.6);
+    border-color: #FF007A;
+    box-shadow: 0 0 20px rgba(255, 0, 122, 0.5), 0 0 40px rgba(255, 0, 122, 0.3);
+    background: rgba(255, 0, 122, 0.1);
   }
 
   /* Navigation scroll container */
@@ -251,28 +290,64 @@
     overflow-y: hidden;
     white-space: nowrap;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    scrollbar-color: #00D1FF rgba(0, 0, 0, 0.3);
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 4px;
   }
 
   .nav-scroll::-webkit-scrollbar {
-    height: 4px;
+    height: 6px;
   }
 
   .nav-scroll::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.3);
     border-radius: 3px;
   }
 
   .nav-scroll::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
+    background: linear-gradient(90deg, #00D1FF 0%, #0099CC 100%);
     border-radius: 3px;
+    box-shadow: 0 0 10px rgba(0, 209, 255, 0.8), 0 0 20px rgba(0, 209, 255, 0.5);
   }
 
   .nav-scroll::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
+    background: linear-gradient(90deg, #00E5FF 0%, #00D1FF 100%);
+    box-shadow: 0 0 15px rgba(0, 209, 255, 1), 0 0 30px rgba(0, 209, 255, 0.7);
+  }
+
+  /* === CUSTOM NEON SCROLLBAR (Global) === */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #00D1FF 0%, #0099CC 100%);
+    border-radius: 4px;
+    box-shadow: 
+      0 0 10px rgba(0, 209, 255, 0.8),
+      0 0 20px rgba(0, 209, 255, 0.5),
+      0 0 30px rgba(0, 209, 255, 0.3);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #00E5FF 0%, #00D1FF 100%);
+    box-shadow: 
+      0 0 15px rgba(0, 209, 255, 1),
+      0 0 30px rgba(0, 209, 255, 0.7),
+      0 0 45px rgba(0, 209, 255, 0.4);
+  }
+
+  /* Firefox scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #00D1FF rgba(0, 0, 0, 0.3);
   }
 
   /* === KPI CARD - NEON GLOW STYLE === */
