@@ -44,12 +44,18 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
           <div 
             className="w-9 h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-lg md:rounded-xl flex items-center justify-center flex-shrink-0"
             style={{ 
-              background: 'linear-gradient(135deg, #E30E7F 0%, #F84BA6 100%)',
-              border: 'none',
-              boxShadow: '0 4px 15px rgba(227, 14, 127, 0.5)'
+              background: 'transparent',
+              border: '2px solid #FF007A',
+              boxShadow: '0 0 15px rgba(255, 0, 122, 0.5), 0 0 30px rgba(255, 0, 122, 0.3)'
             }}
           >
-            <TrendingUp className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" style={{ color: '#FFFFFF' }} />
+            <TrendingUp 
+              className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" 
+              style={{ 
+                color: '#FF007A', 
+                filter: 'drop-shadow(0 0 8px rgba(255, 0, 122, 0.8))' 
+              }} 
+            />
           </div>
 
           {/* Navigation Tabs */}
