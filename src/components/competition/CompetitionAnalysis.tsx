@@ -16,21 +16,21 @@ export const CompetitionAnalysis = () => {
           icon: CheckCircle,
           label: 'Competitivo',
           color: '#39FF14',
-          glowColor: 'rgba(57, 255, 20, 0.5)'
+          glowColor: 'rgba(57, 255, 20, 0.2)'
         };
       case 'attention':
         return {
           icon: AlertTriangle,
           label: 'Atenção',
           color: '#FFAC00',
-          glowColor: 'rgba(255, 172, 0, 0.5)'
+          glowColor: 'rgba(255, 172, 0, 0.2)'
         };
       case 'above_market':
         return {
           icon: AlertCircle,
           label: 'Acima do Mercado',
           color: '#BC13FE',
-          glowColor: 'rgba(188, 19, 254, 0.5)'
+          glowColor: 'rgba(188, 19, 254, 0.2)'
         };
     }
   };
@@ -48,15 +48,15 @@ export const CompetitionAnalysis = () => {
         </div>
       </div>
 
-      {/* Summary Cards - Neon Style - Preto Absoluto com Bordas Neon */}
+      {/* Summary Cards - Premium Style */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {/* Card Competitivo - Verde Neon */}
+        {/* Card Competitivo */}
         <div 
           className="p-4 rounded-xl transition-all duration-300 hover:-translate-y-1"
           style={{
-            background: '#000000',
-            border: '1px solid #39FF14',
-            boxShadow: '0 0 20px rgba(57, 255, 20, 0.4), 0 0 40px rgba(57, 255, 20, 0.2), 0 0 60px rgba(57, 255, 20, 0.1)'
+            background: '#0a0a0c',
+            border: '1px solid rgba(57, 255, 20, 0.4)',
+            boxShadow: '0 0 15px rgba(57, 255, 20, 0.15)'
           }}
         >
           <div className="flex items-center gap-3">
@@ -64,7 +64,7 @@ export const CompetitionAnalysis = () => {
               className="w-8 h-8" 
               style={{ 
                 color: '#39FF14',
-                filter: 'drop-shadow(0 0 10px #39FF14) drop-shadow(0 0 20px rgba(57, 255, 20, 0.6))'
+                filter: 'drop-shadow(0 0 4px #39FF14)'
               }} 
             />
             <div>
@@ -72,7 +72,7 @@ export const CompetitionAnalysis = () => {
                 className="text-2xl font-bold"
                 style={{ 
                   color: '#39FF14',
-                  textShadow: '0 0 10px rgba(57, 255, 20, 0.9), 0 0 20px rgba(57, 255, 20, 0.6), 0 0 30px rgba(57, 255, 20, 0.4)'
+                  textShadow: '0 0 6px rgba(57, 255, 20, 0.5)'
                 }}
               >
                 {competitiveCount}
@@ -82,13 +82,13 @@ export const CompetitionAnalysis = () => {
           </div>
         </div>
 
-        {/* Card Atenção - Laranja Plasma */}
+        {/* Card Atenção */}
         <div 
           className="p-4 rounded-xl transition-all duration-300 hover:-translate-y-1"
           style={{
-            background: '#000000',
-            border: '1px solid #FFAC00',
-            boxShadow: '0 0 20px rgba(255, 172, 0, 0.4), 0 0 40px rgba(255, 172, 0, 0.2), 0 0 60px rgba(255, 172, 0, 0.1)'
+            background: '#0a0a0c',
+            border: '1px solid rgba(255, 172, 0, 0.4)',
+            boxShadow: '0 0 15px rgba(255, 172, 0, 0.15)'
           }}
         >
           <div className="flex items-center gap-3">
@@ -96,7 +96,7 @@ export const CompetitionAnalysis = () => {
               className="w-8 h-8" 
               style={{ 
                 color: '#FFAC00',
-                filter: 'drop-shadow(0 0 10px #FFAC00) drop-shadow(0 0 20px rgba(255, 172, 0, 0.6))'
+                filter: 'drop-shadow(0 0 4px #FFAC00)'
               }} 
             />
             <div>
@@ -104,7 +104,7 @@ export const CompetitionAnalysis = () => {
                 className="text-2xl font-bold"
                 style={{ 
                   color: '#FFAC00',
-                  textShadow: '0 0 10px rgba(255, 172, 0, 0.9), 0 0 20px rgba(255, 172, 0, 0.6), 0 0 30px rgba(255, 172, 0, 0.4)'
+                  textShadow: '0 0 6px rgba(255, 172, 0, 0.5)'
                 }}
               >
                 {attentionCount}
@@ -114,13 +114,13 @@ export const CompetitionAnalysis = () => {
           </div>
         </div>
 
-        {/* Card Acima do Mercado - Roxo Neon */}
+        {/* Card Acima do Mercado */}
         <div 
           className="p-4 rounded-xl transition-all duration-300 hover:-translate-y-1"
           style={{
-            background: '#000000',
-            border: '1px solid #BC13FE',
-            boxShadow: '0 0 20px rgba(188, 19, 254, 0.4), 0 0 40px rgba(188, 19, 254, 0.2), 0 0 60px rgba(188, 19, 254, 0.1)'
+            background: '#0a0a0c',
+            border: '1px solid rgba(188, 19, 254, 0.4)',
+            boxShadow: '0 0 15px rgba(188, 19, 254, 0.15)'
           }}
         >
           <div className="flex items-center gap-3">
@@ -128,7 +128,7 @@ export const CompetitionAnalysis = () => {
               className="w-8 h-8" 
               style={{ 
                 color: '#BC13FE',
-                filter: 'drop-shadow(0 0 10px #BC13FE) drop-shadow(0 0 20px rgba(188, 19, 254, 0.6))'
+                filter: 'drop-shadow(0 0 4px #BC13FE)'
               }} 
             />
             <div>
@@ -136,7 +136,7 @@ export const CompetitionAnalysis = () => {
                 className="text-2xl font-bold"
                 style={{ 
                   color: '#BC13FE',
-                  textShadow: '0 0 10px rgba(188, 19, 254, 0.9), 0 0 20px rgba(188, 19, 254, 0.6), 0 0 30px rgba(188, 19, 254, 0.4)'
+                  textShadow: '0 0 6px rgba(188, 19, 254, 0.5)'
                 }}
               >
                 {aboveMarketCount}
@@ -147,24 +147,24 @@ export const CompetitionAnalysis = () => {
         </div>
       </div>
 
-      {/* Competition Table - Neon Style - Preto Absoluto */}
+      {/* Competition Table - Premium Style */}
       <div 
         className="rounded-xl overflow-hidden"
         style={{
-          background: '#000000',
-          border: '1px solid #00D1FF',
-          boxShadow: '0 0 20px rgba(0, 209, 255, 0.3), 0 0 40px rgba(0, 209, 255, 0.15)'
+          background: '#0a0a0c',
+          border: '1px solid rgba(0, 209, 255, 0.3)',
+          boxShadow: '0 0 12px rgba(0, 209, 255, 0.1)'
         }}
       >
         <div className="overflow-x-auto">
           <table className="data-table">
             <thead>
               <tr style={{ background: 'transparent' }}>
-                <th style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 10px rgba(0, 209, 255, 0.8), 0 0 20px rgba(0, 209, 255, 0.5)', background: 'transparent' }}>Produto</th>
-                <th className="text-right" style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 10px rgba(0, 209, 255, 0.8), 0 0 20px rgba(0, 209, 255, 0.5)', background: 'transparent' }}>Nosso Preço</th>
-                <th className="text-right" style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 10px rgba(0, 209, 255, 0.8), 0 0 20px rgba(0, 209, 255, 0.5)', background: 'transparent' }}>Preço Concorrente</th>
-                <th className="text-right" style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 10px rgba(0, 209, 255, 0.8), 0 0 20px rgba(0, 209, 255, 0.5)', background: 'transparent' }}>Diferença</th>
-                <th style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 10px rgba(0, 209, 255, 0.8), 0 0 20px rgba(0, 209, 255, 0.5)', background: 'transparent' }}>Status</th>
+                <th style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 6px rgba(0, 209, 255, 0.4)', background: 'transparent' }}>Produto</th>
+                <th className="text-right" style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 6px rgba(0, 209, 255, 0.4)', background: 'transparent' }}>Nosso Preço</th>
+                <th className="text-right" style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 6px rgba(0, 209, 255, 0.4)', background: 'transparent' }}>Preço Concorrente</th>
+                <th className="text-right" style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 6px rgba(0, 209, 255, 0.4)', background: 'transparent' }}>Diferença</th>
+                <th style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 6px rgba(0, 209, 255, 0.4)', background: 'transparent' }}>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -175,22 +175,14 @@ export const CompetitionAnalysis = () => {
                 return (
                   <tr 
                     key={competitor.id} 
-                    className="transition-all duration-300"
+                    className="transition-all duration-300 hover:bg-white/[0.02]"
                     style={{
                       background: 'transparent',
                       borderBottom: '1px solid rgba(0, 209, 255, 0.1)'
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.boxShadow = `inset 4px 0 20px ${statusConfig.glowColor}, 0 0 15px ${statusConfig.glowColor}`;
-                      e.currentTarget.style.borderLeft = `2px solid ${statusConfig.color}`;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.boxShadow = 'none';
-                      e.currentTarget.style.borderLeft = 'none';
-                    }}
                   >
                     <td className="font-medium" style={{ background: 'transparent' }}>{competitor.productName}</td>
-                    <td className="text-right mono" style={{ background: 'transparent', color: '#00D1FF', textShadow: '0 0 8px rgba(0, 209, 255, 0.5)' }}>{formatCurrency(competitor.ourPrice)}</td>
+                    <td className="text-right mono" style={{ background: 'transparent', color: '#00D1FF' }}>{formatCurrency(competitor.ourPrice)}</td>
                     <td className="text-right mono" style={{ background: 'transparent', color: 'rgba(255, 255, 255, 0.5)' }}>{formatCurrency(competitor.competitorPrice)}</td>
                     <td className="text-right" style={{ background: 'transparent' }}>
                       <div className="flex items-center justify-end gap-2">
@@ -199,7 +191,7 @@ export const CompetitionAnalysis = () => {
                             className="w-4 h-4" 
                             style={{ 
                               color: '#BC13FE',
-                              filter: 'drop-shadow(0 0 8px #BC13FE)'
+                              filter: 'drop-shadow(0 0 3px #BC13FE)'
                             }} 
                           />
                         ) : competitor.difference < 0 ? (
@@ -207,7 +199,7 @@ export const CompetitionAnalysis = () => {
                             className="w-4 h-4" 
                             style={{ 
                               color: '#39FF14',
-                              filter: 'drop-shadow(0 0 8px #39FF14)'
+                              filter: 'drop-shadow(0 0 3px #39FF14)'
                             }} 
                           />
                         ) : (
@@ -218,10 +210,7 @@ export const CompetitionAnalysis = () => {
                           style={{
                             color: competitor.difference > 5 ? '#BC13FE' : 
                                    competitor.difference < -5 ? '#39FF14' : 
-                                   'rgba(255, 255, 255, 0.5)',
-                            textShadow: competitor.difference > 5 ? '0 0 10px rgba(188, 19, 254, 0.8)' :
-                                        competitor.difference < -5 ? '0 0 10px rgba(57, 255, 20, 0.8)' :
-                                        'none'
+                                   'rgba(255, 255, 255, 0.5)'
                           }}
                         >
                           {competitor.difference > 0 ? '+' : ''}{competitor.difference.toFixed(1)}%
@@ -232,17 +221,12 @@ export const CompetitionAnalysis = () => {
                       <span 
                         className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium"
                         style={{
-                          background: 'transparent',
-                          border: `1px solid ${statusConfig.color}`,
-                          color: statusConfig.color,
-                          boxShadow: `0 0 12px ${statusConfig.glowColor}, 0 0 24px ${statusConfig.glowColor}`,
-                          textShadow: `0 0 10px ${statusConfig.glowColor}`
+                          background: `${statusConfig.color}15`,
+                          border: `1px solid ${statusConfig.color}40`,
+                          color: statusConfig.color
                         }}
                       >
-                        <StatusIcon 
-                          className="w-3 h-3" 
-                          style={{ filter: `drop-shadow(0 0 6px ${statusConfig.color})` }}
-                        />
+                        <StatusIcon className="w-3 h-3" />
                         {statusConfig.label}
                       </span>
                     </td>
@@ -254,20 +238,20 @@ export const CompetitionAnalysis = () => {
         </div>
       </div>
 
-      {/* Legend - LED Style - Preto Absoluto */}
+      {/* Legend - Premium Style */}
       <div 
         className="mt-6 p-4 rounded-xl"
         style={{
-          background: '#000000',
-          border: '1px solid #00D1FF',
-          boxShadow: '0 0 15px rgba(0, 209, 255, 0.3), 0 0 30px rgba(0, 209, 255, 0.15)'
+          background: '#0a0a0c',
+          border: '1px solid rgba(0, 209, 255, 0.3)',
+          boxShadow: '0 0 10px rgba(0, 209, 255, 0.08)'
         }}
       >
         <h4 
           className="font-medium mb-3"
           style={{ 
             color: '#00D1FF',
-            textShadow: '0 0 10px rgba(0, 209, 255, 0.8), 0 0 20px rgba(0, 209, 255, 0.5)'
+            textShadow: '0 0 6px rgba(0, 209, 255, 0.3)'
           }}
         >
           Legenda de Status
@@ -279,11 +263,11 @@ export const CompetitionAnalysis = () => {
               className="w-3 h-3 rounded-full"
               style={{
                 background: '#39FF14',
-                boxShadow: '0 0 8px #39FF14, 0 0 16px rgba(57, 255, 20, 0.6), 0 0 24px rgba(57, 255, 20, 0.4)'
+                boxShadow: '0 0 6px #39FF14'
               }}
             />
-            <span style={{ color: '#39FF14', textShadow: '0 0 8px rgba(57, 255, 20, 0.6)' }}>Competitivo</span>
-            <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>— Igual ou abaixo do mercado</span>
+            <span style={{ color: '#39FF14' }}>Competitivo</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.5)' }}>— Igual ou abaixo do mercado</span>
           </div>
           {/* LED Laranja */}
           <div className="flex items-center gap-3">
@@ -291,11 +275,11 @@ export const CompetitionAnalysis = () => {
               className="w-3 h-3 rounded-full"
               style={{
                 background: '#FFAC00',
-                boxShadow: '0 0 8px #FFAC00, 0 0 16px rgba(255, 172, 0, 0.6), 0 0 24px rgba(255, 172, 0, 0.4)'
+                boxShadow: '0 0 6px #FFAC00'
               }}
             />
-            <span style={{ color: '#FFAC00', textShadow: '0 0 8px rgba(255, 172, 0, 0.6)' }}>Atenção</span>
-            <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>— Até 10% acima</span>
+            <span style={{ color: '#FFAC00' }}>Atenção</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.5)' }}>— Até 10% acima</span>
           </div>
           {/* LED Roxo */}
           <div className="flex items-center gap-3">
@@ -303,11 +287,11 @@ export const CompetitionAnalysis = () => {
               className="w-3 h-3 rounded-full"
               style={{
                 background: '#BC13FE',
-                boxShadow: '0 0 8px #BC13FE, 0 0 16px rgba(188, 19, 254, 0.6), 0 0 24px rgba(188, 19, 254, 0.4)'
+                boxShadow: '0 0 6px #BC13FE'
               }}
             />
-            <span style={{ color: '#BC13FE', textShadow: '0 0 8px rgba(188, 19, 254, 0.6)' }}>Acima do Mercado</span>
-            <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>— Mais de 10% acima</span>
+            <span style={{ color: '#BC13FE' }}>Acima do Mercado</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.5)' }}>— Mais de 10% acima</span>
           </div>
         </div>
       </div>
