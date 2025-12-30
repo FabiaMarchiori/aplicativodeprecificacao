@@ -811,3 +811,38 @@
     @apply gap-3 md:gap-4 lg:gap-6;
   }
 }
+
+/* Custom Neon Scrollbar - Ciano Elétrico */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00D1FF;
+  border-radius: 10px;
+  box-shadow: 
+    0 0 10px rgba(0, 209, 255, 0.8),
+    0 0 20px rgba(0, 209, 255, 0.6),
+    0 0 30px rgba(0, 209, 255, 0.4),
+    0 0 40px rgba(0, 209, 255, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00E5FF;
+  box-shadow: 
+    0 0 15px rgba(0, 209, 255, 1),
+    0 0 30px rgba(0, 209, 255, 0.8),
+    0 0 45px rgba(0, 209, 255, 0.6),
+    0 0 60px rgba(0, 209, 255, 0.4);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #00D1FF transparent;
+}
