@@ -136,7 +136,7 @@ export const TaxesConfig = () => {
     );
   };
 
-  const otherFeesColor = '#64748b';
+  const otherFeesColor = '#00D1FF';
 
   return (
     <div className="animate-fade-in">
