@@ -29,11 +29,17 @@ export interface FixedCost {
   allocationPercent: number;
 }
 
+export interface OtherTax {
+  id: string;
+  name: string;
+  percentage: number;
+}
+
 export interface TaxConfig {
   salesTax: number;
   marketplaceFee: number;
   cardFee: number;
-  otherFees: number;
+  otherFees: OtherTax[];
 }
 
 export interface Competitor {
@@ -85,7 +91,10 @@ export const mockTaxConfig: TaxConfig = {
   salesTax: 12.5,
   marketplaceFee: 16,
   cardFee: 3.5,
-  otherFees: 1.2,
+  otherFees: [
+    { id: '1', name: 'Frete', percentage: 0.8 },
+    { id: '2', name: 'Seguros', percentage: 0.4 }
+  ],
 };
 
 export const mockCompetitors: Competitor[] = [
@@ -138,7 +147,8 @@ export const calculatePricing = (
   const allocatedFixedCost = avgFixedCostPerProduct * 0.1; // Simplified allocation
   
   const totalCost = product.purchaseCost + product.variableCost + allocatedFixedCost;
-  const totalTaxRate = (taxes.salesTax + taxes.marketplaceFee + taxes.cardFee + taxes.otherFees) / 100;
+  const otherFeesTotal = taxes.otherFees.reduce((sum, tax) => sum + tax.percentage, 0);
+  const totalTaxRate = (taxes.salesTax + taxes.marketplaceFee + taxes.cardFee + otherFeesTotal) / 100;
   
   const suggestedPrice = totalCost / (1 - desiredMargin / 100 - totalTaxRate);
   const taxAmount = suggestedPrice * totalTaxRate;

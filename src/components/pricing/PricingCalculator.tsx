@@ -27,7 +27,8 @@ const getMarginNeonConfig = (margin: number) => {
     return { color: '#BC13FE', glow: 'rgba(188, 19, 254, 0.2)', label: 'Crítico' };
   };
 
-  const totalTax = (mockTaxConfig.salesTax + mockTaxConfig.marketplaceFee + mockTaxConfig.cardFee + mockTaxConfig.otherFees).toFixed(1);
+  const otherFeesTotal = mockTaxConfig.otherFees.reduce((sum, tax) => sum + tax.percentage, 0);
+  const totalTax = (mockTaxConfig.salesTax + mockTaxConfig.marketplaceFee + mockTaxConfig.cardFee + otherFeesTotal).toFixed(1);
 
   return (
     <div className="animate-fade-in">

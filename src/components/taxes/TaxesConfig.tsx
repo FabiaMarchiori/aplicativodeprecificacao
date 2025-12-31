@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Save, Info, Receipt, CreditCard, Store, MoreHorizontal } from 'lucide-react';
-import { mockTaxConfig, TaxConfig } from '@/data/mockData';
+import { Save, Info, Receipt, CreditCard, Store, MoreHorizontal, Plus, X } from 'lucide-react';
+import { mockTaxConfig, TaxConfig, OtherTax } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
 
 // Configuração de cores neon por categoria
@@ -22,12 +22,6 @@ const taxCardConfigs = {
     label: 'Taxa de Cartão',
     description: 'Débito, Crédito, Pix com taxa',
     Icon: CreditCard
-  },
-  otherFees: {
-    color: '#64748b',
-    label: 'Outras Taxas',
-    description: 'Frete, seguros, devoluções',
-    Icon: MoreHorizontal
   }
 };
 
@@ -35,17 +29,48 @@ export const TaxesConfig = () => {
   const [taxes, setTaxes] = useState<TaxConfig>(mockTaxConfig);
   const { toast } = useToast();
 
-  const totalTaxes = taxes.salesTax + taxes.marketplaceFee + taxes.cardFee + taxes.otherFees;
+  const otherFeesTotal = taxes.otherFees.reduce((sum, tax) => sum + tax.percentage, 0);
+  const totalTaxes = taxes.salesTax + taxes.marketplaceFee + taxes.cardFee + otherFeesTotal;
 
   const handleSave = () => {
-    toast({ title: 'Configurações salvas', description: 'As taxas foram atualizadas com sucesso.' });
+    toast({ 
+      title: '✓ Configurações salvas com sucesso', 
+      description: 'As taxas foram atualizadas e já estão sendo aplicadas nos cálculos de precificação.',
+      duration: 4000
+    });
   };
 
-  const handleChange = (field: keyof TaxConfig, value: string) => {
+  const handleChange = (field: keyof Omit<TaxConfig, 'otherFees'>, value: string) => {
     setTaxes({ ...taxes, [field]: parseFloat(value) || 0 });
   };
 
-  const renderTaxCard = (field: keyof TaxConfig) => {
+  const handleOtherFeeChange = (id: string, field: 'name' | 'percentage', value: string) => {
+    setTaxes({
+      ...taxes,
+      otherFees: taxes.otherFees.map(fee => 
+        fee.id === id 
+          ? { ...fee, [field]: field === 'percentage' ? (parseFloat(value) || 0) : value }
+          : fee
+      )
+    });
+  };
+
+  const addOtherFee = () => {
+    const newId = (Math.max(...taxes.otherFees.map(f => parseInt(f.id)), 0) + 1).toString();
+    setTaxes({
+      ...taxes,
+      otherFees: [...taxes.otherFees, { id: newId, name: '', percentage: 0 }]
+    });
+  };
+
+  const removeOtherFee = (id: string) => {
+    setTaxes({
+      ...taxes,
+      otherFees: taxes.otherFees.filter(fee => fee.id !== id)
+    });
+  };
+
+  const renderTaxCard = (field: 'salesTax' | 'marketplaceFee' | 'cardFee') => {
     const config = taxCardConfigs[field];
     const { color, label, description, Icon } = config;
 
@@ -74,7 +99,7 @@ export const TaxesConfig = () => {
           </div>
           <div>
             <h3 className="font-semibold" style={{ color }}>{label}</h3>
-            <p className="text-sm text-muted-foreground">{description}</p>
+            <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>{description}</p>
           </div>
         </div>
         <div className="relative">
@@ -111,6 +136,8 @@ export const TaxesConfig = () => {
     );
   };
 
+  const otherFeesColor = '#64748b';
+
   return (
     <div className="animate-fade-in">
       {/* Header */}
@@ -125,7 +152,10 @@ export const TaxesConfig = () => {
           >
             Impostos & Taxas
           </h2>
-          <p className="text-muted-foreground">Configure as alíquotas aplicadas sobre vendas</p>
+          <p style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Configure as alíquotas aplicadas sobre vendas</p>
+          <p className="text-sm mt-1" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+            Estas taxas são usadas como base nos cálculos de precificação e podem ser ajustadas conforme seu modelo de negócio.
+          </p>
         </div>
         <button 
           onClick={handleSave} 
@@ -185,7 +215,7 @@ export const TaxesConfig = () => {
         </p>
         <p 
           className="text-sm mt-2"
-          style={{ color: '#64748b' }}
+          style={{ color: 'rgba(255, 255, 255, 0.7)' }}
         >
           Este percentual será aplicado sobre o preço de venda
         </p>
@@ -196,7 +226,132 @@ export const TaxesConfig = () => {
         {renderTaxCard('salesTax')}
         {renderTaxCard('marketplaceFee')}
         {renderTaxCard('cardFee')}
-        {renderTaxCard('otherFees')}
+        
+        {/* Outras Taxas - Card Dinâmico */}
+        <div 
+          className="p-6 rounded-xl transition-all duration-300"
+          style={{
+            background: '#0a0a0c',
+            border: `1px solid ${otherFeesColor}40`,
+            boxShadow: `0 0 12px ${otherFeesColor}20`
+          }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div 
+                className="p-2.5 rounded-xl"
+                style={{ 
+                  background: `${otherFeesColor}15`,
+                  border: `1px solid ${otherFeesColor}30`
+                }}
+              >
+                <MoreHorizontal 
+                  className="w-5 h-5" 
+                  style={{ color: otherFeesColor, filter: `drop-shadow(0 0 4px ${otherFeesColor})` }}
+                />
+              </div>
+              <div>
+                <h3 className="font-semibold" style={{ color: otherFeesColor }}>Outras Taxas</h3>
+                <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>Frete, seguros, devoluções</p>
+              </div>
+            </div>
+            <div 
+              className="px-3 py-1 rounded-lg text-sm font-bold"
+              style={{ 
+                background: `${otherFeesColor}20`,
+                color: otherFeesColor
+              }}
+            >
+              Total: {otherFeesTotal.toFixed(1)}%
+            </div>
+          </div>
+          
+          {/* Lista de taxas adicionais */}
+          <div className="space-y-3 mb-4">
+            {taxes.otherFees.map((fee) => (
+              <div key={fee.id} className="flex items-center gap-3">
+                <input
+                  type="text"
+                  placeholder="Nome da taxa"
+                  className="flex-1 px-3 py-2 rounded-lg text-sm transition-all duration-300"
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.4)',
+                    border: `1px solid ${otherFeesColor}30`,
+                    color: '#F8FAFC',
+                    outline: 'none'
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.border = `1px solid ${otherFeesColor}`;
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.border = `1px solid ${otherFeesColor}30`;
+                  }}
+                  value={fee.name}
+                  onChange={(e) => handleOtherFeeChange(fee.id, 'name', e.target.value)}
+                />
+                <div className="relative w-24">
+                  <input
+                    type="number"
+                    step="0.1"
+                    className="w-full px-3 py-2 pr-8 rounded-lg text-sm font-bold transition-all duration-300"
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.4)',
+                      border: `1px solid ${otherFeesColor}30`,
+                      color: '#F8FAFC',
+                      outline: 'none'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.border = `1px solid ${otherFeesColor}`;
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.border = `1px solid ${otherFeesColor}30`;
+                    }}
+                    value={fee.percentage}
+                    onChange={(e) => handleOtherFeeChange(fee.id, 'percentage', e.target.value)}
+                  />
+                  <span 
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-sm"
+                    style={{ color: `${otherFeesColor}80` }}
+                  >
+                    %
+                  </span>
+                </div>
+                <button
+                  onClick={() => removeOtherFee(fee.id)}
+                  className="p-2 rounded-lg transition-all duration-300 hover:scale-110"
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)'
+                  }}
+                >
+                  <X className="w-4 h-4 text-red-400" />
+                </button>
+              </div>
+            ))}
+          </div>
+          
+          {/* Botão Adicionar */}
+          <button
+            onClick={addOtherFee}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300"
+            style={{
+              background: `${otherFeesColor}10`,
+              border: `1px dashed ${otherFeesColor}40`,
+              color: otherFeesColor
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = `${otherFeesColor}20`;
+              e.currentTarget.style.borderStyle = 'solid';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = `${otherFeesColor}10`;
+              e.currentTarget.style.borderStyle = 'dashed';
+            }}
+          >
+            <Plus className="w-4 h-4" />
+            Adicionar Taxa
+          </button>
+        </div>
       </div>
 
       {/* Info Box - Sutil com ícone brilhante */}
@@ -219,11 +374,11 @@ export const TaxesConfig = () => {
           <div>
             <h4 
               className="font-medium"
-              style={{ color: '#94a3b8' }}
+              style={{ color: 'rgba(255, 255, 255, 0.85)' }}
             >
               Como funciona o cálculo
             </h4>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm mt-1" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
               As taxas configuradas aqui são automaticamente incluídas no cálculo de precificação. 
               O preço sugerido considera todos estes percentuais para garantir que sua margem desejada seja atingida.
             </p>
