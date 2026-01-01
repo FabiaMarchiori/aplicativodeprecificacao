@@ -202,7 +202,7 @@ export const ReportsSection = () => {
               {entry.name}: {formatCurrency(entry.value)}
             </p>
           ))}
-          <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '12px', marginTop: '8px' }}>
+          <p style={{ color: '#FFFFFF', fontSize: '12px', marginTop: '8px' }}>
             Clique para ver detalhes
           </p>
         </div>
@@ -246,7 +246,7 @@ export const ReportsSection = () => {
                 <button 
                   onClick={completeTutorial}
                   className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
-                  style={{ color: 'rgba(255, 255, 255, 0.6)' }}
+                  style={{ color: '#FFFFFF' }}
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -258,7 +258,7 @@ export const ReportsSection = () => {
               >
                 {tutorialSteps[tutorialStep].title}
               </h3>
-              <p style={{ color: 'rgba(255, 255, 255, 0.75)', lineHeight: 1.6 }}>
+              <p style={{ color: '#FFFFFF', lineHeight: 1.6 }}>
                 {tutorialSteps[tutorialStep].description}
               </p>
               
@@ -266,7 +266,7 @@ export const ReportsSection = () => {
                 <button 
                   onClick={completeTutorial}
                   className="text-sm px-4 py-2 rounded-lg transition-colors"
-                  style={{ color: 'rgba(255, 255, 255, 0.6)' }}
+                  style={{ color: '#FFFFFF' }}
                 >
                   Pular tutorial
                 </button>
@@ -332,7 +332,7 @@ export const ReportsSection = () => {
                       className="p-4 rounded-xl"
                       style={{ background: 'rgba(0, 209, 255, 0.1)', border: '1px solid rgba(0, 209, 255, 0.3)' }}
                     >
-                      <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '14px' }}>Faturamento</p>
+                      <p style={{ color: '#FFFFFF', fontSize: '14px' }}>Faturamento</p>
                       <p 
                         className="text-2xl font-bold"
                         style={{ color: '#00D1FF', textShadow: '0 0 10px rgba(0, 209, 255, 0.5)' }}
@@ -345,7 +345,7 @@ export const ReportsSection = () => {
                       className="p-4 rounded-xl"
                       style={{ background: 'rgba(57, 255, 20, 0.1)', border: '1px solid rgba(57, 255, 20, 0.3)' }}
                     >
-                      <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '14px' }}>Lucro Líquido</p>
+                      <p style={{ color: '#FFFFFF', fontSize: '14px' }}>Lucro Líquido</p>
                       <p 
                         className="text-2xl font-bold"
                         style={{ color: '#39FF14', textShadow: '0 0 10px rgba(57, 255, 20, 0.5)' }}
@@ -358,7 +358,7 @@ export const ReportsSection = () => {
                       className="p-4 rounded-xl"
                       style={{ background: 'rgba(255, 172, 0, 0.1)', border: '1px solid rgba(255, 172, 0, 0.3)' }}
                     >
-                      <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '14px' }}>Margem de Lucro</p>
+                      <p style={{ color: '#FFFFFF', fontSize: '14px' }}>Margem de Lucro</p>
                       <p 
                         className="text-2xl font-bold"
                         style={{ color: '#FFAC00', textShadow: '0 0 10px rgba(255, 172, 0, 0.5)' }}
@@ -373,7 +373,7 @@ export const ReportsSection = () => {
                           className="p-4 rounded-xl"
                           style={{ background: 'rgba(188, 19, 254, 0.1)', border: '1px solid rgba(188, 19, 254, 0.3)' }}
                         >
-                          <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '14px' }}>Custos Fixos (est.)</p>
+                          <p style={{ color: '#FFFFFF', fontSize: '14px' }}>Custos Fixos (est.)</p>
                           <p 
                             className="text-xl font-bold"
                             style={{ color: '#BC13FE', textShadow: '0 0 10px rgba(188, 19, 254, 0.5)' }}
@@ -386,7 +386,7 @@ export const ReportsSection = () => {
                           className="p-4 rounded-xl"
                           style={{ background: 'rgba(255, 107, 107, 0.1)', border: '1px solid rgba(255, 107, 107, 0.3)' }}
                         >
-                          <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '14px' }}>Custos Variáveis (est.)</p>
+                          <p style={{ color: '#FFFFFF', fontSize: '14px' }}>Custos Variáveis (est.)</p>
                           <p 
                             className="text-xl font-bold"
                             style={{ color: '#FF6B6B', textShadow: '0 0 10px rgba(255, 107, 107, 0.5)' }}
@@ -402,7 +402,7 @@ export const ReportsSection = () => {
                   <div className="flex flex-col items-center justify-center">
                     <p 
                       className="text-sm font-medium mb-2"
-                      style={{ color: 'rgba(255, 255, 255, 0.75)' }}
+                      style={{ color: '#FFFFFF' }}
                     >
                       Composição do Faturamento
                     </p>
@@ -426,7 +426,7 @@ export const ReportsSection = () => {
                           ))}
                         </Pie>
                         <Legend 
-                          formatter={(value) => <span style={{ color: 'rgba(255, 255, 255, 0.75)' }}>{value}</span>}
+                          formatter={(value) => <span style={{ color: '#FFFFFF' }}>{value}</span>}
                         />
                       </PieChart>
                     </ResponsiveContainer>
@@ -440,7 +440,7 @@ export const ReportsSection = () => {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-2xl font-bold text-foreground">Relatórios</h2>
-            <p style={{ color: 'rgba(255, 255, 255, 0.75)' }}>Visualize e exporte seus dados</p>
+            <p style={{ color: '#FFFFFF' }}>Visualize e exporte seus dados</p>
           </div>
           <div className="flex items-center gap-4">
             {/* View Mode Toggle */}
@@ -463,6 +463,7 @@ export const ReportsSection = () => {
               <Switch 
                 checked={viewMode === 'detailed'}
                 onCheckedChange={(checked) => setViewMode(checked ? 'detailed' : 'simple')}
+                className={viewMode === 'simple' ? '[&[data-state=unchecked]]:bg-[#00D1FF] [&[data-state=unchecked]]:shadow-[0_0_10px_rgba(0,209,255,0.5)]' : ''}
               />
               <div className="flex items-center gap-2">
                 <span 
@@ -485,7 +486,7 @@ export const ReportsSection = () => {
                     style={{
                       background: 'transparent',
                       border: '1px solid rgba(255, 255, 255, 0.2)',
-                      color: 'rgba(255, 255, 255, 0.6)'
+                      color: '#FFFFFF'
                     }}
                   >
                     <Info className="w-4 h-4" />
@@ -548,12 +549,12 @@ export const ReportsSection = () => {
         <div className="glass-card p-4 mb-6">
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4" style={{ color: 'rgba(255, 255, 255, 0.7)' }} />
+              <Filter className="w-4 h-4" style={{ color: '#FFFFFF' }} />
               <span className="text-sm font-medium text-foreground">Filtros:</span>
             </div>
             
             <div className="flex items-center gap-2">
-              <label className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Produto:</label>
+              <label className="text-sm" style={{ color: '#FFFFFF' }}>Produto:</label>
               <select 
                 className="input-field py-1.5"
                 value={selectedProduct}
@@ -568,7 +569,7 @@ export const ReportsSection = () => {
 
             {/* Category Filter - shown in detailed mode or always for better UX */}
             <div className="flex items-center gap-2">
-              <label className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Categoria:</label>
+              <label className="text-sm" style={{ color: '#FFFFFF' }}>Categoria:</label>
               <select 
                 className="input-field py-1.5"
                 value={selectedCategory}
@@ -584,7 +585,7 @@ export const ReportsSection = () => {
             {/* Value Range Filter */}
             {viewMode === 'detailed' && (
               <div className="flex items-center gap-2">
-                <label className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Faixa de Valor:</label>
+                <label className="text-sm" style={{ color: '#FFFFFF' }}>Faixa de Valor:</label>
                 <select 
                   className="input-field py-1.5"
                   value={selectedValueRange}
@@ -598,8 +599,8 @@ export const ReportsSection = () => {
             )}
 
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" style={{ color: 'rgba(255, 255, 255, 0.7)' }} />
-              <label className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Período:</label>
+              <Calendar className="w-4 h-4" style={{ color: '#FFFFFF' }} />
+              <label className="text-sm" style={{ color: '#FFFFFF' }}>Período:</label>
               <select 
                 className="input-field py-1.5"
                 value={selectedPeriod}
@@ -626,7 +627,7 @@ export const ReportsSection = () => {
                 <TooltipContent className="max-w-xs">
                   <p><strong>Faturamento:</strong> Valor total das vendas realizadas no período.</p>
                   <p className="mt-1"><strong>Lucro:</strong> Faturamento menos todos os custos (fixos e variáveis).</p>
-                  <p className="mt-2 text-xs" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Clique em um ponto para ver detalhes do mês.</p>
+                  <p className="mt-2 text-xs" style={{ color: '#FFFFFF' }}>Clique em um ponto para ver detalhes do mês.</p>
                 </TooltipContent>
               </UITooltip>
             </div>
@@ -645,11 +646,11 @@ export const ReportsSection = () => {
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis 
                   dataKey="month" 
-                  stroke="hsl(var(--muted-foreground))"
+                  stroke="#FFFFFF"
                   fontSize={12}
                 />
                 <YAxis 
-                  stroke="hsl(var(--muted-foreground))"
+                  stroke="#FFFFFF"
                   fontSize={12}
                   tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
                 />
@@ -714,14 +715,14 @@ export const ReportsSection = () => {
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis 
                   dataKey="name" 
-                  stroke="hsl(var(--muted-foreground))"
+                  stroke="#FFFFFF"
                   fontSize={10}
                   angle={-20}
                   textAnchor="end"
                   height={60}
                 />
                 <YAxis 
-                  stroke="hsl(var(--muted-foreground))"
+                  stroke="#FFFFFF"
                   fontSize={12}
                   tickFormatter={(value) => `${value}%`}
                 />
@@ -792,14 +793,14 @@ export const ReportsSection = () => {
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Mês</th>
-                  <th className="text-right" style={{ color: '#00D1FF', textShadow: '0 0 8px rgba(0, 209, 255, 0.5)' }}>Faturamento</th>
-                  <th className="text-right" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Var.</th>
-                  <th className="text-right" style={{ color: '#39FF14', textShadow: '0 0 8px rgba(57, 255, 20, 0.5)' }}>Lucro</th>
-                  <th className="text-right" style={{ color: '#FFAC00', textShadow: '0 0 8px rgba(255, 172, 0, 0.5)' }}>Margem</th>
-                  <th className="text-right" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Var. Margem</th>
+                  <th className="text-center">Mês</th>
+                  <th className="text-center" style={{ color: '#00D1FF', textShadow: '0 0 8px rgba(0, 209, 255, 0.5)' }}>Faturamento</th>
+                  <th className="text-center" style={{ color: '#FFFFFF' }}>Var.</th>
+                  <th className="text-center" style={{ color: '#39FF14', textShadow: '0 0 8px rgba(57, 255, 20, 0.5)' }}>Lucro</th>
+                  <th className="text-center" style={{ color: '#FFAC00', textShadow: '0 0 8px rgba(255, 172, 0, 0.5)' }}>Margem</th>
+                  <th className="text-center" style={{ color: '#FFFFFF' }}>Var. Margem</th>
                   {viewMode === 'detailed' && (
-                    <th className="text-right" style={{ color: '#BC13FE', textShadow: '0 0 8px rgba(188, 19, 254, 0.5)' }}>Custos (est.)</th>
+                    <th className="text-center" style={{ color: '#BC13FE', textShadow: '0 0 8px rgba(188, 19, 254, 0.5)' }}>Custos (est.)</th>
                   )}
                 </tr>
               </thead>
@@ -836,7 +837,7 @@ export const ReportsSection = () => {
                             {data.revenueVariation >= 0 ? '+' : ''}{data.revenueVariation.toFixed(1)}%
                           </span>
                         ) : (
-                          <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>-</span>
+                          <span style={{ color: '#FFFFFF' }}>-</span>
                         )}
                       </td>
                       {/* Lucro */}
@@ -875,7 +876,7 @@ export const ReportsSection = () => {
                             {data.marginVariation >= 0 ? '+' : ''}{data.marginVariation.toFixed(1)}pp
                           </span>
                         ) : (
-                          <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>-</span>
+                          <span style={{ color: '#FFFFFF' }}>-</span>
                         )}
                       </td>
                       {/* Costs - only in detailed mode */}
@@ -898,40 +899,6 @@ export const ReportsSection = () => {
           </div>
         </div>
 
-        {/* Export Notice */}
-        <div 
-          className="mt-6 p-4 rounded-xl"
-          style={{
-            background: 'rgba(0, 209, 255, 0.05)',
-            border: '1px solid rgba(0, 209, 255, 0.3)',
-            boxShadow: '0 0 15px rgba(0, 209, 255, 0.1), inset 0 0 20px rgba(0, 0, 0, 0.5)'
-          }}
-        >
-          <div className="flex items-center gap-3">
-            <Download 
-              className="w-5 h-5" 
-              style={{ 
-                color: '#00D1FF',
-                filter: 'drop-shadow(0 0 8px #00D1FF)'
-              }} 
-            />
-            <div>
-              <h4 
-                className="font-medium"
-                style={{ 
-                  color: '#00D1FF',
-                  textShadow: '0 0 8px rgba(0, 209, 255, 0.5)'
-                }}
-              >
-                Exportação de Dados
-              </h4>
-              <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-                A funcionalidade de exportação para Excel e PDF será disponibilizada em breve. 
-                Você poderá baixar relatórios completos com todos os filtros aplicados.
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
     </TooltipProvider>
   );
