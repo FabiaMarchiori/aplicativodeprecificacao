@@ -382,6 +382,13 @@ export const Dashboard = () => {
                         <stop offset="0%" stopColor="#BC13FE" stopOpacity={1}/>
                         <stop offset="100%" stopColor="#00D1FF" stopOpacity={1}/>
                       </linearGradient>
+                      <filter id="barHoverGlow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+                        <feMerge>
+                          <feMergeNode in="blur"/>
+                          <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                      </filter>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" horizontal={false} />
                     <XAxis 
@@ -419,6 +426,13 @@ export const Dashboard = () => {
                       fill="url(#marginGradient)"
                       radius={[0, 6, 6, 0]}
                       name="Margem"
+                      activeBar={{
+                        fill: "url(#marginGradient)",
+                        filter: "url(#barHoverGlow)",
+                        fillOpacity: 1,
+                        stroke: "rgba(0, 209, 255, 0.6)",
+                        strokeWidth: 1
+                      }}
                     />
                   </BarChart>
                 </ResponsiveContainer>
@@ -487,6 +501,13 @@ export const Dashboard = () => {
                       fill="url(#profitGradient)"
                       radius={[6, 6, 0, 0]}
                       name="Lucro/Un"
+                      activeBar={{
+                        fill: "url(#profitGradient)",
+                        filter: "url(#barHoverGlow)",
+                        fillOpacity: 1,
+                        stroke: "rgba(188, 19, 254, 0.6)",
+                        strokeWidth: 1
+                      }}
                     />
                   </BarChart>
                 </ResponsiveContainer>
