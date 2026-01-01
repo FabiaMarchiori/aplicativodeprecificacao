@@ -58,6 +58,16 @@ export interface RevenueData {
   profit: number;
 }
 
+export interface PriceHistory {
+  id: string;
+  productId: string;
+  date: string;
+  suggestedPrice: number;
+  appliedPrice: number;
+  margin: number;
+  reason?: string;
+}
+
 export const mockProducts: Product[] = [
   { id: '1', code: 'PRD-001', name: 'Smartphone Galaxy X200', category: 'Eletrônicos', supplier: 'Tech Import Ltda', unit: 'UN', purchaseCost: 1200, variableCost: 45, currentPrice: 2499, status: 'active' },
   { id: '2', code: 'PRD-002', name: 'Fone Bluetooth Premium', category: 'Acessórios', supplier: 'Tech Import Ltda', unit: 'UN', purchaseCost: 85, variableCost: 8, currentPrice: 249, status: 'active' },
@@ -121,6 +131,38 @@ export const mockRevenueData: RevenueData[] = [
   { month: 'Out', revenue: 210000, profit: 63000 },
   { month: 'Nov', revenue: 245000, profit: 78400 },
   { month: 'Dez', revenue: 285000, profit: 91200 },
+];
+
+export const mockPriceHistory: PriceHistory[] = [
+  // Smartphone Galaxy X200
+  { id: '1', productId: '1', date: '2025-09-01', suggestedPrice: 2280, appliedPrice: 2299, margin: 26.5, reason: 'Lançamento' },
+  { id: '2', productId: '1', date: '2025-10-15', suggestedPrice: 2350, appliedPrice: 2399, margin: 27.8, reason: 'Ajuste inflação' },
+  { id: '3', productId: '1', date: '2025-11-20', suggestedPrice: 2420, appliedPrice: 2449, margin: 28.5, reason: 'Black Friday' },
+  { id: '4', productId: '1', date: '2025-12-10', suggestedPrice: 2480, appliedPrice: 2499, margin: 29.2, reason: 'Natal' },
+  { id: '5', productId: '1', date: '2026-01-01', suggestedPrice: 2574, appliedPrice: 2499, margin: 30.0, reason: 'Ano novo' },
+  
+  // Fone Bluetooth Premium
+  { id: '6', productId: '2', date: '2025-09-01', suggestedPrice: 220, appliedPrice: 229, margin: 24.0 },
+  { id: '7', productId: '2', date: '2025-10-15', suggestedPrice: 235, appliedPrice: 239, margin: 26.5 },
+  { id: '8', productId: '2', date: '2025-12-01', suggestedPrice: 245, appliedPrice: 249, margin: 28.0 },
+  
+  // Smart Watch Pro
+  { id: '9', productId: '5', date: '2025-08-01', suggestedPrice: 920, appliedPrice: 949, margin: 25.5 },
+  { id: '10', productId: '5', date: '2025-10-01', suggestedPrice: 965, appliedPrice: 979, margin: 27.0 },
+  { id: '11', productId: '5', date: '2025-12-15', suggestedPrice: 990, appliedPrice: 999, margin: 28.5 },
+  
+  // Tablet Ultra 10"
+  { id: '12', productId: '7', date: '2025-07-01', suggestedPrice: 1750, appliedPrice: 1799, margin: 26.0 },
+  { id: '13', productId: '7', date: '2025-09-15', suggestedPrice: 1820, appliedPrice: 1849, margin: 27.5 },
+  { id: '14', productId: '7', date: '2025-11-30', suggestedPrice: 1880, appliedPrice: 1899, margin: 29.0 },
+  
+  // Mouse Gamer RGB
+  { id: '15', productId: '9', date: '2025-08-15', suggestedPrice: 215, appliedPrice: 229, margin: 25.0 },
+  { id: '16', productId: '9', date: '2025-11-01', suggestedPrice: 240, appliedPrice: 249, margin: 27.5 },
+  
+  // Teclado Mecânico
+  { id: '17', productId: '10', date: '2025-09-01', suggestedPrice: 510, appliedPrice: 529, margin: 26.0 },
+  { id: '18', productId: '10', date: '2025-12-01', suggestedPrice: 535, appliedPrice: 549, margin: 28.0 },
 ];
 
 export const costComposition = [
