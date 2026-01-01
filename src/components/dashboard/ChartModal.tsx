@@ -216,6 +216,13 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
                   <stop offset="0%" stopColor="#FF007A" stopOpacity={1}/>
                   <stop offset="100%" stopColor="#00D1FF" stopOpacity={1}/>
                 </linearGradient>
+                <filter id="barHoverGlowModal" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" horizontal={false} />
               <XAxis 
@@ -252,6 +259,13 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
                 fill="url(#marginGradientModal)"
                 radius={[0, 8, 8, 0]}
                 name="Margem"
+                activeBar={{
+                  fill: "url(#marginGradientModal)",
+                  filter: "url(#barHoverGlowModal)",
+                  fillOpacity: 1,
+                  stroke: "rgba(0, 209, 255, 0.6)",
+                  strokeWidth: 2
+                }}
               />
             </BarChart>
           </ResponsiveContainer>
@@ -303,6 +317,13 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
                 fill="url(#profitGradientModal)"
                 radius={[8, 8, 0, 0]}
                 name="Lucro/Un"
+                activeBar={{
+                  fill: "url(#profitGradientModal)",
+                  filter: "url(#barHoverGlowModal)",
+                  fillOpacity: 1,
+                  stroke: "rgba(188, 19, 254, 0.6)",
+                  strokeWidth: 2
+                }}
               />
             </BarChart>
           </ResponsiveContainer>
