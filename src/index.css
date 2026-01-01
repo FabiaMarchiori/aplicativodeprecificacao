@@ -454,9 +454,9 @@
       0 0 32px rgba(155, 77, 202, 0.15);
   }
 
-  /* KPI Card Text - Softer text hierarchy */
+  /* KPI Card Text - High visibility for beginners */
   .kpi-card .kpi-title {
-    color: hsl(210 10% 55%) !important;
+    color: #FFFFFF !important;
     font-size: clamp(0.7rem, 2vw, 0.8rem);
     font-weight: 500;
     text-transform: uppercase;
@@ -497,8 +497,21 @@
   }
 
   .kpi-card .kpi-subtitle {
-    color: hsl(210 10% 50%) !important;
+    color: rgba(255, 255, 255, 0.85) !important;
     font-size: clamp(0.7rem, 2vw, 0.8rem);
+  }
+
+  /* Product cards (Mais Lucrativo / Menor Margem) - larger min-width */
+  .kpi-card.kpi-cyan,
+  .kpi-card.kpi-purple {
+    min-width: 200px;
+  }
+
+  @media (min-width: 1024px) {
+    .kpi-card.kpi-cyan,
+    .kpi-card.kpi-purple {
+      min-width: 220px;
+    }
   }
 
   .kpi-card .kpi-trend {

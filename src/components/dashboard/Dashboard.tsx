@@ -100,7 +100,7 @@ export const Dashboard = () => {
                 className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full" 
                 style={{ backgroundColor: entry.color, boxShadow: `0 0 4px ${entry.color}50` }}
               />
-              <span className="text-muted-foreground">{entry.name}:</span>
+              <span className="text-white">{entry.name}:</span>
               <span className="font-semibold" style={{ color: entry.color, textShadow: `0 0 6px ${entry.color}40` }}>
                 {formatCurrency(entry.value)}
               </span>
@@ -281,13 +281,15 @@ export const Dashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(220 10% 18%)" />
                     <XAxis 
                       dataKey="month" 
-                      stroke="hsl(210 10% 45%)"
+                      stroke="#FFFFFF"
+                      tick={{ fill: '#FFFFFF' }}
                       fontSize={10}
                       tickLine={false}
                       interval="preserveStartEnd"
                     />
                     <YAxis 
-                      stroke="hsl(210 10% 45%)"
+                      stroke="#FFFFFF"
+                      tick={{ fill: '#FFFFFF' }}
                       fontSize={10}
                       tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
                       tickLine={false}
@@ -352,7 +354,7 @@ export const Dashboard = () => {
                     <Tooltip content={<CustomPieTooltip />} />
                     <Legend 
                       wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
-                      formatter={(value) => <span className="text-foreground font-medium text-xs md:text-sm">{value}</span>}
+                      formatter={(value) => <span style={{ color: '#FFFFFF', fontWeight: 500 }} className="text-xs md:text-sm">{value}</span>}
                     />
                   </PieChart>
                 </ResponsiveContainer>
@@ -384,7 +386,8 @@ export const Dashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" horizontal={false} />
                     <XAxis 
                       type="number" 
-                      stroke="rgba(255,255,255,0.5)"
+                      stroke="#FFFFFF"
+                      tick={{ fill: '#FFFFFF' }}
                       fontSize={10}
                       tickFormatter={(value) => `${value}%`}
                       tickLine={false}
@@ -392,12 +395,12 @@ export const Dashboard = () => {
                     <YAxis 
                       type="category" 
                       dataKey="name" 
-                      stroke="rgba(255,255,255,0.5)"
+                      stroke="#FFFFFF"
                       fontSize={9}
                       width={80}
                       tickLine={false}
                       axisLine={false}
-                      tick={{ fill: 'rgba(255,255,255,0.7)' }}
+                      tick={{ fill: '#FFFFFF' }}
                     />
                     <Tooltip 
                       formatter={(value: number) => [`${value}%`, 'Margem']}
@@ -449,7 +452,8 @@ export const Dashboard = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
                     <XAxis 
                       dataKey="name" 
-                      stroke="rgba(255,255,255,0.5)"
+                      stroke="#FFFFFF"
+                      tick={{ fill: '#FFFFFF' }}
                       fontSize={8}
                       angle={-25}
                       textAnchor="end"
@@ -458,7 +462,8 @@ export const Dashboard = () => {
                       interval={0}
                     />
                     <YAxis 
-                      stroke="rgba(255,255,255,0.5)"
+                      stroke="#FFFFFF"
+                      tick={{ fill: '#FFFFFF' }}
                       fontSize={10}
                       tickFormatter={(value) => `R$${value}`}
                       tickLine={false}
