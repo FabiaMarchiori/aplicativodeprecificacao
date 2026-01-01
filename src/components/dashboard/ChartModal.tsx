@@ -245,6 +245,7 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
                 }}
                 labelStyle={{ color: '#FFFFFF', fontWeight: 600 }}
                 itemStyle={{ color: '#FFFFFF' }}
+                cursor={false}
               />
               <Bar 
                 dataKey="margin" 
@@ -295,6 +296,7 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
                 }}
                 labelStyle={{ color: '#FFFFFF', fontWeight: 600 }}
                 itemStyle={{ color: '#FFFFFF' }}
+                cursor={false}
               />
               <Bar 
                 dataKey="profit" 
