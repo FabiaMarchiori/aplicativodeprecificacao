@@ -25,6 +25,7 @@ export interface Supplier {
 export interface FixedCost {
   id: string;
   type: string;
+  category: 'operational' | 'administrative' | 'personnel' | 'marketing';
   monthlyValue: number;
   allocationPercent: number;
 }
@@ -89,12 +90,12 @@ export const mockSuppliers: Supplier[] = [
 ];
 
 export const mockFixedCosts: FixedCost[] = [
-  { id: '1', type: 'Aluguel', monthlyValue: 8500, allocationPercent: 25 },
-  { id: '2', type: 'Energia Elétrica', monthlyValue: 1200, allocationPercent: 10 },
-  { id: '3', type: 'Funcionários', monthlyValue: 25000, allocationPercent: 40 },
-  { id: '4', type: 'Internet/Telefone', monthlyValue: 450, allocationPercent: 5 },
-  { id: '5', type: 'Marketing', monthlyValue: 3500, allocationPercent: 15 },
-  { id: '6', type: 'Contador', monthlyValue: 800, allocationPercent: 5 },
+  { id: '1', type: 'Aluguel', category: 'operational', monthlyValue: 8500, allocationPercent: 25 },
+  { id: '2', type: 'Energia Elétrica', category: 'operational', monthlyValue: 1200, allocationPercent: 10 },
+  { id: '3', type: 'Funcionários', category: 'personnel', monthlyValue: 25000, allocationPercent: 40 },
+  { id: '4', type: 'Internet/Telefone', category: 'operational', monthlyValue: 450, allocationPercent: 5 },
+  { id: '5', type: 'Marketing', category: 'marketing', monthlyValue: 3500, allocationPercent: 15 },
+  { id: '6', type: 'Contador', category: 'administrative', monthlyValue: 800, allocationPercent: 5 },
 ];
 
 export const mockTaxConfig: TaxConfig = {
