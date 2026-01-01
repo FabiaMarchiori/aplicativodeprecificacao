@@ -356,7 +356,7 @@ export const PricingCalculator = () => {
                 </div>
 
                 {/* Discount Field */}
-                <div className="xl:col-span-2 lg:col-span-2">
+                <div className="xl:col-span-1 lg:col-span-2">
                   <p className="text-xs mb-1" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                     Desconto
                     <TooltipIcon content="Desconto opcional aplicado sobre o preço sugerido" />
@@ -368,17 +368,17 @@ export const PricingCalculator = () => {
                         className="text-sm font-medium w-full rounded-lg transition-all duration-300"
                         style={{
                           background: '#000000',
-                          border: '1px solid rgba(188, 19, 254, 0.3)',
+                          border: '1px solid rgba(255, 172, 0, 0.3)',
                           color: '#F8FAFC',
                           padding: '10px 14px',
                           outline: 'none'
                         }}
                         onFocus={(e) => {
-                          e.currentTarget.style.border = '1px solid #BC13FE';
-                          e.currentTarget.style.boxShadow = '0 0 15px rgba(188, 19, 254, 0.5)';
+                          e.currentTarget.style.border = '1px solid #FFAC00';
+                          e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 172, 0, 0.5)';
                         }}
                         onBlur={(e) => {
-                          e.currentTarget.style.border = '1px solid rgba(188, 19, 254, 0.3)';
+                          e.currentTarget.style.border = '1px solid rgba(255, 172, 0, 0.3)';
                           e.currentTarget.style.boxShadow = 'none';
                         }}
                         value={discount?.amount || ''}
@@ -391,8 +391,8 @@ export const PricingCalculator = () => {
                       className="rounded-lg text-sm px-2 transition-all duration-200"
                       style={{
                         background: '#000000',
-                        border: '1px solid rgba(188, 19, 254, 0.3)',
-                        color: '#BC13FE',
+                        border: '1px solid rgba(255, 172, 0, 0.3)',
+                        color: '#FFAC00',
                         outline: 'none'
                       }}
                       value={discount?.type || 'percent'}
@@ -403,7 +403,7 @@ export const PricingCalculator = () => {
                     </select>
                   </div>
                   {hasDiscount && (
-                    <p className="text-xs mt-1" style={{ color: '#BC13FE' }}>
+                    <p className="text-xs mt-1" style={{ color: '#FFAC00' }}>
                       Final: {formatCurrency(finalPrice)} • Margem: {newMargin.toFixed(1)}%
                     </p>
                   )}
@@ -443,7 +443,7 @@ export const PricingCalculator = () => {
                 </div>
 
                 {/* Results */}
-                <div className="xl:col-span-1 lg:col-span-1 text-right space-y-1">
+                <div className="xl:col-span-2 lg:col-span-1 space-y-1">
                   <p className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                     Lucro/Un
                     <TooltipIcon content="Lucro líquido por unidade vendida, após todos os custos e impostos" />
