@@ -562,12 +562,12 @@ export const FixedCostsTable = () => {
               <div 
                 className="flex items-center gap-1 text-sm px-2 py-1 rounded"
                 style={{ 
-                  background: `${allocationStatus.color}22`,
-                  color: allocationStatus.color, 
-                  textShadow: `0 0 8px ${allocationStatus.color}88`
+                  background: 'rgba(0, 209, 255, 0.15)',
+                  color: '#00D1FF', 
+                  textShadow: '0 0 8px rgba(0, 209, 255, 0.5)'
                 }}
               >
-                <Info className="w-3.5 h-3.5" />
+                <HelpCircle className="w-3.5 h-3.5" />
                 <span>{allocationStatus.type === 'success' ? 'Completo' : allocationStatus.type === 'warning' ? 'Incompleto' : 'Excedido'}</span>
               </div>
             </div>
