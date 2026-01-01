@@ -412,7 +412,7 @@ export const Dashboard = () => {
                       }}
                       labelStyle={{ color: '#FFFFFF', fontWeight: 600 }}
                       itemStyle={{ color: '#FFFFFF' }}
-                      cursor={{ fill: 'rgba(227, 14, 127, 0.2)' }}
+                      cursor={false}
                     />
                     <Bar 
                       dataKey="margin" 
@@ -480,7 +480,7 @@ export const Dashboard = () => {
                       }}
                       labelStyle={{ color: '#FFFFFF', fontWeight: 600 }}
                       itemStyle={{ color: '#FFFFFF' }}
-                      cursor={{ fill: 'rgba(252, 114, 0, 0.25)' }}
+                      cursor={false}
                     />
                     <Bar 
                       dataKey="profit" 
