@@ -396,12 +396,12 @@ export const FixedCostsTable = () => {
               className="flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-all duration-300 text-sm"
               style={{
                 background: 'transparent',
-                border: '1px solid rgba(57, 255, 20, 0.3)',
-                color: '#39FF14',
+                border: '1px solid rgba(0, 209, 255, 0.3)',
+                color: '#00D1FF',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(57, 255, 20, 0.15)';
-                e.currentTarget.style.boxShadow = '0 0 15px rgba(57, 255, 20, 0.4)';
+                e.currentTarget.style.background = 'rgba(0, 209, 255, 0.15)';
+                e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 209, 255, 0.4)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'transparent';
@@ -537,23 +537,23 @@ export const FixedCostsTable = () => {
             className="p-6 rounded-xl"
             style={{
               background: '#000000',
-              border: `1px solid ${allocationStatus.color}`,
-              boxShadow: `0 0 20px ${allocationStatus.color}33, 0 0 40px ${allocationStatus.color}22`
+              border: '1px solid #00D1FF',
+              boxShadow: '0 0 20px rgba(0, 209, 255, 0.2), 0 0 40px rgba(0, 209, 255, 0.15)'
             }}
           >
             <div className="flex items-start justify-between">
               <div>
                 <h3 
                   className="text-sm font-medium mb-1"
-                  style={{ color: allocationStatus.color, textShadow: `0 0 8px ${allocationStatus.color}66` }}
+                  style={{ color: '#00D1FF', textShadow: '0 0 8px rgba(0, 209, 255, 0.4)' }}
                 >
                   Alocação Total
                 </h3>
                 <p 
                   className="text-2xl font-bold mono"
                   style={{ 
-                    color: allocationStatus.color,
-                    textShadow: `0 0 20px ${allocationStatus.color}cc, 0 0 40px ${allocationStatus.color}66`
+                    color: '#00D1FF',
+                    textShadow: '0 0 20px rgba(0, 209, 255, 0.8), 0 0 40px rgba(0, 209, 255, 0.4)'
                   }}
                 >
                   {totalAllocation}%
@@ -903,17 +903,12 @@ export const FixedCostsTable = () => {
                             </span>
                           )}
                         </td>
-                        <td style={{ padding: '16px' }}>
-                          <span 
-                            className="text-xs px-2 py-1 rounded"
-                            style={{ 
-                              background: 'rgba(0, 209, 255, 0.15)',
-                              color: 'rgba(255, 255, 255, 0.8)',
-                              border: '1px solid rgba(0, 209, 255, 0.2)'
-                            }}
-                          >
-                            {categoryLabels[cost.category] || cost.category}
-                          </span>
+                        <td style={{ 
+                          padding: '16px', 
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          fontSize: '14px'
+                        }}>
+                          {categoryLabels[cost.category] || cost.category}
                         </td>
                         <td style={{ 
                           padding: '16px', 
