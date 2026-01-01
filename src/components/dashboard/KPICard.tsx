@@ -82,7 +82,17 @@ export const KPICard = ({
         </div>
         
         <h3 className="kpi-title mb-1 md:mb-2">{title}</h3>
-        <p className="kpi-value mono truncate" title={value}>{value}</p>
+        <p 
+          className="kpi-value mono" 
+          title={value}
+          style={{
+            wordBreak: 'break-word',
+            lineHeight: '1.2',
+            fontSize: value.length > 15 ? 'clamp(0.9rem, 3vw, 1.1rem)' : undefined
+          }}
+        >
+          {value}
+        </p>
         
         {subtitle && (
           <p className="kpi-subtitle mt-1 md:mt-2 truncate" title={subtitle}>{subtitle}</p>
