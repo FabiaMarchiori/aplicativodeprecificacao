@@ -251,27 +251,25 @@ export const Dashboard = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={mockRevenueData}>
                     <defs>
-                      {/* Refined gradient - softer transparency */}
                       <linearGradient id="neonRevenue" x1="0" y1="1" x2="0" y2="0">
-                        <stop offset="0%" stopColor="#0ABCE8" stopOpacity={0}/>
-                        <stop offset="60%" stopColor="#0ABCE8" stopOpacity={0.15}/>
-                        <stop offset="100%" stopColor="#0ABCE8" stopOpacity={0.35}/>
+                        <stop offset="0%" stopColor="#00D1FF" stopOpacity={0}/>
+                        <stop offset="50%" stopColor="#00D1FF" stopOpacity={0.4}/>
+                        <stop offset="100%" stopColor="#00D1FF" stopOpacity={0.8}/>
                       </linearGradient>
                       <linearGradient id="neonProfit" x1="0" y1="1" x2="0" y2="0">
-                        <stop offset="0%" stopColor="#2EAA5C" stopOpacity={0}/>
-                        <stop offset="60%" stopColor="#2EAA5C" stopOpacity={0.15}/>
-                        <stop offset="100%" stopColor="#2EAA5C" stopOpacity={0.35}/>
+                        <stop offset="0%" stopColor="#39FF14" stopOpacity={0}/>
+                        <stop offset="50%" stopColor="#39FF14" stopOpacity={0.4}/>
+                        <stop offset="100%" stopColor="#39FF14" stopOpacity={0.8}/>
                       </linearGradient>
-                      {/* Subtle glow filter for lines */}
                       <filter id="glowCyan" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
                         <feMerge>
                           <feMergeNode in="coloredBlur"/>
                           <feMergeNode in="SourceGraphic"/>
                         </feMerge>
                       </filter>
                       <filter id="glowGreen" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
                         <feMerge>
                           <feMergeNode in="coloredBlur"/>
                           <feMergeNode in="SourceGraphic"/>
@@ -300,8 +298,8 @@ export const Dashboard = () => {
                     <Area
                       type="monotone"
                       dataKey="revenue"
-                      stroke="#0ABCE8"
-                      strokeWidth={2}
+                      stroke="#00D1FF"
+                      strokeWidth={4}
                       fillOpacity={1}
                       fill="url(#neonRevenue)"
                       name="Faturamento"
@@ -310,8 +308,8 @@ export const Dashboard = () => {
                     <Area
                       type="monotone"
                       dataKey="profit"
-                      stroke="#2EAA5C"
-                      strokeWidth={2}
+                      stroke="#39FF14"
+                      strokeWidth={4}
                       fillOpacity={1}
                       fill="url(#neonProfit)"
                       name="Lucro"

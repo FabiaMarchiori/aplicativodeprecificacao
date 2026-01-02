@@ -29,10 +29,10 @@ interface ChartModalProps {
 }
 
 const PIE_COLORS = [
-  '#FF007A',
-  '#39FF14',
-  '#FFAC00',
-  '#00D1FF',
+  '#BC13FE', // Roxo Neon
+  '#39FF14', // Verde Neon
+  '#F29A1B', // Laranja
+  '#0ABCE8', // Ciano
 ];
 
 const formatCurrency = (value: number) => {
@@ -182,26 +182,24 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
                 data={costComposition}
                 cx="50%"
                 cy="50%"
-                innerRadius="35%"
-                outerRadius="65%"
-                paddingAngle={4}
+                innerRadius="40%"
+                outerRadius="70%"
+                paddingAngle={3}
                 dataKey="value"
                 stroke="none"
-                label={({ name, value }) => `${name}: ${value}%`}
-                labelLine={{ stroke: 'rgba(255,255,255,0.3)', strokeWidth: 1 }}
               >
                 {costComposition.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
                     fill={PIE_COLORS[index % PIE_COLORS.length]}
-                    style={{ filter: `drop-shadow(0 0 15px ${PIE_COLORS[index % PIE_COLORS.length]}50)` }}
+                    style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }}
                   />
                 ))}
               </Pie>
               <Tooltip content={<CustomPieTooltip />} />
               <Legend 
                 wrapperStyle={{ fontSize: '14px', paddingTop: '20px' }}
-                formatter={(value) => <span className="text-foreground font-medium">{value}</span>}
+                formatter={(value) => <span style={{ color: '#FFFFFF', fontWeight: 500 }}>{value}</span>}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -213,21 +211,22 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
             <BarChart data={productMargins} layout="vertical">
               <defs>
                 <linearGradient id="marginGradientModal" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#FF007A" stopOpacity={1}/>
+                  <stop offset="0%" stopColor="#BC13FE" stopOpacity={1}/>
                   <stop offset="100%" stopColor="#00D1FF" stopOpacity={1}/>
                 </linearGradient>
                 <filter id="barHoverGlowModal" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
                   <feMerge>
                     <feMergeNode in="blur"/>
                     <feMergeNode in="SourceGraphic"/>
                   </feMerge>
                 </filter>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" horizontal={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" horizontal={false} />
               <XAxis 
                 type="number" 
-                stroke="rgba(255,255,255,0.6)"
+                stroke="#FFFFFF"
+                tick={{ fill: '#FFFFFF' }}
                 fontSize={14}
                 tickFormatter={(value) => `${value}%`}
                 tickLine={false}
@@ -235,20 +234,20 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
               <YAxis 
                 type="category" 
                 dataKey="name" 
-                stroke="rgba(255,255,255,0.6)"
+                stroke="#FFFFFF"
                 fontSize={12}
                 width={120}
                 tickLine={false}
                 axisLine={false}
-                tick={{ fill: 'rgba(255,255,255,0.8)' }}
+                tick={{ fill: '#FFFFFF' }}
               />
               <Tooltip 
                 formatter={(value: number) => [`${value}%`, 'Margem']}
                 contentStyle={{
-                  backgroundColor: 'rgba(0, 0, 0, 0.95)',
-                  border: '1px solid rgba(0, 209, 255, 0.5)',
+                  backgroundColor: 'hsl(234, 35%, 12%)',
+                  border: '1px solid hsl(234, 25%, 28%)',
                   borderRadius: '12px',
-                  boxShadow: '0 0 30px rgba(0, 209, 255, 0.3)',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
                 }}
                 labelStyle={{ color: '#FFFFFF', fontWeight: 600 }}
                 itemStyle={{ color: '#FFFFFF' }}
@@ -257,14 +256,14 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
               <Bar 
                 dataKey="margin" 
                 fill="url(#marginGradientModal)"
-                radius={[0, 8, 8, 0]}
+                radius={[0, 6, 6, 0]}
                 name="Margem"
                 activeBar={{
                   fill: "url(#marginGradientModal)",
                   filter: "url(#barHoverGlowModal)",
                   fillOpacity: 1,
                   stroke: "rgba(0, 209, 255, 0.6)",
-                  strokeWidth: 2
+                  strokeWidth: 1
                 }}
               />
             </BarChart>
@@ -277,21 +276,22 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
             <BarChart data={sortedProfits}>
               <defs>
                 <linearGradient id="profitGradientModal" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#FF007A" stopOpacity={1}/>
+                  <stop offset="0%" stopColor="#BC13FE" stopOpacity={1}/>
                   <stop offset="100%" stopColor="#00D1FF" stopOpacity={1}/>
                 </linearGradient>
                 <filter id="barHoverGlowModal" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
                   <feMerge>
                     <feMergeNode in="blur"/>
                     <feMergeNode in="SourceGraphic"/>
                   </feMerge>
                 </filter>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
               <XAxis 
                 dataKey="name" 
-                stroke="rgba(255,255,255,0.6)"
+                stroke="#FFFFFF"
+                tick={{ fill: '#FFFFFF' }}
                 fontSize={12}
                 angle={-20}
                 textAnchor="end"
@@ -300,7 +300,8 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
                 interval={0}
               />
               <YAxis 
-                stroke="rgba(255,255,255,0.6)"
+                stroke="#FFFFFF"
+                tick={{ fill: '#FFFFFF' }}
                 fontSize={14}
                 tickFormatter={(value) => `R$${value}`}
                 tickLine={false}
@@ -310,10 +311,10 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
               <Tooltip 
                 formatter={(value: number) => [formatCurrency(value), 'Lucro/Un']}
                 contentStyle={{
-                  backgroundColor: 'rgba(0, 0, 0, 0.95)',
-                  border: '1px solid rgba(0, 209, 255, 0.5)',
+                  backgroundColor: 'hsl(234, 35%, 12%)',
+                  border: '1px solid hsl(234, 25%, 28%)',
                   borderRadius: '12px',
-                  boxShadow: '0 0 30px rgba(0, 209, 255, 0.3)',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
                 }}
                 labelStyle={{ color: '#FFFFFF', fontWeight: 600 }}
                 itemStyle={{ color: '#FFFFFF' }}
@@ -322,14 +323,14 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
               <Bar 
                 dataKey="profit" 
                 fill="url(#profitGradientModal)"
-                radius={[8, 8, 0, 0]}
+                radius={[6, 6, 0, 0]}
                 name="Lucro/Un"
                 activeBar={{
                   fill: "url(#profitGradientModal)",
                   filter: "url(#barHoverGlowModal)",
                   fillOpacity: 1,
                   stroke: "rgba(188, 19, 254, 0.6)",
-                  strokeWidth: 2
+                  strokeWidth: 1
                 }}
               />
             </BarChart>
