@@ -191,8 +191,8 @@ export const Dashboard = () => {
 
       {/* KPI Cards */}
       {hasVisibleKPIs && (
-        <div className="pb-2 lg:pb-4 xl:pb-6">
-          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5 lg:gap-6 xl:gap-8">
+        <div className="pb-2 lg:pb-6 xl:pb-8">
+          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5 lg:gap-8 xl:gap-10 2xl:gap-12">
           {config.visibleKPIs.revenue && (
             <KPICard
               title="Faturamento Estimado"
