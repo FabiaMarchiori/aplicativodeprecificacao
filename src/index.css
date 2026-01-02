@@ -514,6 +514,14 @@
     }
   }
 
+  /* KPI value - ensure single line */
+  .kpi-card .kpi-value {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
   .kpi-card .kpi-trend {
     color: hsl(210 20% 90%) !important;
     font-weight: 600;

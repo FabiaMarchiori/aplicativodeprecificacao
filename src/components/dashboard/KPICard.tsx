@@ -86,9 +86,15 @@ export const KPICard = ({
           className="kpi-value mono" 
           title={value}
           style={{
-            wordBreak: 'break-word',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
             lineHeight: '1.2',
-            fontSize: value.length > 15 ? 'clamp(0.9rem, 3vw, 1.1rem)' : undefined
+            fontSize: value.length > 14 
+              ? 'clamp(0.85rem, 2.5vw, 1rem)' 
+              : value.length > 10 
+                ? 'clamp(1rem, 3vw, 1.25rem)' 
+                : undefined
           }}
         >
           {value}
