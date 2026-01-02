@@ -6,12 +6,13 @@ import {
   FixedCost, 
   TaxConfig, 
   Competitor,
+  CompetitorPrice,
   PriceHistory,
   mockProducts, 
   mockSuppliers, 
   mockFixedCosts, 
   mockTaxConfig,
-  mockCompetitors,
+  mockCompetitorPrices,
   mockPriceHistory
 } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
@@ -39,8 +40,11 @@ interface DataContextType {
   taxConfig: TaxConfig;
   updateTaxConfig: (config: TaxConfig) => void;
   
-  // Derived data (read-only)
+  // Competitor prices (user-editable)
   competitors: Competitor[];
+  updateCompetitorPrice: (productId: string, price: number | null) => void;
+  
+  // Price history
   priceHistory: PriceHistory[];
   
   // Utility
@@ -70,6 +74,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const [fixedCosts, setFixedCosts] = useLocalStorage<FixedCost[]>('pricing-app-fixed-costs', mockFixedCosts);
   const [taxConfig, setTaxConfig] = useLocalStorage<TaxConfig>('pricing-app-tax-config', mockTaxConfig);
   const [priceHistory, setPriceHistory] = useLocalStorage<PriceHistory[]>('pricing-app-price-history', mockPriceHistory);
+  const [competitorPrices, setCompetitorPrices] = useLocalStorage<CompetitorPrice[]>('pricing-app-competitor-prices', mockCompetitorPrices);
   
   // Products CRUD
   const addProduct = useCallback((product: Omit<Product, 'id'>) => {
@@ -142,50 +147,52 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     });
   }, [setTaxConfig, toast]);
   
-  // Derived data: Competitors based on current products
+  // Update competitor price (user-editable)
+  const updateCompetitorPrice = useCallback((productId: string, price: number | null) => {
+    setCompetitorPrices(prev => {
+      const existing = prev.find(cp => cp.productId === productId);
+      if (existing) {
+        return prev.map(cp => 
+          cp.productId === productId 
+            ? { ...cp, competitorPrice: price } 
+            : cp
+        );
+      }
+      return [...prev, { id: Date.now().toString(), productId, competitorPrice: price }];
+    });
+  }, [setCompetitorPrices]);
+  
+  // Derived data: Competitors based on current products and user-entered prices
   const competitors = useMemo<Competitor[]>(() => {
     return products
       .filter(p => p.status === 'active')
       .map(product => {
-        // Find existing competitor data or generate mock
-        const existingCompetitor = mockCompetitors.find(c => c.productId === product.id);
+        // Find user-entered competitor price
+        const priceData = competitorPrices.find(cp => cp.productId === product.id);
+        const competitorPrice = priceData?.competitorPrice ?? null;
         
-        if (existingCompetitor) {
-          // Update with current product price
-          const difference = ((product.currentPrice - existingCompetitor.competitorPrice) / existingCompetitor.competitorPrice) * 100;
-          const status: Competitor['status'] = 
-            difference <= 0 ? 'competitive' : 
-            difference <= 10 ? 'attention' : 
-            'above_market';
-          
-          return {
-            ...existingCompetitor,
-            ourPrice: product.currentPrice,
-            productName: product.name,
-            difference: Math.round(difference * 10) / 10,
-            status
-          };
+        // Calculate difference and status only if price is provided
+        let difference = 0;
+        let status: Competitor['status'] = 'competitive';
+        
+        if (competitorPrice !== null && competitorPrice > 0) {
+          difference = ((product.currentPrice - competitorPrice) / competitorPrice) * 100;
+          status = difference <= 0 ? 'competitive' : 
+                   difference <= 5 ? 'attention' : 
+                   'above_market';
         }
-        
-        // Generate new competitor data for new products
-        const competitorPrice = product.currentPrice * (0.9 + Math.random() * 0.2);
-        const difference = ((product.currentPrice - competitorPrice) / competitorPrice) * 100;
-        const status: Competitor['status'] = 
-          difference <= 0 ? 'competitive' : 
-          difference <= 10 ? 'attention' : 
-          'above_market';
         
         return {
           id: `comp-${product.id}`,
           productId: product.id,
           productName: product.name,
-          competitorPrice: Math.round(competitorPrice),
+          competitorPrice,
           ourPrice: product.currentPrice,
           difference: Math.round(difference * 10) / 10,
           status
         };
       });
-  }, [products]);
+  }, [products, competitorPrices]);
   
   // Reset to defaults
   const resetToDefaults = useCallback(() => {
@@ -194,11 +201,12 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     setFixedCosts(mockFixedCosts);
     setTaxConfig(mockTaxConfig);
     setPriceHistory(mockPriceHistory);
+    setCompetitorPrices(mockCompetitorPrices);
     toast({ 
       title: 'Dados restaurados', 
       description: 'Todos os dados foram restaurados para os valores padrão.'
     });
-  }, [setProducts, setSuppliers, setFixedCosts, setTaxConfig, setPriceHistory, toast]);
+  }, [setProducts, setSuppliers, setFixedCosts, setTaxConfig, setPriceHistory, setCompetitorPrices, toast]);
   
   const value: DataContextType = {
     products,
@@ -216,6 +224,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     taxConfig,
     updateTaxConfig,
     competitors,
+    updateCompetitorPrice,
     priceHistory,
     resetToDefaults,
   };
