@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Save, Info, Receipt, CreditCard, Store, MoreHorizontal, Plus, X } from 'lucide-react';
-import { mockTaxConfig, TaxConfig, OtherTax } from '@/data/mockData';
+import { TaxConfig, OtherTax } from '@/data/mockData';
+import { useData } from '@/contexts/DataContext';
 import { useToast } from '@/hooks/use-toast';
 
 // Configuração de cores neon por categoria
@@ -26,18 +27,20 @@ const taxCardConfigs = {
 };
 
 export const TaxesConfig = () => {
-  const [taxes, setTaxes] = useState<TaxConfig>(mockTaxConfig);
+  const { taxConfig, updateTaxConfig } = useData();
+  const [taxes, setTaxes] = useState<TaxConfig>(taxConfig);
   const { toast } = useToast();
+
+  // Sync local state when taxConfig changes from context
+  useEffect(() => {
+    setTaxes(taxConfig);
+  }, [taxConfig]);
 
   const otherFeesTotal = taxes.otherFees.reduce((sum, tax) => sum + tax.percentage, 0);
   const totalTaxes = taxes.salesTax + taxes.marketplaceFee + taxes.cardFee + otherFeesTotal;
 
   const handleSave = () => {
-    toast({ 
-      title: '✓ Configurações salvas com sucesso', 
-      description: 'As taxas foram atualizadas e já estão sendo aplicadas nos cálculos de precificação.',
-      duration: 4000
-    });
+    updateTaxConfig(taxes);
   };
 
   const handleChange = (field: keyof Omit<TaxConfig, 'otherFees'>, value: string) => {
