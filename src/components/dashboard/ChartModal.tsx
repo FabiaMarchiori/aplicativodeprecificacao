@@ -344,7 +344,7 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-4 animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center animate-fade-in"
       style={{
         background: 'rgba(0, 0, 0, 0.95)',
         backdropFilter: 'blur(10px)',
@@ -352,7 +352,7 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-[95vw] h-[85vh] md:h-[90vh] rounded-xl md:rounded-2xl p-4 md:p-6 animate-slide-up"
+        className="relative w-[95vw] h-[90vh] rounded-2xl p-6 animate-slide-up"
         style={{
           background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.98) 0%, rgba(10, 10, 20, 0.98) 100%)',
           border: '1px solid rgba(0, 209, 255, 0.4)',
@@ -361,9 +361,9 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between mb-4 md:mb-6">
+        <div className="flex items-center justify-between mb-6">
           <h2 
-            className="text-lg md:text-2xl font-bold"
+            className="text-2xl font-bold"
             style={{ 
               color: '#F8FAFC',
               textShadow: '0 0 20px rgba(248, 250, 252, 0.4)'
@@ -373,7 +373,7 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
           </h2>
           <button 
             onClick={onClose}
-            className="p-2.5 md:p-3 rounded-lg md:rounded-xl transition-all duration-300 touch-target"
+            className="p-3 rounded-xl transition-all duration-300"
             style={{
               background: 'rgba(0, 209, 255, 0.1)',
               border: '1px solid rgba(0, 209, 255, 0.3)',
@@ -388,7 +388,7 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
             }}
           >
             <X 
-              className="w-5 h-5 md:w-6 md:h-6"
+              className="w-6 h-6"
               style={{ 
                 color: '#00D1FF',
                 filter: 'drop-shadow(0 0 8px rgba(0, 209, 255, 0.8))'

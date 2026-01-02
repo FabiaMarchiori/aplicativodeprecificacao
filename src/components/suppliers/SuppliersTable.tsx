@@ -93,10 +93,10 @@ export const SuppliersTable = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 md:mb-6">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h2 
-            className="text-xl md:text-2xl font-bold"
+            className="text-2xl font-bold"
             style={{ 
               color: '#F8FAFC',
               textShadow: '0 0 10px rgba(248, 250, 252, 0.3)'
@@ -104,11 +104,11 @@ export const SuppliersTable = () => {
           >
             Fornecedores
           </h2>
-          <p className="text-sm md:text-base" style={{ color: '#94a3b8' }}>Gerencie seus fornecedores e custos logísticos</p>
+          <p style={{ color: '#94a3b8' }}>Gerencie seus fornecedores e custos logísticos</p>
         </div>
         <button 
           onClick={() => setIsAdding(true)}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 md:px-5 md:py-2.5 rounded-lg font-medium transition-all duration-300 touch-target"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all duration-300"
           style={{
             background: 'rgba(0, 209, 255, 0.08)',
             border: '1px solid #00D1FF',
@@ -128,7 +128,7 @@ export const SuppliersTable = () => {
           }}
         >
           <Plus className="w-4 h-4" style={{ filter: 'drop-shadow(0 0 4px #00D1FF)' }} />
-          <span className="text-sm md:text-base">Novo Fornecedor</span>
+          Novo Fornecedor
         </button>
       </div>
 
@@ -140,15 +140,15 @@ export const SuppliersTable = () => {
           boxShadow: '0 0 20px rgba(0, 209, 255, 0.2)'
         }}
       >
-        <div className="table-responsive">
+        <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr>
-                <th style={thStyle}>Nome</th>
+                <th style={thStyle}>Nome do Fornecedor</th>
                 <th style={thStyle}>Tipo</th>
-                <th style={{ ...thStyle, textAlign: 'right' }} className="hidden md:table-cell">Prazo (dias)</th>
+                <th style={{ ...thStyle, textAlign: 'right' }}>Prazo Médio (dias)</th>
                 <th style={{ ...thStyle, textAlign: 'right' }}>Custo Logístico</th>
-                <th style={thStyle} className="hidden lg:table-cell">Observações</th>
+                <th style={thStyle}>Observações</th>
                 <th style={{ ...thStyle, textAlign: 'right' }}>Ações</th>
               </tr>
             </thead>

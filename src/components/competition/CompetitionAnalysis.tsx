@@ -40,15 +40,15 @@ export const CompetitionAnalysis = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 md:mb-6">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-xl md:text-2xl font-bold text-foreground">Análise da Concorrência</h2>
-          <p className="text-sm md:text-base text-muted-foreground">Compare seus preços com o mercado</p>
+          <h2 className="text-2xl font-bold text-foreground">Análise da Concorrência</h2>
+          <p className="text-muted-foreground">Compare seus preços com o mercado</p>
         </div>
       </div>
 
       {/* Summary Cards - Premium Style */}
-      <div className="grid grid-cols-1 xs:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         {/* Card Competitivo */}
         <div 
           className="p-4 rounded-xl transition-all duration-300 hover:-translate-y-1"
@@ -155,13 +155,13 @@ export const CompetitionAnalysis = () => {
           boxShadow: '0 0 12px rgba(0, 209, 255, 0.1)'
         }}
       >
-        <div className="table-responsive">
+        <div className="overflow-x-auto">
           <table className="data-table">
             <thead>
               <tr style={{ background: 'transparent' }}>
                 <th style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 6px rgba(0, 209, 255, 0.4)', background: 'transparent' }}>Produto</th>
                 <th className="text-right" style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 6px rgba(0, 209, 255, 0.4)', background: 'transparent' }}>Nosso Preço</th>
-                <th className="text-right hidden md:table-cell" style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 6px rgba(0, 209, 255, 0.4)', background: 'transparent' }}>Preço Concorrente</th>
+                <th className="text-right" style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 6px rgba(0, 209, 255, 0.4)', background: 'transparent' }}>Preço Concorrente</th>
                 <th className="text-right" style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 6px rgba(0, 209, 255, 0.4)', background: 'transparent' }}>Diferença</th>
                 <th style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 6px rgba(0, 209, 255, 0.4)', background: 'transparent' }}>Status</th>
               </tr>
@@ -180,9 +180,9 @@ export const CompetitionAnalysis = () => {
                       borderBottom: '1px solid rgba(0, 209, 255, 0.1)'
                     }}
                   >
-                    <td className="font-medium text-sm md:text-base" style={{ background: 'transparent' }}>{competitor.productName}</td>
-                    <td className="text-right mono text-sm md:text-base" style={{ background: 'transparent', color: '#00D1FF' }}>{formatCurrency(competitor.ourPrice)}</td>
-                    <td className="text-right mono text-sm md:text-base hidden md:table-cell" style={{ background: 'transparent', color: 'rgba(255, 255, 255, 0.5)' }}>{formatCurrency(competitor.competitorPrice)}</td>
+                    <td className="font-medium" style={{ background: 'transparent' }}>{competitor.productName}</td>
+                    <td className="text-right mono" style={{ background: 'transparent', color: '#00D1FF' }}>{formatCurrency(competitor.ourPrice)}</td>
+                    <td className="text-right mono" style={{ background: 'transparent', color: 'rgba(255, 255, 255, 0.5)' }}>{formatCurrency(competitor.competitorPrice)}</td>
                     <td className="text-right" style={{ background: 'transparent' }}>
                       <div className="flex items-center justify-end gap-2">
                         {competitor.difference > 0 ? (
@@ -255,7 +255,7 @@ export const CompetitionAnalysis = () => {
         >
           Legenda de Status
         </h4>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 text-sm">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           {/* LED Verde */}
           <div className="flex items-center gap-3">
             <div 

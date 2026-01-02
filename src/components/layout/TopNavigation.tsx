@@ -81,7 +81,7 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
                 <button
                   key={tab.id}
                   onClick={() => onTabChange(tab.id)}
-                  className="flex items-center gap-1 xs:gap-1.5 md:gap-2 whitespace-nowrap px-2 py-1.5 xs:px-2.5 xs:py-2 md:px-4 md:py-2.5 lg:px-5 text-[10px] xs:text-xs md:text-sm font-semibold transition-all duration-300 rounded-lg md:rounded-xl uppercase tracking-wider touch-target"
+                  className="flex items-center gap-1.5 md:gap-2 whitespace-nowrap px-3 py-2 md:px-4 md:py-2.5 lg:px-5 text-xs md:text-sm font-semibold transition-all duration-300 rounded-lg md:rounded-xl uppercase tracking-wider"
                   style={{
                     background: 'transparent',
                     color: tabColor.color,
@@ -109,12 +109,12 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
                   }}
                 >
                   <Icon 
-                    className="w-4 h-4 flex-shrink-0" 
+                    className="w-4 h-4" 
                     style={{ 
                       filter: isActive ? `drop-shadow(0 0 8px ${tabColor.color})` : `drop-shadow(0 0 4px ${tabColor.glow})`
                     }} 
                   />
-                  <span className="hidden xs:inline">{tab.label}</span>
+                  <span className="hidden md:inline">{tab.label}</span>
                 </button>
               );
             })}

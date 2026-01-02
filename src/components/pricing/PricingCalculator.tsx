@@ -153,10 +153,10 @@ export const PricingCalculator = () => {
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 md:mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
           <h2 
-            className="text-xl md:text-3xl font-bold pb-2 inline-block"
+            className="text-3xl font-bold pb-2 inline-block"
             style={{ 
               color: '#F8FAFC', 
               textShadow: '0 0 10px rgba(248, 250, 252, 0.3)',
@@ -166,38 +166,58 @@ export const PricingCalculator = () => {
           >
             Precificação
           </h2>
-          <p className="text-sm md:text-base" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Calcule o preço ideal para cada produto</p>
+          <p style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Calcule o preço ideal para cada produto em tempo real</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2 md:gap-3">
+        <div className="flex items-center gap-3">
           {/* Export Buttons */}
           <Button
             variant="outline"
             size="sm"
             onClick={exportCSV}
-            className="transition-all duration-200 hover:brightness-110 touch-target text-xs md:text-sm"
+            className="transition-all duration-200 hover:brightness-110"
             style={{
               background: 'rgba(0, 209, 255, 0.1)',
               border: '1px solid rgba(0, 209, 255, 0.3)',
               color: '#00D1FF'
             }}
           >
-            <Download className="w-4 h-4 mr-1 md:mr-2" />
-            <span className="hidden xs:inline">CSV</span>
+            <Download className="w-4 h-4 mr-2" />
+            CSV
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={exportExcel}
-            className="transition-all duration-200 hover:brightness-110 touch-target text-xs md:text-sm"
+            className="transition-all duration-200 hover:brightness-110"
             style={{
               background: 'rgba(57, 255, 20, 0.1)',
               border: '1px solid rgba(57, 255, 20, 0.3)',
               color: '#39FF14'
             }}
           >
-            <FileSpreadsheet className="w-4 h-4 mr-1 md:mr-2" />
-            <span className="hidden xs:inline">Excel</span>
+            <FileSpreadsheet className="w-4 h-4 mr-2" />
+            Excel
           </Button>
+          {/* Tax Badge */}
+          <div 
+            className="flex items-center gap-2 px-4 py-2 rounded-lg"
+            style={{
+              background: 'rgba(0, 209, 255, 0.1)',
+              border: '1px solid rgba(0, 209, 255, 0.3)',
+              boxShadow: '0 0 10px rgba(0, 209, 255, 0.15)'
+            }}
+          >
+            <Calculator 
+              className="w-4 h-4" 
+              style={{ color: '#00D1FF', filter: 'drop-shadow(0 0 3px #00D1FF)' }}
+            />
+            <span 
+              className="text-sm font-semibold"
+              style={{ color: '#00D1FF', textShadow: '0 0 6px rgba(0, 209, 255, 0.4)' }}
+            >
+              Taxa total: {totalTax}%
+            </span>
+          </div>
         </div>
       </div>
 
