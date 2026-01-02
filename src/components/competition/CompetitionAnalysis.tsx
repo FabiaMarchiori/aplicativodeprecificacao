@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import { TrendingUp, TrendingDown, Minus, AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react';
-import { mockCompetitors, Competitor } from '@/data/mockData';
+import { Competitor } from '@/data/mockData';
+import { useData } from '@/contexts/DataContext';
 
 export const CompetitionAnalysis = () => {
-  const [competitors] = useState<Competitor[]>(mockCompetitors);
-
+  const { competitors } = useData();
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };

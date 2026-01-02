@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
 import { Plus, Pencil, Trash2, Check, X, Info, HelpCircle, Download, FileText, Filter, ArrowUpDown } from 'lucide-react';
-import { mockFixedCosts, FixedCost } from '@/data/mockData';
-import { useToast } from '@/hooks/use-toast';
+import { FixedCost } from '@/data/mockData';
+import { useData } from '@/contexts/DataContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 
 // Tooltip Icon Component
 const TooltipIcon = ({ content }: { content: string }) => (
@@ -45,14 +46,18 @@ const categoryLabels: Record<string, string> = {
 };
 
 export const FixedCostsTable = () => {
-  const [costs, setCosts] = useState<FixedCost[]>(mockFixedCosts);
+  const { fixedCosts: costs, addFixedCost, updateFixedCost, deleteFixedCost } = useData();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<Partial<FixedCost>>({});
   const [isAdding, setIsAdding] = useState(false);
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [sortOrder, setSortOrder] = useState<'name' | 'value_desc' | 'value_asc'>('name');
   const [updatedIds, setUpdatedIds] = useState<Set<string>>(new Set());
-  const { toast } = useToast();
+  const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; id: string; name: string }>({
+    isOpen: false,
+    id: '',
+    name: ''
+  });
 
   const totalCosts = costs.reduce((sum, c) => sum + c.monthlyValue, 0);
   const totalAllocation = costs.reduce((sum, c) => sum + c.allocationPercent, 0);

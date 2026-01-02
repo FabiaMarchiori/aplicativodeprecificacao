@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Plus, Pencil, Trash2, Check, X, HelpCircle, Filter } from 'lucide-react';
-import { mockProducts, Product } from '@/data/mockData';
-import { useToast } from '@/hooks/use-toast';
+import { Product } from '@/data/mockData';
+import { useData } from '@/contexts/DataContext';
 import {
   Tooltip,
   TooltipContent,
@@ -15,13 +15,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 
 export const ProductsTable = () => {
-  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const { products, addProduct, updateProduct, deleteProduct } = useData();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<Partial<Product>>({});
   const [isAdding, setIsAdding] = useState(false);
-  const { toast } = useToast();
+  const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; id: string; name: string }>({
+    isOpen: false,
+    id: '',
+    name: ''
+  });
 
   // Filter states
   const [filterCategory, setFilterCategory] = useState<string>('all');
@@ -71,10 +76,7 @@ export const ProductsTable = () => {
 
   const handleSave = () => {
     if (editingId) {
-      setProducts(products.map(p => 
-        p.id === editingId ? { ...p, ...editData } as Product : p
-      ));
-      toast({ title: 'Produto atualizado', description: 'As alterações foram salvas.' });
+      updateProduct(editingId, editData);
     }
     setEditingId(null);
     setEditData({});
@@ -86,14 +88,17 @@ export const ProductsTable = () => {
     setIsAdding(false);
   };
 
-  const handleDelete = (id: string) => {
-    setProducts(products.filter(p => p.id !== id));
-    toast({ title: 'Produto excluído', variant: 'destructive' });
+  const handleDeleteClick = (id: string, name: string) => {
+    setDeleteDialog({ isOpen: true, id, name });
+  };
+
+  const handleDeleteConfirm = () => {
+    deleteProduct(deleteDialog.id);
+    setDeleteDialog({ isOpen: false, id: '', name: '' });
   };
 
   const handleAddNew = () => {
-    const newProduct: Product = {
-      id: Date.now().toString(),
+    const newProduct = {
       code: `PRD-${String(products.length + 1).padStart(3, '0')}`,
       name: editData.name || 'Novo Produto',
       category: editData.category || 'Geral',
@@ -102,12 +107,11 @@ export const ProductsTable = () => {
       purchaseCost: editData.purchaseCost || 0,
       variableCost: editData.variableCost || 0,
       currentPrice: editData.currentPrice || 0,
-      status: 'active',
+      status: 'active' as const,
     };
-    setProducts([...products, newProduct]);
+    addProduct(newProduct);
     setIsAdding(false);
     setEditData({});
-    toast({ title: 'Produto adicionado', description: 'Novo produto cadastrado com sucesso.' });
   };
 
   // Neon input style helper
@@ -432,8 +436,7 @@ export const ProductsTable = () => {
                           background: 'transparent',
                           border: '1px solid #39FF14',
                           color: '#39FF14',
-                          boxShadow: '0 0 10px rgba(57, 255, 20, 0.4), inset 0 0 8px rgba(57, 255, 20, 0.1)',
-                          textShadow: '0 0 8px rgba(57, 255, 20, 0.6)'
+                          boxShadow: '0 0 10px rgba(57, 255, 20, 0.4)',
                         }}
                       >
                         Ativo
@@ -490,19 +493,23 @@ export const ProductsTable = () => {
                       borderBottom: '1px solid rgba(0, 209, 255, 0.1)'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(0, 209, 255, 0.05)';
-                      e.currentTarget.style.borderLeft = '3px solid #00D1FF';
-                      e.currentTarget.style.boxShadow = 'inset 0 0 30px rgba(0, 209, 255, 0.08), -5px 0 15px rgba(0, 209, 255, 0.3)';
+                      if (editingId !== product.id) {
+                        e.currentTarget.style.background = 'rgba(0, 209, 255, 0.05)';
+                        e.currentTarget.style.borderLeft = '3px solid #00D1FF';
+                        e.currentTarget.style.boxShadow = 'inset 0 0 30px rgba(0, 209, 255, 0.08)';
+                      }
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'transparent';
-                      e.currentTarget.style.borderLeft = 'none';
-                      e.currentTarget.style.boxShadow = 'none';
+                      if (editingId !== product.id) {
+                        e.currentTarget.style.background = 'transparent';
+                        e.currentTarget.style.borderLeft = 'none';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }
                     }}
                   >
                     {editingId === product.id ? (
                       <>
-                        <td style={{ padding: '16px', color: '#00D1FF', fontFamily: 'monospace' }}>{product.code}</td>
+                        <td style={{ padding: '16px', color: 'rgba(0, 209, 255, 0.8)' }}>{product.code}</td>
                         <td style={{ padding: '16px' }}>
                           <input
                             type="text"
@@ -575,8 +582,11 @@ export const ProductsTable = () => {
                         </td>
                         <td style={{ padding: '16px' }}>
                           <select
-                            style={{ ...neonInputStyle, cursor: 'pointer' }}
-                            value={editData.status || ''}
+                            style={{
+                              ...neonInputStyle,
+                              width: '100px',
+                            }}
+                            value={editData.status || 'active'}
                             onChange={(e) => setEditData({ ...editData, status: e.target.value as 'active' | 'inactive' })}
                             onFocus={handleInputFocus}
                             onBlur={handleInputBlur}
@@ -628,21 +638,31 @@ export const ProductsTable = () => {
                       </>
                     ) : (
                       <>
-                        <td style={{ padding: '16px', color: '#00D1FF', fontFamily: 'monospace', fontSize: '14px' }}>{product.code}</td>
-                        <td style={{ padding: '16px', color: '#F8FAFC', fontWeight: '500' }}>{product.name}</td>
-                        <td style={{ padding: '16px', color: 'rgba(255, 255, 255, 0.75)' }}>{product.category}</td>
-                        <td style={{ padding: '16px', color: 'rgba(255, 255, 255, 0.75)' }}>{product.supplier}</td>
-                        <td style={{ padding: '16px', color: 'rgba(255, 255, 255, 0.75)' }}>{product.unit}</td>
-                        <td style={{ padding: '16px', color: '#F8FAFC', textAlign: 'right', fontFamily: 'monospace' }}>{formatCurrency(product.purchaseCost)}</td>
-                        <td style={{ padding: '16px', color: '#F8FAFC', textAlign: 'right', fontFamily: 'monospace' }}>{formatCurrency(product.variableCost)}</td>
-                        <td style={{ 
-                          padding: '16px', 
-                          color: '#39FF14', 
-                          textAlign: 'right', 
-                          fontFamily: 'monospace',
-                          fontWeight: '600',
-                          textShadow: '0 0 15px rgba(57, 255, 20, 0.8), 0 0 30px rgba(57, 255, 20, 0.4)'
-                        }}>
+                        <td 
+                          style={{ 
+                            color: '#00D1FF', 
+                            padding: '16px',
+                            textShadow: '0 0 8px rgba(0, 209, 255, 0.4)'
+                          }}
+                        >
+                          {product.code}
+                        </td>
+                        <td style={{ color: '#F8FAFC', padding: '16px', fontWeight: '500' }}>{product.name}</td>
+                        <td style={{ color: 'rgba(255, 255, 255, 0.7)', padding: '16px' }}>{product.category}</td>
+                        <td style={{ color: 'rgba(255, 255, 255, 0.7)', padding: '16px' }}>{product.supplier}</td>
+                        <td style={{ color: 'rgba(255, 255, 255, 0.7)', padding: '16px' }}>{product.unit}</td>
+                        <td style={{ color: '#F8FAFC', padding: '16px', textAlign: 'right', fontFamily: 'monospace' }}>{formatCurrency(product.purchaseCost)}</td>
+                        <td style={{ color: '#F8FAFC', padding: '16px', textAlign: 'right', fontFamily: 'monospace' }}>{formatCurrency(product.variableCost)}</td>
+                        <td 
+                          style={{ 
+                            color: '#39FF14', 
+                            padding: '16px', 
+                            textAlign: 'right', 
+                            fontFamily: 'monospace',
+                            fontWeight: '600',
+                            textShadow: '0 0 8px rgba(57, 255, 20, 0.5)'
+                          }}
+                        >
                           {formatCurrency(product.currentPrice)}
                         </td>
                         <td style={{ padding: '16px' }}>
@@ -679,33 +699,35 @@ export const ProductsTable = () => {
                             <button 
                               onClick={() => handleEdit(product)} 
                               className="p-2 rounded-lg transition-all duration-300"
-                              style={{ color: 'rgba(248, 250, 252, 0.4)' }}
+                              style={{ 
+                                color: '#00D1FF',
+                                filter: 'drop-shadow(0 0 4px #00D1FF)'
+                              }}
                               onMouseEnter={(e) => {
-                                e.currentTarget.style.color = '#00D1FF';
-                                e.currentTarget.style.filter = 'drop-shadow(0 0 8px #00D1FF)';
-                                e.currentTarget.style.background = 'rgba(0, 209, 255, 0.1)';
+                                e.currentTarget.style.background = 'rgba(0, 209, 255, 0.15)';
+                                e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 209, 255, 0.5)';
                               }}
                               onMouseLeave={(e) => {
-                                e.currentTarget.style.color = 'rgba(248, 250, 252, 0.4)';
-                                e.currentTarget.style.filter = 'none';
                                 e.currentTarget.style.background = 'transparent';
+                                e.currentTarget.style.boxShadow = 'none';
                               }}
                             >
                               <Pencil className="w-4 h-4" />
                             </button>
                             <button 
-                              onClick={() => handleDelete(product.id)} 
+                              onClick={() => handleDeleteClick(product.id, product.name)} 
                               className="p-2 rounded-lg transition-all duration-300"
-                              style={{ color: 'rgba(248, 250, 252, 0.4)' }}
+                              style={{ 
+                                color: '#FF007A',
+                                filter: 'drop-shadow(0 0 4px #FF007A)'
+                              }}
                               onMouseEnter={(e) => {
-                                e.currentTarget.style.color = '#FF007A';
-                                e.currentTarget.style.filter = 'drop-shadow(0 0 8px #FF007A)';
-                                e.currentTarget.style.background = 'rgba(255, 0, 122, 0.1)';
+                                e.currentTarget.style.background = 'rgba(255, 0, 122, 0.15)';
+                                e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 0, 122, 0.5)';
                               }}
                               onMouseLeave={(e) => {
-                                e.currentTarget.style.color = 'rgba(248, 250, 252, 0.4)';
-                                e.currentTarget.style.filter = 'none';
                                 e.currentTarget.style.background = 'transparent';
+                                e.currentTarget.style.boxShadow = 'none';
                               }}
                             >
                               <Trash2 className="w-4 h-4" />
@@ -720,6 +742,13 @@ export const ProductsTable = () => {
             </table>
           </div>
         </div>
+
+        <DeleteConfirmDialog
+          isOpen={deleteDialog.isOpen}
+          onClose={() => setDeleteDialog({ isOpen: false, id: '', name: '' })}
+          onConfirm={handleDeleteConfirm}
+          itemName={deleteDialog.name}
+        />
       </div>
     </TooltipProvider>
   );
