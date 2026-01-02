@@ -1,18 +1,18 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { 
   Calculator, TrendingUp, TrendingDown, Info, Download, FileSpreadsheet, 
   Clock, Smartphone, Headphones, Volume2, Mouse, Watch, Tablet, Cable, Battery
 } from 'lucide-react';
-import { mockProducts, mockFixedCosts, mockTaxConfig, mockPriceHistory, calculatePricing, Product } from '@/data/mockData';
+import { calculatePricing, Product } from '@/data/mockData';
+import { useData } from '@/contexts/DataContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { PriceHistoryModal } from './PriceHistoryModal';
 
 export const PricingCalculator = () => {
-  const [products] = useState(mockProducts.filter(p => p.status === 'active'));
-  const [margins, setMargins] = useState<Record<string, number>>(
-    Object.fromEntries(products.map(p => [p.id, 30]))
-  );
+  const { products: allProducts, fixedCosts, taxConfig } = useData();
+  const products = useMemo(() => allProducts.filter(p => p.status === 'active'), [allProducts]);
+  const [margins, setMargins] = useState<Record<string, number>>({});
   const [discounts, setDiscounts] = useState<Record<string, { type: 'percent' | 'value', amount: number }>>({});
   const [historyModal, setHistoryModal] = useState<{ isOpen: boolean; product: Product | null }>({
     isOpen: false,
@@ -33,7 +33,7 @@ export const PricingCalculator = () => {
 
   const getPricingData = (product: Product) => {
     const desiredMargin = margins[product.id] || 30;
-    return calculatePricing(product, mockFixedCosts, mockTaxConfig, desiredMargin);
+    return calculatePricing(product, fixedCosts, taxConfig, desiredMargin);
   };
 
   const getDiscountedPrice = (suggestedPrice: number, productId: string) => {
@@ -69,8 +69,8 @@ export const PricingCalculator = () => {
     return { color: '#BC13FE', glow: 'rgba(188, 19, 254, 0.2)', label: 'Crítico' };
   };
 
-  const otherFeesTotal = mockTaxConfig.otherFees.reduce((sum, tax) => sum + tax.percentage, 0);
-  const totalTax = (mockTaxConfig.salesTax + mockTaxConfig.marketplaceFee + mockTaxConfig.cardFee + otherFeesTotal).toFixed(1);
+  const otherFeesTotal = taxConfig.otherFees.reduce((sum, tax) => sum + tax.percentage, 0);
+  const totalTax = (taxConfig.salesTax + taxConfig.marketplaceFee + taxConfig.cardFee + otherFeesTotal).toFixed(1);
 
   const exportCSV = () => {
     const headers = ['Código', 'Produto', 'Categoria', 'Custo Total', 'Impostos', 'Margem %', 'Preço Sugerido', 'Lucro/Un'];

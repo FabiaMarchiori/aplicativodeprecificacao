@@ -1,14 +1,19 @@
 import { useState } from 'react';
 import { Plus, Pencil, Trash2, Check, X, Globe, MapPin } from 'lucide-react';
-import { mockSuppliers, Supplier } from '@/data/mockData';
-import { useToast } from '@/hooks/use-toast';
+import { Supplier } from '@/data/mockData';
+import { useData } from '@/contexts/DataContext';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 
 export const SuppliersTable = () => {
-  const [suppliers, setSuppliers] = useState<Supplier[]>(mockSuppliers);
+  const { suppliers, addSupplier, updateSupplier, deleteSupplier } = useData();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<Partial<Supplier>>({});
   const [isAdding, setIsAdding] = useState(false);
-  const { toast } = useToast();
+  const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; id: string; name: string }>({
+    isOpen: false,
+    id: '',
+    name: ''
+  });
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
@@ -21,10 +26,7 @@ export const SuppliersTable = () => {
 
   const handleSave = () => {
     if (editingId) {
-      setSuppliers(suppliers.map(s => 
-        s.id === editingId ? { ...s, ...editData } as Supplier : s
-      ));
-      toast({ title: 'Fornecedor atualizado' });
+      updateSupplier(editingId, editData);
     }
     setEditingId(null);
     setEditData({});
@@ -36,24 +38,26 @@ export const SuppliersTable = () => {
     setIsAdding(false);
   };
 
-  const handleDelete = (id: string) => {
-    setSuppliers(suppliers.filter(s => s.id !== id));
-    toast({ title: 'Fornecedor excluído', variant: 'destructive' });
+  const handleDeleteClick = (id: string, name: string) => {
+    setDeleteDialog({ isOpen: true, id, name });
+  };
+
+  const handleDeleteConfirm = () => {
+    deleteSupplier(deleteDialog.id);
+    setDeleteDialog({ isOpen: false, id: '', name: '' });
   };
 
   const handleAddNew = () => {
-    const newSupplier: Supplier = {
-      id: Date.now().toString(),
+    const newSupplier = {
       name: editData.name || 'Novo Fornecedor',
-      type: editData.type || 'national',
+      type: editData.type || 'national' as const,
       averageDeliveryDays: editData.averageDeliveryDays || 0,
       averageLogisticsCost: editData.averageLogisticsCost || 0,
       notes: editData.notes || '',
     };
-    setSuppliers([...suppliers, newSupplier]);
+    addSupplier(newSupplier);
     setIsAdding(false);
     setEditData({});
-    toast({ title: 'Fornecedor adicionado' });
   };
 
   // Neon input styles with focus effects
@@ -399,70 +403,76 @@ export const SuppliersTable = () => {
                             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium"
                             style={{
                               background: 'transparent',
-                              border: '1px solid #FFAC00',
-                              color: '#FFAC00',
-                              boxShadow: '0 0 12px rgba(255, 172, 0, 0.5), inset 0 0 10px rgba(255, 172, 0, 0.15)',
-                              textShadow: '0 0 10px rgba(255, 172, 0, 0.7)'
+                              border: '1px solid #BC13FE',
+                              color: '#BC13FE',
+                              boxShadow: '0 0 10px rgba(188, 19, 254, 0.4), inset 0 0 8px rgba(188, 19, 254, 0.1)',
+                              textShadow: '0 0 8px rgba(188, 19, 254, 0.6)'
                             }}
                           >
-                            <Globe className="w-3 h-3" style={{ filter: 'drop-shadow(0 0 5px #FFAC00)' }} />
+                            <Globe className="w-3 h-3" style={{ filter: 'drop-shadow(0 0 4px #BC13FE)' }} />
                             Importado
                           </span>
                         )}
                       </td>
-                      <td style={{ 
-                        color: '#00D1FF', 
-                        textAlign: 'right',
-                        padding: '16px',
-                        textShadow: '0 0 6px rgba(0, 209, 255, 0.4)',
-                        fontFamily: 'monospace'
-                      }}>
+                      <td 
+                        style={{ 
+                          color: '#00D1FF', 
+                          padding: '16px', 
+                          textAlign: 'right',
+                          fontFamily: 'monospace',
+                          textShadow: '0 0 6px rgba(0, 209, 255, 0.4)'
+                        }}
+                      >
                         {supplier.averageDeliveryDays} dias
                       </td>
-                      <td style={{ 
-                        color: '#39FF14', 
-                        textAlign: 'right',
-                        padding: '16px',
-                        textShadow: '0 0 8px rgba(57, 255, 20, 0.5)',
-                        fontFamily: 'monospace'
-                      }}>
+                      <td 
+                        style={{ 
+                          color: '#FFAC00', 
+                          padding: '16px', 
+                          textAlign: 'right',
+                          fontFamily: 'monospace',
+                          textShadow: '0 0 6px rgba(255, 172, 0, 0.4)'
+                        }}
+                      >
                         {formatCurrency(supplier.averageLogisticsCost)}
                       </td>
-                      <td style={{ color: '#64748b', padding: '16px', maxWidth: '200px' }} className="truncate">
-                        {supplier.notes}
+                      <td style={{ color: 'rgba(255, 255, 255, 0.6)', padding: '16px', maxWidth: '200px' }}>
+                        <span className="truncate block">{supplier.notes}</span>
                       </td>
                       <td style={{ padding: '16px', textAlign: 'right' }}>
                         <div className="flex items-center justify-end gap-2">
                           <button 
                             onClick={() => handleEdit(supplier)} 
                             className="p-2 rounded-lg transition-all duration-300"
-                            style={{ color: 'rgba(248, 250, 252, 0.4)' }}
+                            style={{ 
+                              color: '#00D1FF',
+                              filter: 'drop-shadow(0 0 4px #00D1FF)'
+                            }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.color = '#00D1FF';
-                              e.currentTarget.style.filter = 'drop-shadow(0 0 8px #00D1FF)';
-                              e.currentTarget.style.background = 'rgba(0, 209, 255, 0.1)';
+                              e.currentTarget.style.background = 'rgba(0, 209, 255, 0.15)';
+                              e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 209, 255, 0.5)';
                             }}
                             onMouseLeave={(e) => {
-                              e.currentTarget.style.color = 'rgba(248, 250, 252, 0.4)';
-                              e.currentTarget.style.filter = 'none';
                               e.currentTarget.style.background = 'transparent';
+                              e.currentTarget.style.boxShadow = 'none';
                             }}
                           >
                             <Pencil className="w-4 h-4" />
                           </button>
                           <button 
-                            onClick={() => handleDelete(supplier.id)} 
+                            onClick={() => handleDeleteClick(supplier.id, supplier.name)} 
                             className="p-2 rounded-lg transition-all duration-300"
-                            style={{ color: 'rgba(248, 250, 252, 0.4)' }}
+                            style={{ 
+                              color: '#FF007A',
+                              filter: 'drop-shadow(0 0 4px #FF007A)'
+                            }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.color = '#FF007A';
-                              e.currentTarget.style.filter = 'drop-shadow(0 0 8px #FF007A)';
-                              e.currentTarget.style.background = 'rgba(255, 0, 122, 0.1)';
+                              e.currentTarget.style.background = 'rgba(255, 0, 122, 0.15)';
+                              e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 0, 122, 0.5)';
                             }}
                             onMouseLeave={(e) => {
-                              e.currentTarget.style.color = 'rgba(248, 250, 252, 0.4)';
-                              e.currentTarget.style.filter = 'none';
                               e.currentTarget.style.background = 'transparent';
+                              e.currentTarget.style.boxShadow = 'none';
                             }}
                           >
                             <Trash2 className="w-4 h-4" />
@@ -477,6 +487,13 @@ export const SuppliersTable = () => {
           </table>
         </div>
       </div>
+
+      <DeleteConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={() => setDeleteDialog({ isOpen: false, id: '', name: '' })}
+        onConfirm={handleDeleteConfirm}
+        itemName={deleteDialog.name}
+      />
     </div>
   );
 };
