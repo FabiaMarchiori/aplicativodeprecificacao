@@ -155,10 +155,10 @@ export const ProductsTable = () => {
   return (
     <TooltipProvider>
       <div className="animate-fade-in">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 md:mb-6">
           <div>
             <h2 
-              className="text-2xl font-bold"
+              className="text-xl md:text-2xl font-bold"
               style={{ 
                 color: '#F8FAFC',
                 textShadow: '0 0 10px rgba(248, 250, 252, 0.3)'
@@ -166,11 +166,11 @@ export const ProductsTable = () => {
             >
               Cadastro de Produtos
             </h2>
-            <p style={{ color: 'rgba(255, 255, 255, 0.75)' }}>Gerencie seus produtos e custos</p>
+            <p className="text-sm md:text-base" style={{ color: 'rgba(255, 255, 255, 0.75)' }}>Gerencie seus produtos e custos</p>
           </div>
           <button 
             onClick={() => setIsAdding(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all duration-300"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 md:px-5 md:py-2.5 rounded-lg font-medium transition-all duration-300 touch-target"
             style={{
               background: 'rgba(0, 209, 255, 0.08)',
               border: '1px solid #00D1FF',
@@ -190,27 +190,27 @@ export const ProductsTable = () => {
             }}
           >
             <Plus className="w-4 h-4" style={{ filter: 'drop-shadow(0 0 4px #00D1FF)' }} />
-            Novo Produto
+            <span className="text-sm md:text-base">Novo Produto</span>
           </button>
         </div>
 
         {/* Quick Filters */}
         <div 
-          className="flex items-center gap-4 mb-4 p-3 rounded-lg"
+          className="flex flex-wrap items-center gap-2 md:gap-4 mb-4 p-3 rounded-lg"
           style={{
             background: 'rgba(0, 0, 0, 0.4)',
             border: '1px solid rgba(0, 209, 255, 0.15)',
           }}
         >
-          <div className="flex items-center gap-2" style={{ color: 'rgba(0, 209, 255, 0.7)' }}>
+          <div className="flex items-center gap-2 w-full xs:w-auto" style={{ color: 'rgba(0, 209, 255, 0.7)' }}>
             <Filter className="w-4 h-4" />
             <span className="text-sm font-medium">Filtros:</span>
           </div>
 
-          <div className="flex items-center gap-3 flex-1">
+          <div className="flex flex-wrap items-center gap-2 md:gap-3 flex-1">
             <Select value={filterCategory} onValueChange={setFilterCategory}>
               <SelectTrigger 
-                className="w-[160px] h-9 text-sm"
+                className="w-full xs:w-[140px] md:w-[160px] h-10 md:h-9 text-sm"
                 style={{
                   ...filterSelectStyle,
                   color: filterCategory !== 'all' ? '#00D1FF' : 'rgba(255, 255, 255, 0.7)',
@@ -228,7 +228,7 @@ export const ProductsTable = () => {
 
             <Select value={filterStatus} onValueChange={setFilterStatus}>
               <SelectTrigger 
-                className="w-[140px] h-9 text-sm"
+                className="w-[calc(50%-0.25rem)] xs:w-[120px] md:w-[140px] h-10 md:h-9 text-sm"
                 style={{
                   ...filterSelectStyle,
                   color: filterStatus !== 'all' ? '#00D1FF' : 'rgba(255, 255, 255, 0.7)',
@@ -245,7 +245,7 @@ export const ProductsTable = () => {
 
             <Select value={filterSupplier} onValueChange={setFilterSupplier}>
               <SelectTrigger 
-                className="w-[160px] h-9 text-sm"
+                className="w-[calc(50%-0.25rem)] xs:w-[140px] md:w-[160px] h-10 md:h-9 text-sm hidden md:flex"
                 style={{
                   ...filterSelectStyle,
                   color: filterSupplier !== 'all' ? '#00D1FF' : 'rgba(255, 255, 255, 0.7)',
@@ -297,20 +297,20 @@ export const ProductsTable = () => {
             boxShadow: '0 0 20px rgba(0, 209, 255, 0.2)'
           }}
         >
-          <div className="overflow-x-auto">
+          <div className="table-responsive">
             <table className="w-full">
               <thead>
                 <tr>
-                  <th style={thStyle}>Código</th>
+                  <th style={thStyle} className="hidden md:table-cell">Código</th>
                   <th style={thStyle}>Nome</th>
-                  <th style={thStyle}>Categoria</th>
-                  <th style={thStyle}>Fornecedor</th>
-                  <th style={thStyle}>Unidade</th>
-                  <th style={{ ...thStyle, textAlign: 'right' }}>Custo Compra</th>
-                  <th style={{ ...thStyle, textAlign: 'right' }}>Custo Variável</th>
+                  <th style={thStyle} className="hidden lg:table-cell">Categoria</th>
+                  <th style={thStyle} className="hidden xl:table-cell">Fornecedor</th>
+                  <th style={thStyle} className="hidden xl:table-cell">Unidade</th>
+                  <th style={{ ...thStyle, textAlign: 'right' }}>Custo</th>
+                  <th style={{ ...thStyle, textAlign: 'right' }} className="hidden lg:table-cell">Custo Variável</th>
                   <th style={{ ...thStyle, textAlign: 'right' }}>
                     <div className="flex items-center justify-end gap-1.5">
-                      <span>Preço Venda</span>
+                      <span>Preço</span>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button className="focus:outline-none">

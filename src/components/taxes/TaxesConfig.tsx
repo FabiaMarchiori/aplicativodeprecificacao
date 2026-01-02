@@ -144,10 +144,10 @@ export const TaxesConfig = () => {
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 md:mb-6">
         <div>
           <h2 
-            className="text-2xl font-bold"
+            className="text-xl md:text-2xl font-bold"
             style={{ 
               color: '#F8FAFC',
               textShadow: '0 0 10px rgba(248, 250, 252, 0.3)'
@@ -155,14 +155,14 @@ export const TaxesConfig = () => {
           >
             Impostos & Taxas
           </h2>
-          <p style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Configure as alíquotas aplicadas sobre vendas</p>
-          <p className="text-sm mt-1" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+          <p className="text-sm md:text-base" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Configure as alíquotas aplicadas sobre vendas</p>
+          <p className="text-xs md:text-sm mt-1 hidden sm:block" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
             Estas taxas são usadas como base nos cálculos de precificação e podem ser ajustadas conforme seu modelo de negócio.
           </p>
         </div>
         <button 
           onClick={handleSave} 
-          className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all duration-300"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 md:px-6 md:py-2.5 rounded-lg font-medium transition-all duration-300 touch-target"
           style={{
             background: 'rgba(0, 209, 255, 0.1)',
             border: '1px solid rgba(0, 209, 255, 0.4)',
@@ -182,7 +182,7 @@ export const TaxesConfig = () => {
             className="w-4 h-4" 
             style={{ filter: 'drop-shadow(0 0 3px #00D1FF)' }}
           />
-          Salvar Alterações
+          <span className="text-sm md:text-base">Salvar Alterações</span>
         </button>
       </div>
 
@@ -225,7 +225,7 @@ export const TaxesConfig = () => {
       </div>
 
       {/* Tax Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6">
         {renderTaxCard('salesTax')}
         {renderTaxCard('marketplaceFee')}
         {renderTaxCard('cardFee')}
