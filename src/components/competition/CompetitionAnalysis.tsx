@@ -48,7 +48,7 @@ export const CompetitionAnalysis = () => {
       </div>
 
       {/* Summary Cards - Premium Style */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-6">
         {/* Card Competitivo */}
         <div 
           className="p-4 rounded-xl transition-all duration-300 hover:-translate-y-1"
@@ -155,8 +155,8 @@ export const CompetitionAnalysis = () => {
           boxShadow: '0 0 12px rgba(0, 209, 255, 0.1)'
         }}
       >
-        <div className="overflow-x-auto">
-          <table className="data-table">
+        <div className="overflow-x-auto -mx-1 px-1 md:mx-0 md:px-0">
+          <table className="data-table min-w-[600px] md:min-w-0">
             <thead>
               <tr style={{ background: 'transparent' }}>
                 <th style={{ color: '#00D1FF', fontWeight: 700, textShadow: '0 0 6px rgba(0, 209, 255, 0.4)', background: 'transparent' }}>Produto</th>
@@ -255,7 +255,7 @@ export const CompetitionAnalysis = () => {
         >
           Legenda de Status
         </h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+        <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 text-sm">
           {/* LED Verde */}
           <div className="flex items-center gap-3">
             <div 

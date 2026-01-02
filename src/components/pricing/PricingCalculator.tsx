@@ -153,7 +153,7 @@ export const PricingCalculator = () => {
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
           <h2 
             className="text-3xl font-bold pb-2 inline-block"
@@ -168,13 +168,13 @@ export const PricingCalculator = () => {
           </h2>
           <p style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Calcule o preço ideal para cada produto em tempo real</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col xs:flex-row flex-wrap items-stretch xs:items-center gap-2 sm:gap-3 w-full sm:w-auto">
           {/* Export Buttons */}
           <Button
             variant="outline"
             size="sm"
             onClick={exportCSV}
-            className="transition-all duration-200 hover:brightness-110"
+            className="transition-all duration-200 hover:brightness-110 w-full xs:w-auto"
             style={{
               background: 'rgba(0, 209, 255, 0.1)',
               border: '1px solid rgba(0, 209, 255, 0.3)',
@@ -188,7 +188,7 @@ export const PricingCalculator = () => {
             variant="outline"
             size="sm"
             onClick={exportExcel}
-            className="transition-all duration-200 hover:brightness-110"
+            className="transition-all duration-200 hover:brightness-110 w-full xs:w-auto"
             style={{
               background: 'rgba(57, 255, 20, 0.1)',
               border: '1px solid rgba(57, 255, 20, 0.3)',
@@ -245,9 +245,9 @@ export const PricingCalculator = () => {
                 paddingRight: '24px'
               }}
             >
-              <div className="grid grid-cols-1 xl:grid-cols-12 lg:grid-cols-6 gap-6 items-start">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-12 lg:grid-cols-6 gap-4 sm:gap-6 items-start">
                 {/* Product Info */}
-                <div className="xl:col-span-2 lg:col-span-2">
+                <div className="xl:col-span-2 lg:col-span-2 sm:col-span-2">
                   <div className="flex items-center gap-2 mb-1">
                     <span 
                       className="text-xs mono"
@@ -282,7 +282,7 @@ export const PricingCalculator = () => {
                 </div>
 
                 {/* Costs */}
-                <div className="xl:col-span-2 lg:col-span-2 space-y-1">
+                <div className="xl:col-span-2 lg:col-span-2 sm:col-span-1 space-y-1">
                   <p className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                     Custo Total
                     <TooltipIcon content="Soma do custo de compra + custo variável + rateio de custos fixos" />

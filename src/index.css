@@ -879,3 +879,194 @@
   scrollbar-width: thin;
   scrollbar-color: hsl(189 85% 48%) hsl(220 10% 12%);
 }
+
+/* ================================================
+   MOBILE/TABLET RESPONSIVE OVERRIDES
+   Estas regras afetam APENAS telas menores.
+   Desktop permanece completamente inalterado.
+   ================================================ */
+
+/* === TABLET (max-width: 1023px) === */
+@media (max-width: 1023px) {
+  .kpi-card.kpi-cyan,
+  .kpi-card.kpi-purple {
+    min-width: 180px;
+  }
+}
+
+/* === MOBILE GRANDE (max-width: 767px) === */
+@media (max-width: 767px) {
+  /* Navegação: padding menor nos botões */
+  .nav-button {
+    padding: 0.5rem 0.625rem;
+    font-size: 0.65rem;
+  }
+  
+  /* KPI Cards: espaçamento e tamanho */
+  .kpi-card {
+    padding: 0.875rem;
+  }
+  
+  .kpi-card .kpi-value {
+    font-size: 1.1rem;
+  }
+  
+  .kpi-card .kpi-title {
+    font-size: 0.65rem;
+  }
+  
+  /* Gráficos: altura reduzida via classes responsivas */
+  .chart-container {
+    padding: 0.875rem;
+  }
+  
+  /* Tabelas: scroll horizontal */
+  .table-mobile-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -0.5rem;
+    padding: 0 0.5rem;
+  }
+  
+  .table-mobile-scroll table {
+    min-width: 650px;
+  }
+  
+  /* Glass card: padding menor */
+  .glass-card {
+    padding: 0.875rem;
+  }
+  
+  /* Inputs touch-friendly */
+  input[type="text"],
+  input[type="number"],
+  select {
+    min-height: 44px;
+    font-size: 16px; /* Evita zoom no iOS */
+  }
+
+  /* Filtros responsivos - empilhar verticalmente */
+  .filters-responsive {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.5rem !important;
+  }
+  
+  .filters-responsive > * {
+    width: 100% !important;
+  }
+
+  /* Colunas ocultas no mobile */
+  .hide-on-mobile {
+    display: none !important;
+  }
+
+  /* Recharts legend menor */
+  .recharts-legend-wrapper {
+    font-size: 9px !important;
+  }
+  
+  .recharts-legend-item {
+    margin-right: 8px !important;
+  }
+}
+
+/* === MOBILE PEQUENO (max-width: 639px) === */
+@media (max-width: 639px) {
+  /* Nav buttons mais compactos */
+  .nav-button {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.6rem;
+    border-radius: 0.5rem;
+  }
+  
+  /* KPI ainda mais compacto */
+  .kpi-card {
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+  }
+  
+  .kpi-card .kpi-value {
+    font-size: 1rem;
+  }
+  
+  .kpi-icon {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .kpi-icon svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+  
+  /* Charts compactos */
+  .chart-container {
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+  }
+  
+  .chart-container h3 {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Status badges menores */
+  .status-badge {
+    padding: 0.125rem 0.375rem;
+    font-size: 0.625rem;
+  }
+  
+  /* Botões touch-friendly */
+  button {
+    min-height: 44px;
+  }
+  
+  /* Section titles */
+  .section-title {
+    font-size: 0.875rem;
+  }
+  
+  .section-title::before {
+    width: 0.25rem;
+    height: 1rem;
+  }
+
+  /* Modais responsivos */
+  [role="dialog"] > div {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    margin: 0.5rem;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* === MOBILE MUITO PEQUENO (max-width: 479px) === */
+@media (max-width: 479px) {
+  .nav-button {
+    padding: 0.25rem 0.375rem;
+    font-size: 0.55rem;
+  }
+  
+  .kpi-card .kpi-value {
+    font-size: 0.9rem;
+  }
+  
+  .kpi-card .kpi-title {
+    font-size: 0.6rem;
+  }
+  
+  .kpi-card .kpi-subtitle {
+    font-size: 0.55rem;
+  }
+}
+
+/* === TABELAS RESPONSIVAS (Mobile) === */
+@media (max-width: 767px) {
+  .data-table th,
+  .data-table td {
+    padding: 0.5rem 0.375rem;
+    font-size: 0.7rem;
+  }
+}
