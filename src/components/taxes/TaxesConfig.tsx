@@ -144,10 +144,10 @@ export const TaxesConfig = () => {
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
           <h2 
-            className="text-2xl font-bold"
+            className="text-xl sm:text-2xl font-bold"
             style={{ 
               color: '#F8FAFC',
               textShadow: '0 0 10px rgba(248, 250, 252, 0.3)'
@@ -162,7 +162,7 @@ export const TaxesConfig = () => {
         </div>
         <button 
           onClick={handleSave} 
-          className="flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all duration-300"
+          className="flex items-center gap-2 px-4 sm:px-6 py-2.5 rounded-lg font-medium transition-all duration-300 w-full sm:w-auto justify-center"
           style={{
             background: 'rgba(0, 209, 255, 0.1)',
             border: '1px solid rgba(0, 209, 255, 0.4)',
@@ -225,7 +225,7 @@ export const TaxesConfig = () => {
       </div>
 
       {/* Tax Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         {renderTaxCard('salesTax')}
         {renderTaxCard('marketplaceFee')}
         {renderTaxCard('cardFee')}

@@ -373,7 +373,7 @@ export const FixedCostsTable = () => {
             </Dialog>
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex flex-col xs:flex-row flex-wrap items-stretch xs:items-center gap-2 sm:gap-3">
             {/* Export Buttons */}
             <button 
               onClick={exportCSV}

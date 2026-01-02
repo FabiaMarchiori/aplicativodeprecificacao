@@ -437,24 +437,24 @@ export const ReportsSection = () => {
           </DialogContent>
         </Dialog>
 
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <div>
             <h2 className="text-2xl font-bold text-foreground">Relatórios</h2>
             <p style={{ color: '#FFFFFF' }}>Visualize e exporte seus dados</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col xs:flex-row flex-wrap items-stretch xs:items-center gap-3 w-full sm:w-auto">
             {/* View Mode Toggle */}
             <div 
-              className="flex items-center gap-3 px-4 py-2 rounded-xl"
+              className="flex items-center justify-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 rounded-xl"
               style={{
                 background: 'rgba(0, 0, 0, 0.3)',
                 border: '1px solid rgba(255, 255, 255, 0.1)'
               }}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 sm:gap-2">
                 <Eye className="w-4 h-4" style={{ color: viewMode === 'simple' ? '#00D1FF' : 'rgba(255, 255, 255, 0.4)' }} />
                 <span 
-                  className="text-sm"
+                  className="text-xs sm:text-sm hidden xs:inline"
                   style={{ color: viewMode === 'simple' ? '#00D1FF' : 'rgba(255, 255, 255, 0.4)' }}
                 >
                   Simples
@@ -465,9 +465,9 @@ export const ReportsSection = () => {
                 onCheckedChange={(checked) => setViewMode(checked ? 'detailed' : 'simple')}
                 className={viewMode === 'simple' ? '[&[data-state=unchecked]]:bg-[#00D1FF] [&[data-state=unchecked]]:shadow-[0_0_10px_rgba(0,209,255,0.5)]' : ''}
               />
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 sm:gap-2">
                 <span 
-                  className="text-sm"
+                  className="text-xs sm:text-sm hidden xs:inline"
                   style={{ color: viewMode === 'detailed' ? '#39FF14' : 'rgba(255, 255, 255, 0.4)' }}
                 >
                   Detalhada
@@ -500,7 +500,7 @@ export const ReportsSection = () => {
               {/* Botão Excel */}
               <button 
                 onClick={() => handleExport('Excel')}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:-translate-y-0.5"
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:-translate-y-0.5"
                 style={{
                   background: 'transparent',
                   border: '2px solid #39FF14',
@@ -517,12 +517,12 @@ export const ReportsSection = () => {
                 }}
               >
                 <FileSpreadsheet className="w-4 h-4" style={{ filter: 'drop-shadow(0 0 5px #39FF14)' }} />
-                Excel
+                <span className="hidden xs:inline">Excel</span>
               </button>
               {/* Botão PDF */}
               <button 
                 onClick={() => handleExport('PDF')}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:-translate-y-0.5"
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:-translate-y-0.5"
                 style={{
                   background: 'transparent',
                   border: '2px solid #BC13FE',
@@ -539,77 +539,79 @@ export const ReportsSection = () => {
                 }}
               >
                 <FileText className="w-4 h-4" style={{ filter: 'drop-shadow(0 0 5px #BC13FE)' }} />
-                PDF
+                <span className="hidden xs:inline">PDF</span>
               </button>
             </div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="glass-card p-4 mb-6">
-          <div className="flex flex-wrap items-center gap-4">
+        <div className="glass-card p-3 sm:p-4 mb-6">
+          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
             <div className="flex items-center gap-2">
               <Filter className="w-4 h-4" style={{ color: '#FFFFFF' }} />
               <span className="text-sm font-medium text-foreground">Filtros:</span>
             </div>
             
-            <div className="flex items-center gap-2">
-              <label className="text-sm" style={{ color: '#FFFFFF' }}>Produto:</label>
-              <select 
-                className="input-field py-1.5"
-                value={selectedProduct}
-                onChange={(e) => setSelectedProduct(e.target.value)}
-              >
-                <option value="all">Todos os produtos</option>
-                {mockProducts.map(p => (
-                  <option key={p.id} value={p.id}>{p.name}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Category Filter - shown in detailed mode or always for better UX */}
-            <div className="flex items-center gap-2">
-              <label className="text-sm" style={{ color: '#FFFFFF' }}>Categoria:</label>
-              <select 
-                className="input-field py-1.5"
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                <option value="all">Todas</option>
-                {categories.filter(c => c !== 'all').map(c => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Value Range Filter */}
-            {viewMode === 'detailed' && (
-              <div className="flex items-center gap-2">
-                <label className="text-sm" style={{ color: '#FFFFFF' }}>Faixa de Valor:</label>
+            <div className="flex flex-col xs:flex-row flex-wrap items-stretch xs:items-center gap-2 sm:gap-3 flex-1">
+              <div className="flex items-center gap-2 w-full xs:w-auto">
+                <label className="text-sm whitespace-nowrap" style={{ color: '#FFFFFF' }}>Produto:</label>
                 <select 
-                  className="input-field py-1.5"
-                  value={selectedValueRange}
-                  onChange={(e) => setSelectedValueRange(e.target.value)}
+                  className="input-field py-1.5 flex-1 xs:flex-none"
+                  value={selectedProduct}
+                  onChange={(e) => setSelectedProduct(e.target.value)}
                 >
-                  {valueRanges.map(range => (
-                    <option key={range.value} value={range.value}>{range.label}</option>
+                  <option value="all">Todos os produtos</option>
+                  {mockProducts.map(p => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
                   ))}
                 </select>
               </div>
-            )}
 
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" style={{ color: '#FFFFFF' }} />
-              <label className="text-sm" style={{ color: '#FFFFFF' }}>Período:</label>
-              <select 
-                className="input-field py-1.5"
-                value={selectedPeriod}
-                onChange={(e) => setSelectedPeriod(e.target.value)}
-              >
-                <option value="12months">Últimos 12 meses</option>
-                <option value="6months">Últimos 6 meses</option>
-                <option value="3months">Últimos 3 meses</option>
-              </select>
+              {/* Category Filter - shown in detailed mode or always for better UX */}
+              <div className="flex items-center gap-2 w-full xs:w-auto">
+                <label className="text-sm whitespace-nowrap" style={{ color: '#FFFFFF' }}>Categoria:</label>
+                <select 
+                  className="input-field py-1.5 flex-1 xs:flex-none"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  <option value="all">Todas</option>
+                  {categories.filter(c => c !== 'all').map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Value Range Filter */}
+              {viewMode === 'detailed' && (
+                <div className="flex items-center gap-2 w-full xs:w-auto">
+                  <label className="text-sm whitespace-nowrap" style={{ color: '#FFFFFF' }}>Faixa de Valor:</label>
+                  <select 
+                    className="input-field py-1.5 flex-1 xs:flex-none"
+                    value={selectedValueRange}
+                    onChange={(e) => setSelectedValueRange(e.target.value)}
+                  >
+                    {valueRanges.map(range => (
+                      <option key={range.value} value={range.value}>{range.label}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <div className="flex items-center gap-2 w-full xs:w-auto">
+                <Calendar className="w-4 h-4" style={{ color: '#FFFFFF' }} />
+                <label className="text-sm whitespace-nowrap" style={{ color: '#FFFFFF' }}>Período:</label>
+                <select 
+                  className="input-field py-1.5 flex-1 xs:flex-none"
+                  value={selectedPeriod}
+                  onChange={(e) => setSelectedPeriod(e.target.value)}
+                >
+                  <option value="12months">Últimos 12 meses</option>
+                  <option value="6months">Últimos 6 meses</option>
+                  <option value="3months">Últimos 3 meses</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>

@@ -140,15 +140,15 @@ export const SuppliersTable = () => {
           boxShadow: '0 0 20px rgba(0, 209, 255, 0.2)'
         }}
       >
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <div className="overflow-x-auto -mx-1 px-1 md:mx-0 md:px-0">
+          <table className="w-full min-w-[700px] md:min-w-0">
             <thead>
               <tr>
                 <th style={thStyle}>Nome do Fornecedor</th>
                 <th style={thStyle}>Tipo</th>
-                <th style={{ ...thStyle, textAlign: 'right' }}>Prazo Médio (dias)</th>
+                <th style={{ ...thStyle, textAlign: 'right' }} className="hidden sm:table-cell">Prazo Médio (dias)</th>
                 <th style={{ ...thStyle, textAlign: 'right' }}>Custo Logístico</th>
-                <th style={thStyle}>Observações</th>
+                <th style={thStyle} className="hidden md:table-cell">Observações</th>
                 <th style={{ ...thStyle, textAlign: 'right' }}>Ações</th>
               </tr>
             </thead>
