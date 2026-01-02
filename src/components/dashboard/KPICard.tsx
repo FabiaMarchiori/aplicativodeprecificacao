@@ -67,7 +67,7 @@ export const KPICard = ({
   return (
     <div className={`kpi-card animate-fade-in ${getCardClass()}`}>
       <div className="relative z-10">
-        <div className="flex items-start justify-between mb-3 md:mb-4">
+        <div className="flex items-start justify-between mb-3 md:mb-4 lg:mb-5">
           <div className={`kpi-icon ${getIconClass()}`}>
             <Icon className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-white" />
           </div>

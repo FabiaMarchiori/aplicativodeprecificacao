@@ -155,9 +155,9 @@ export const Dashboard = () => {
   const hasVisibleCharts = Object.values(config.visibleCharts).some(v => v);
 
   return (
-    <div className="space-y-4 md:space-y-6 animate-fade-in">
+    <div className="space-y-4 md:space-y-6 lg:space-y-8 xl:space-y-10 animate-fade-in">
       {/* Header with Settings Button */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-2 lg:mb-4 xl:mb-6">
         <h2 
           className="text-xl md:text-2xl font-bold"
           style={{ 
@@ -191,7 +191,8 @@ export const Dashboard = () => {
 
       {/* KPI Cards */}
       {hasVisibleKPIs && (
-        <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5 lg:gap-6">
+        <div className="pb-2 lg:pb-4 xl:pb-6">
+          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5 lg:gap-6 xl:gap-8">
           {config.visibleKPIs.revenue && (
             <KPICard
               title="Faturamento Estimado"
@@ -241,12 +242,13 @@ export const Dashboard = () => {
               variant="purple"
             />
           )}
+          </div>
         </div>
       )}
 
       {/* Charts Row 1 */}
       {(config.visibleCharts.revenueEvolution || config.visibleCharts.costComposition) && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8 xl:gap-10">
           {/* Revenue Area Chart */}
           {config.visibleCharts.revenueEvolution && (
             <InteractiveChart 
@@ -371,7 +373,7 @@ export const Dashboard = () => {
 
       {/* Charts Row 2 */}
       {(config.visibleCharts.marginByProduct || config.visibleCharts.profitRanking) && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8 xl:gap-10">
           {/* Margin by Product - Gradient bars */}
           {config.visibleCharts.marginByProduct && (
             <InteractiveChart 
