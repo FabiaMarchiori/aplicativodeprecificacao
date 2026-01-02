@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { Plus, Pencil, Trash2, Check, X, Info, HelpCircle, Download, FileText, Filter, ArrowUpDown } from 'lucide-react';
 import { FixedCost } from '@/data/mockData';
 import { useData } from '@/contexts/DataContext';
+import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -47,6 +48,7 @@ const categoryLabels: Record<string, string> = {
 
 export const FixedCostsTable = () => {
   const { fixedCosts: costs, addFixedCost, updateFixedCost, deleteFixedCost } = useData();
+  const { toast } = useToast();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<Partial<FixedCost>>({});
   const [isAdding, setIsAdding] = useState(false);
@@ -109,9 +111,7 @@ export const FixedCostsTable = () => {
     }
     
     if (editingId) {
-      setCosts(costs.map(c => 
-        c.id === editingId ? { ...c, ...editData } as FixedCost : c
-      ));
+      updateFixedCost(editingId, editData);
       setUpdatedIds(prev => new Set(prev).add(editingId));
       setTimeout(() => {
         setUpdatedIds(prev => {
@@ -120,7 +120,6 @@ export const FixedCostsTable = () => {
           return next;
         });
       }, 2000);
-      toast({ title: 'Custo atualizado com sucesso' });
     }
     setEditingId(null);
     setEditData({});
@@ -132,9 +131,13 @@ export const FixedCostsTable = () => {
     setIsAdding(false);
   };
 
-  const handleDelete = (id: string) => {
-    setCosts(costs.filter(c => c.id !== id));
-    toast({ title: 'Custo excluído', variant: 'destructive' });
+  const handleDeleteClick = (id: string, name: string) => {
+    setDeleteDialog({ isOpen: true, id, name });
+  };
+
+  const handleDeleteConfirm = () => {
+    deleteFixedCost(deleteDialog.id);
+    setDeleteDialog({ isOpen: false, id: '', name: '' });
   };
 
   const handleAddNew = () => {
@@ -147,17 +150,14 @@ export const FixedCostsTable = () => {
       return;
     }
     
-    const newCost: FixedCost = {
-      id: Date.now().toString(),
+    addFixedCost({
       type: editData.type || 'Novo Custo',
       category: (editData.category as FixedCost['category']) || 'operational',
       monthlyValue: editData.monthlyValue || 0,
       allocationPercent: editData.allocationPercent || 0,
-    };
-    setCosts([...costs, newCost]);
+    });
     setIsAdding(false);
     setEditData({});
-    toast({ title: 'Custo adicionado com sucesso' });
   };
 
   // Export functions
@@ -437,42 +437,47 @@ export const FixedCostsTable = () => {
                 e.currentTarget.style.textShadow = 'none';
               }}
             >
-              <Plus className="w-4 h-4" style={{ filter: 'drop-shadow(0 0 4px #00D1FF)' }} />
+              <Plus className="w-5 h-5" />
               Novo Custo
             </button>
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="flex items-center gap-4 mb-6 flex-wrap">
+        {/* Filters & Sort */}
+        <div className="flex items-center gap-4 mb-4 flex-wrap">
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4" style={{ color: 'rgba(0, 209, 255, 0.7)' }} />
+            <Filter className="w-4 h-4" style={{ color: 'rgba(255, 255, 255, 0.6)' }} />
             <Select value={filterCategory} onValueChange={setFilterCategory}>
               <SelectTrigger 
-                className="w-[180px] text-sm"
+                className="w-40"
                 style={{
                   background: '#000000',
                   border: '1px solid rgba(0, 209, 255, 0.3)',
                   color: '#F8FAFC'
                 }}
               >
-                <SelectValue placeholder="Todas categorias" />
+                <SelectValue placeholder="Categoria" />
               </SelectTrigger>
-              <SelectContent style={{ background: '#000000', border: '1px solid rgba(0, 209, 255, 0.3)' }}>
-                <SelectItem value="all" style={{ color: '#F8FAFC' }}>Todas categorias</SelectItem>
-                <SelectItem value="operational" style={{ color: '#F8FAFC' }}>Operacional</SelectItem>
-                <SelectItem value="administrative" style={{ color: '#F8FAFC' }}>Administrativo</SelectItem>
-                <SelectItem value="personnel" style={{ color: '#F8FAFC' }}>Pessoal</SelectItem>
-                <SelectItem value="marketing" style={{ color: '#F8FAFC' }}>Marketing</SelectItem>
+              <SelectContent
+                style={{
+                  background: '#0a0a0c',
+                  border: '1px solid rgba(0, 209, 255, 0.3)'
+                }}
+              >
+                <SelectItem value="all">Todas</SelectItem>
+                <SelectItem value="operational">Operacional</SelectItem>
+                <SelectItem value="administrative">Administrativo</SelectItem>
+                <SelectItem value="personnel">Pessoal</SelectItem>
+                <SelectItem value="marketing">Marketing</SelectItem>
               </SelectContent>
             </Select>
           </div>
           
           <div className="flex items-center gap-2">
-            <ArrowUpDown className="w-4 h-4" style={{ color: 'rgba(0, 209, 255, 0.7)' }} />
+            <ArrowUpDown className="w-4 h-4" style={{ color: 'rgba(255, 255, 255, 0.6)' }} />
             <Select value={sortOrder} onValueChange={(v) => setSortOrder(v as typeof sortOrder)}>
               <SelectTrigger 
-                className="w-[160px] text-sm"
+                className="w-40"
                 style={{
                   background: '#000000',
                   border: '1px solid rgba(0, 209, 255, 0.3)',
@@ -481,513 +486,393 @@ export const FixedCostsTable = () => {
               >
                 <SelectValue placeholder="Ordenar" />
               </SelectTrigger>
-              <SelectContent style={{ background: '#000000', border: '1px solid rgba(0, 209, 255, 0.3)' }}>
-                <SelectItem value="name" style={{ color: '#F8FAFC' }}>Alfabética</SelectItem>
-                <SelectItem value="value_desc" style={{ color: '#F8FAFC' }}>Maior valor</SelectItem>
-                <SelectItem value="value_asc" style={{ color: '#F8FAFC' }}>Menor valor</SelectItem>
+              <SelectContent
+                style={{
+                  background: '#0a0a0c',
+                  border: '1px solid rgba(0, 209, 255, 0.3)'
+                }}
+              >
+                <SelectItem value="name">Por Nome</SelectItem>
+                <SelectItem value="value_desc">Maior Valor</SelectItem>
+                <SelectItem value="value_asc">Menor Valor</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
-        {/* Allocation Alert Banner */}
-        {totalAllocation !== 100 && (
-          <div 
-            className="p-4 rounded-lg mb-6 flex items-center gap-3"
-            style={{ 
-              background: `rgba(${allocationStatus.type === 'warning' ? '255, 172, 0' : '255, 0, 122'}, 0.1)`,
-              border: `1px solid ${allocationStatus.color}`,
-              boxShadow: `0 0 15px rgba(${allocationStatus.type === 'warning' ? '255, 172, 0' : '255, 0, 122'}, 0.2)`
-            }}
-          >
-            <Info className="w-5 h-5" style={{ color: allocationStatus.color }} />
-            <p style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-              <strong style={{ color: allocationStatus.color }}>Atenção:</strong> {allocationStatus.message}. 
-              Ajuste os valores para totalizar 100% e garantir uma precificação correta.
-            </p>
-          </div>
-        )}
-
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          {/* Total Custos Fixos - Verde Neon */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {/* Total Costs */}
           <div 
-            className="p-6 rounded-xl"
+            className="p-5 rounded-xl"
             style={{
-              background: '#000000',
-              border: '1px solid #39FF14',
-              boxShadow: '0 0 20px rgba(57, 255, 20, 0.3), 0 0 40px rgba(57, 255, 20, 0.15)'
+              background: '#0a0a0c',
+              border: '1px solid rgba(0, 209, 255, 0.3)',
+              boxShadow: '0 0 15px rgba(0, 209, 255, 0.1)'
             }}
           >
-            <h3 
-              className="text-sm font-medium mb-1"
-              style={{ color: '#39FF14', textShadow: '0 0 8px rgba(57, 255, 20, 0.4)' }}
-            >
-              Total Custos Fixos
-            </h3>
+            <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Total Custos Fixos</p>
             <p 
               className="text-2xl font-bold mono"
               style={{ 
-                color: '#39FF14',
-                textShadow: '0 0 20px rgba(57, 255, 20, 0.8), 0 0 40px rgba(57, 255, 20, 0.4)'
+                color: '#00D1FF',
+                textShadow: '0 0 10px rgba(0, 209, 255, 0.5)'
               }}
             >
               {formatCurrency(totalCosts)}
             </p>
-            <p className="text-sm mt-1" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Por mês</p>
           </div>
-
-          {/* Alocação Total - Ciano Elétrico */}
+          
+          {/* Allocation Status */}
           <div 
-            className="p-6 rounded-xl"
+            className="p-5 rounded-xl"
             style={{
-              background: '#000000',
-              border: '1px solid #00D1FF',
-              boxShadow: '0 0 20px rgba(0, 209, 255, 0.2), 0 0 40px rgba(0, 209, 255, 0.15)'
+              background: '#0a0a0c',
+              border: `1px solid ${allocationStatus.color}40`,
+              boxShadow: `0 0 15px ${allocationStatus.color}15`
             }}
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 
-                  className="text-sm font-medium mb-1"
-                  style={{ color: '#00D1FF', textShadow: '0 0 8px rgba(0, 209, 255, 0.4)' }}
-                >
-                  Alocação Total
-                </h3>
-                <p 
-                  className="text-2xl font-bold mono"
-                  style={{ 
-                    color: '#00D1FF',
-                    textShadow: '0 0 20px rgba(0, 209, 255, 0.8), 0 0 40px rgba(0, 209, 255, 0.4)'
-                  }}
-                >
-                  {totalAllocation}%
-                </p>
-              </div>
-              <div 
-                className="flex items-center gap-1 text-sm px-2 py-1 rounded"
-                style={{ 
-                  background: 'rgba(0, 209, 255, 0.15)',
-                  color: '#00D1FF', 
-                  textShadow: '0 0 8px rgba(0, 209, 255, 0.5)'
-                }}
-              >
-                <HelpCircle className="w-3.5 h-3.5" />
-                <span>{allocationStatus.type === 'success' ? 'Completo' : allocationStatus.type === 'warning' ? 'Incompleto' : 'Excedido'}</span>
-              </div>
-            </div>
+            <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+              Alocação Total
+              <TooltipIcon content="Soma de todos os percentuais de rateio. Idealmente deve ser 100%." />
+            </p>
+            <p 
+              className="text-2xl font-bold"
+              style={{ 
+                color: allocationStatus.color,
+                textShadow: `0 0 10px ${allocationStatus.color}50`
+              }}
+            >
+              {totalAllocation}%
+            </p>
+            <p className="text-xs mt-1" style={{ color: allocationStatus.color }}>
+              {allocationStatus.message}
+            </p>
+          </div>
+          
+          {/* Allocated Value */}
+          <div 
+            className="p-5 rounded-xl"
+            style={{
+              background: '#0a0a0c',
+              border: '1px solid rgba(57, 255, 20, 0.3)',
+              boxShadow: '0 0 15px rgba(57, 255, 20, 0.1)'
+            }}
+          >
+            <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+              Valor Rateado
+              <TooltipIcon content="Valor total que será distribuído nos produtos para precificação." />
+            </p>
+            <p 
+              className="text-2xl font-bold mono"
+              style={{ 
+                color: '#39FF14',
+                textShadow: '0 0 10px rgba(57, 255, 20, 0.5)'
+              }}
+            >
+              {formatCurrency(costs.reduce((sum, c) => sum + (c.monthlyValue * c.allocationPercent / 100), 0))}
+            </p>
           </div>
         </div>
 
-        {/* Table Container */}
+        {/* Table */}
         <div 
           className="rounded-xl overflow-hidden"
           style={{
-            background: '#000000',
-            border: '1px solid #00D1FF',
-            boxShadow: '0 0 20px rgba(0, 209, 255, 0.2)'
+            background: '#0a0a0c',
+            border: '1px solid rgba(57, 255, 20, 0.2)',
+            boxShadow: '0 0 20px rgba(57, 255, 20, 0.08)'
           }}
         >
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th style={{ 
-                    background: 'transparent',
-                    color: '#00D1FF',
-                    textShadow: '0 0 10px rgba(0, 209, 255, 0.5)',
-                    borderBottom: '1px solid rgba(0, 209, 255, 0.3)',
-                    padding: '16px',
-                    textAlign: 'left',
-                    fontWeight: 600,
-                    fontSize: '14px'
-                  }}>
-                    Tipo de Custo
-                    <TooltipIcon content="Nome do custo fixo da sua empresa. Custos fixos são despesas que não variam com a quantidade vendida, como aluguel e salários." />
-                  </th>
-                  <th style={{ 
-                    background: 'transparent',
-                    color: '#00D1FF',
-                    textShadow: '0 0 10px rgba(0, 209, 255, 0.5)',
-                    borderBottom: '1px solid rgba(0, 209, 255, 0.3)',
-                    padding: '16px',
-                    textAlign: 'left',
-                    fontWeight: 600,
-                    fontSize: '14px'
-                  }}>
-                    Categoria
-                  </th>
-                  <th style={{ 
-                    background: 'transparent',
-                    color: '#00D1FF',
-                    textShadow: '0 0 10px rgba(0, 209, 255, 0.5)',
-                    borderBottom: '1px solid rgba(0, 209, 255, 0.3)',
-                    padding: '16px',
-                    textAlign: 'right',
-                    fontWeight: 600,
-                    fontSize: '14px'
-                  }}>
-                    Valor Mensal
-                    <TooltipIcon content="Valor total pago mensalmente por este custo. Digite o valor exato que aparece na sua fatura ou folha de pagamento." />
-                  </th>
-                  <th style={{ 
-                    background: 'transparent',
-                    color: '#00D1FF',
-                    textShadow: '0 0 10px rgba(0, 209, 255, 0.5)',
-                    borderBottom: '1px solid rgba(0, 209, 255, 0.3)',
-                    padding: '16px',
-                    textAlign: 'right',
-                    fontWeight: 600,
-                    fontSize: '14px'
-                  }}>
-                    Rateio (%)
-                    <TooltipIcon content="Percentual deste custo que será distribuído na precificação dos produtos. A soma de todos os rateios deve totalizar 100%." />
-                  </th>
-                  <th style={{ 
-                    background: 'transparent',
-                    color: '#00D1FF',
-                    textShadow: '0 0 10px rgba(0, 209, 255, 0.5)',
-                    borderBottom: '1px solid rgba(0, 209, 255, 0.3)',
-                    padding: '16px',
-                    textAlign: 'right',
-                    fontWeight: 600,
-                    fontSize: '14px'
-                  }}>
-                    Valor Rateado
-                    <TooltipIcon content="Valor calculado automaticamente: Valor Mensal x Rateio (%). Este valor será distribuído entre seus produtos na precificação." />
-                  </th>
-                  <th style={{ 
-                    background: 'transparent',
-                    color: '#00D1FF',
-                    textShadow: '0 0 10px rgba(0, 209, 255, 0.5)',
-                    borderBottom: '1px solid rgba(0, 209, 255, 0.3)',
-                    padding: '16px',
-                    textAlign: 'right',
-                    fontWeight: 600,
-                    fontSize: '14px'
-                  }}>
-                    Ações
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {isAdding && (
-                  <tr style={{ 
+          <table className="w-full">
+            <thead>
+              <tr style={{ background: 'rgba(57, 255, 20, 0.08)' }}>
+                <th className="text-left px-6 py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
+                  Tipo de Custo
+                </th>
+                <th className="text-left px-6 py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
+                  Categoria
+                </th>
+                <th className="text-right px-6 py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
+                  Valor Mensal
+                </th>
+                <th className="text-right px-6 py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
+                  Rateio (%)
+                  <TooltipIcon content="Percentual do custo que será distribuído nos produtos" />
+                </th>
+                <th className="text-right px-6 py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
+                  Valor Rateado
+                </th>
+                <th className="text-center px-6 py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
+                  Ações
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Add New Row */}
+              {isAdding && (
+                <tr 
+                  style={{ 
                     background: 'rgba(57, 255, 20, 0.05)',
-                    borderLeft: '3px solid #39FF14'
-                  }}>
-                    <td style={{ padding: '16px' }}>
-                      <input
-                        type="text"
-                        style={inputStyle}
-                        placeholder="Tipo de custo"
-                        value={editData.type || ''}
-                        onChange={(e) => setEditData({ ...editData, type: e.target.value })}
-                        onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
-                      />
-                    </td>
-                    <td style={{ padding: '16px' }}>
-                      <select
-                        style={{ ...inputStyle, minWidth: '130px' }}
-                        value={editData.category || 'operational'}
-                        onChange={(e) => setEditData({ ...editData, category: e.target.value as FixedCost['category'] })}
-                        onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
+                    borderBottom: '1px solid rgba(57, 255, 20, 0.1)'
+                  }}
+                >
+                  <td className="px-6 py-4">
+                    <input
+                      type="text"
+                      placeholder="Nome do custo"
+                      className="w-full"
+                      style={inputStyle}
+                      onFocus={handleInputFocus}
+                      onBlur={handleInputBlur}
+                      value={editData.type || ''}
+                      onChange={(e) => setEditData({ ...editData, type: e.target.value })}
+                      autoFocus
+                    />
+                  </td>
+                  <td className="px-6 py-4">
+                    <select
+                      className="w-full"
+                      style={inputStyle}
+                      onFocus={handleInputFocus}
+                      onBlur={handleInputBlur}
+                      value={editData.category || 'operational'}
+                      onChange={(e) => setEditData({ ...editData, category: e.target.value as FixedCost['category'] })}
+                    >
+                      <option value="operational">Operacional</option>
+                      <option value="administrative">Administrativo</option>
+                      <option value="personnel">Pessoal</option>
+                      <option value="marketing">Marketing</option>
+                    </select>
+                  </td>
+                  <td className="px-6 py-4">
+                    <input
+                      type="number"
+                      placeholder="0,00"
+                      className="w-full text-right"
+                      style={inputStyle}
+                      onFocus={handleInputFocus}
+                      onBlur={handleInputBlur}
+                      value={editData.monthlyValue || ''}
+                      onChange={(e) => setEditData({ ...editData, monthlyValue: parseFloat(e.target.value) || 0 })}
+                    />
+                  </td>
+                  <td className="px-6 py-4">
+                    <input
+                      type="number"
+                      placeholder="0"
+                      className="w-full text-right"
+                      style={inputStyle}
+                      onFocus={handleInputFocus}
+                      onBlur={handleInputBlur}
+                      value={editData.allocationPercent || ''}
+                      onChange={(e) => setEditData({ ...editData, allocationPercent: parseFloat(e.target.value) || 0 })}
+                    />
+                  </td>
+                  <td className="px-6 py-4 text-right" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                    {formatCurrency((editData.monthlyValue || 0) * (editData.allocationPercent || 0) / 100)}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center justify-center gap-2">
+                      <button
+                        onClick={handleAddNew}
+                        className="p-2 rounded-lg transition-all duration-200"
+                        style={{
+                          background: 'rgba(57, 255, 20, 0.15)',
+                          border: '1px solid rgba(57, 255, 20, 0.4)'
+                        }}
                       >
-                        <option value="operational">Operacional</option>
-                        <option value="administrative">Administrativo</option>
-                        <option value="personnel">Pessoal</option>
-                        <option value="marketing">Marketing</option>
-                      </select>
-                    </td>
-                    <td style={{ padding: '16px' }}>
-                      <input
-                        type="number"
-                        style={{ ...inputStyle, width: '130px', textAlign: 'right' }}
-                        placeholder="0.00"
-                        value={editData.monthlyValue || ''}
-                        onChange={(e) => setEditData({ ...editData, monthlyValue: parseFloat(e.target.value) })}
-                        onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
-                      />
-                    </td>
-                    <td style={{ padding: '16px' }}>
-                      <input
-                        type="number"
-                        style={{ ...inputStyle, width: '100px', textAlign: 'right' }}
-                        placeholder="0"
-                        value={editData.allocationPercent || ''}
-                        onChange={(e) => setEditData({ ...editData, allocationPercent: parseFloat(e.target.value) })}
-                        onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
-                      />
-                    </td>
-                    <td style={{ 
-                      padding: '16px', 
-                      textAlign: 'right',
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontFamily: 'monospace'
-                    }}>
-                      {formatCurrency((editData.monthlyValue || 0) * (editData.allocationPercent || 0) / 100)}
-                    </td>
-                    <td style={{ padding: '16px', textAlign: 'right' }}>
-                      <div className="flex items-center justify-end gap-2">
-                        <button 
-                          onClick={handleAddNew} 
-                          className="p-2 rounded-lg transition-all duration-300"
-                          style={{ 
-                            color: '#39FF14',
-                            filter: 'drop-shadow(0 0 6px #39FF14)'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'rgba(57, 255, 20, 0.15)';
-                            e.currentTarget.style.boxShadow = '0 0 15px rgba(57, 255, 20, 0.5)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.boxShadow = 'none';
-                          }}
+                        <Check className="w-4 h-4" style={{ color: '#39FF14' }} />
+                      </button>
+                      <button
+                        onClick={handleCancel}
+                        className="p-2 rounded-lg transition-all duration-200"
+                        style={{
+                          background: 'rgba(239, 68, 68, 0.15)',
+                          border: '1px solid rgba(239, 68, 68, 0.4)'
+                        }}
+                      >
+                        <X className="w-4 h-4 text-red-400" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              )}
+              
+              {/* Data Rows */}
+              {filteredCosts.map((cost) => (
+                <tr 
+                  key={cost.id}
+                  className={`transition-all duration-500 ${updatedIds.has(cost.id) ? 'animate-pulse' : ''}`}
+                  style={{ 
+                    borderBottom: '1px solid rgba(57, 255, 20, 0.1)',
+                    background: updatedIds.has(cost.id) ? 'rgba(57, 255, 20, 0.1)' : 'transparent'
+                  }}
+                >
+                  {editingId === cost.id ? (
+                    <>
+                      <td className="px-6 py-4">
+                        <input
+                          type="text"
+                          className="w-full"
+                          style={inputStyle}
+                          onFocus={handleInputFocus}
+                          onBlur={handleInputBlur}
+                          value={editData.type || ''}
+                          onChange={(e) => setEditData({ ...editData, type: e.target.value })}
+                          autoFocus
+                        />
+                      </td>
+                      <td className="px-6 py-4">
+                        <select
+                          className="w-full"
+                          style={inputStyle}
+                          onFocus={handleInputFocus}
+                          onBlur={handleInputBlur}
+                          value={editData.category || 'operational'}
+                          onChange={(e) => setEditData({ ...editData, category: e.target.value as FixedCost['category'] })}
                         >
-                          <Check className="w-4 h-4" />
-                        </button>
-                        <button 
-                          onClick={handleCancel} 
-                          className="p-2 rounded-lg transition-all duration-300"
-                          style={{ 
-                            color: '#FF007A',
-                            filter: 'drop-shadow(0 0 6px #FF007A)'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'rgba(255, 0, 122, 0.15)';
-                            e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 0, 122, 0.5)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.boxShadow = 'none';
-                          }}
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-                {filteredCosts.map((cost) => (
-                  <tr 
-                    key={cost.id}
-                    className="transition-all duration-300"
-                    style={{
-                      background: updatedIds.has(cost.id) ? 'rgba(57, 255, 20, 0.1)' : 'transparent',
-                      borderBottom: '1px solid rgba(0, 209, 255, 0.1)'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (editingId !== cost.id && !updatedIds.has(cost.id)) {
-                        e.currentTarget.style.background = 'rgba(57, 255, 20, 0.05)';
-                        e.currentTarget.style.borderLeft = '3px solid #39FF14';
-                        e.currentTarget.style.boxShadow = 'inset 0 0 20px rgba(57, 255, 20, 0.1)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (editingId !== cost.id && !updatedIds.has(cost.id)) {
-                        e.currentTarget.style.background = 'transparent';
-                        e.currentTarget.style.borderLeft = 'none';
-                        e.currentTarget.style.boxShadow = 'none';
-                      }
-                    }}
-                  >
-                    {editingId === cost.id ? (
-                      <>
-                        <td style={{ padding: '16px' }}>
-                          <input
-                            type="text"
-                            style={inputStyle}
-                            value={editData.type || ''}
-                            onChange={(e) => setEditData({ ...editData, type: e.target.value })}
-                            onFocus={handleInputFocus}
-                            onBlur={handleInputBlur}
-                          />
-                        </td>
-                        <td style={{ padding: '16px' }}>
-                          <select
-                            style={{ ...inputStyle, minWidth: '130px' }}
-                            value={editData.category || cost.category}
-                            onChange={(e) => setEditData({ ...editData, category: e.target.value as FixedCost['category'] })}
-                            onFocus={handleInputFocus}
-                            onBlur={handleInputBlur}
+                          <option value="operational">Operacional</option>
+                          <option value="administrative">Administrativo</option>
+                          <option value="personnel">Pessoal</option>
+                          <option value="marketing">Marketing</option>
+                        </select>
+                      </td>
+                      <td className="px-6 py-4">
+                        <input
+                          type="number"
+                          className="w-full text-right"
+                          style={inputStyle}
+                          onFocus={handleInputFocus}
+                          onBlur={handleInputBlur}
+                          value={editData.monthlyValue || ''}
+                          onChange={(e) => setEditData({ ...editData, monthlyValue: parseFloat(e.target.value) || 0 })}
+                        />
+                      </td>
+                      <td className="px-6 py-4">
+                        <input
+                          type="number"
+                          className="w-full text-right"
+                          style={inputStyle}
+                          onFocus={handleInputFocus}
+                          onBlur={handleInputBlur}
+                          value={editData.allocationPercent || ''}
+                          onChange={(e) => setEditData({ ...editData, allocationPercent: parseFloat(e.target.value) || 0 })}
+                        />
+                      </td>
+                      <td className="px-6 py-4 text-right" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                        {formatCurrency((editData.monthlyValue || 0) * (editData.allocationPercent || 0) / 100)}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={handleSave}
+                            className="p-2 rounded-lg transition-all duration-200"
+                            style={{
+                              background: 'rgba(57, 255, 20, 0.15)',
+                              border: '1px solid rgba(57, 255, 20, 0.4)'
+                            }}
                           >
-                            <option value="operational">Operacional</option>
-                            <option value="administrative">Administrativo</option>
-                            <option value="personnel">Pessoal</option>
-                            <option value="marketing">Marketing</option>
-                          </select>
-                        </td>
-                        <td style={{ padding: '16px' }}>
-                          <input
-                            type="number"
-                            style={{ ...inputStyle, width: '130px', textAlign: 'right' }}
-                            value={editData.monthlyValue || ''}
-                            onChange={(e) => setEditData({ ...editData, monthlyValue: parseFloat(e.target.value) })}
-                            onFocus={handleInputFocus}
-                            onBlur={handleInputBlur}
-                          />
-                        </td>
-                        <td style={{ padding: '16px' }}>
-                          <input
-                            type="number"
-                            style={{ ...inputStyle, width: '100px', textAlign: 'right' }}
-                            value={editData.allocationPercent || ''}
-                            onChange={(e) => setEditData({ ...editData, allocationPercent: parseFloat(e.target.value) })}
-                            onFocus={handleInputFocus}
-                            onBlur={handleInputBlur}
-                          />
-                        </td>
-                        <td style={{ 
-                          padding: '16px', 
-                          textAlign: 'right',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          fontFamily: 'monospace'
-                        }}>
-                          {formatCurrency((editData.monthlyValue || 0) * (editData.allocationPercent || 0) / 100)}
-                        </td>
-                        <td style={{ padding: '16px', textAlign: 'right' }}>
-                          <div className="flex items-center justify-end gap-2">
-                            <button 
-                              onClick={handleSave} 
-                              className="p-2 rounded-lg transition-all duration-300"
-                              style={{ 
-                                color: '#39FF14',
-                                filter: 'drop-shadow(0 0 6px #39FF14)'
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.background = 'rgba(57, 255, 20, 0.15)';
-                                e.currentTarget.style.boxShadow = '0 0 15px rgba(57, 255, 20, 0.5)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.background = 'transparent';
-                                e.currentTarget.style.boxShadow = 'none';
-                              }}
-                            >
-                              <Check className="w-4 h-4" />
-                            </button>
-                            <button 
-                              onClick={handleCancel} 
-                              className="p-2 rounded-lg transition-all duration-300"
-                              style={{ 
-                                color: '#FF007A',
-                                filter: 'drop-shadow(0 0 6px #FF007A)'
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.background = 'rgba(255, 0, 122, 0.15)';
-                                e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 0, 122, 0.5)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.background = 'transparent';
-                                e.currentTarget.style.boxShadow = 'none';
-                              }}
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </>
-                    ) : (
-                      <>
-                        <td style={{ padding: '16px', color: '#F8FAFC', fontWeight: 500 }}>
-                          {cost.type}
-                          {updatedIds.has(cost.id) && (
-                            <span 
-                              className="ml-2 text-xs px-2 py-0.5 rounded"
-                              style={{ 
-                                background: 'rgba(57, 255, 20, 0.2)', 
-                                color: '#39FF14',
-                                animation: 'pulse 1s ease-in-out infinite'
-                              }}
-                            >
-                              Atualizado
-                            </span>
-                          )}
-                        </td>
-                        <td style={{ 
-                          padding: '16px', 
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          fontSize: '14px'
-                        }}>
+                            <Check className="w-4 h-4" style={{ color: '#39FF14' }} />
+                          </button>
+                          <button
+                            onClick={handleCancel}
+                            className="p-2 rounded-lg transition-all duration-200"
+                            style={{
+                              background: 'rgba(239, 68, 68, 0.15)',
+                              border: '1px solid rgba(239, 68, 68, 0.4)'
+                            }}
+                          >
+                            <X className="w-4 h-4 text-red-400" />
+                          </button>
+                        </div>
+                      </td>
+                    </>
+                  ) : (
+                    <>
+                      <td className="px-6 py-4 font-medium" style={{ color: '#F8FAFC' }}>
+                        {cost.type}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span 
+                          className="px-3 py-1 rounded-full text-xs font-medium"
+                          style={{
+                            background: 'rgba(0, 209, 255, 0.1)',
+                            color: '#00D1FF',
+                            border: '1px solid rgba(0, 209, 255, 0.3)'
+                          }}
+                        >
                           {categoryLabels[cost.category] || cost.category}
-                        </td>
-                        <td style={{ 
-                          padding: '16px', 
-                          textAlign: 'right',
-                          fontFamily: 'monospace',
-                          color: '#39FF14',
-                          textShadow: '0 0 8px rgba(57, 255, 20, 0.5)'
-                        }}>
-                          {formatCurrency(cost.monthlyValue)}
-                        </td>
-                        <td style={{ 
-                          padding: '16px', 
-                          textAlign: 'right',
-                          fontFamily: 'monospace',
-                          color: '#00D1FF',
-                          textShadow: '0 0 8px rgba(0, 209, 255, 0.5)'
-                        }}>
-                          {cost.allocationPercent}%
-                        </td>
-                        <td style={{ 
-                          padding: '16px', 
-                          textAlign: 'right',
-                          fontFamily: 'monospace',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          transition: 'all 0.3s ease'
-                        }}>
-                          {formatCurrency(cost.monthlyValue * cost.allocationPercent / 100)}
-                        </td>
-                        <td style={{ padding: '16px', textAlign: 'right' }}>
-                          <div className="flex items-center justify-end gap-2">
-                            <button 
-                              onClick={() => handleEdit(cost)} 
-                              className="p-2 rounded-lg transition-all duration-300"
-                              style={{ color: 'rgba(0, 209, 255, 0.5)' }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.color = '#00D1FF';
-                                e.currentTarget.style.filter = 'drop-shadow(0 0 8px #00D1FF)';
-                                e.currentTarget.style.background = 'rgba(0, 209, 255, 0.1)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.color = 'rgba(0, 209, 255, 0.5)';
-                                e.currentTarget.style.filter = 'none';
-                                e.currentTarget.style.background = 'transparent';
-                              }}
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </button>
-                            <button 
-                              onClick={() => handleDelete(cost.id)} 
-                              className="p-2 rounded-lg transition-all duration-300"
-                              style={{ color: 'rgba(255, 0, 122, 0.5)' }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.color = '#FF007A';
-                                e.currentTarget.style.filter = 'drop-shadow(0 0 8px #FF007A)';
-                                e.currentTarget.style.background = 'rgba(255, 0, 122, 0.1)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.color = 'rgba(255, 0, 122, 0.5)';
-                                e.currentTarget.style.filter = 'none';
-                                e.currentTarget.style.background = 'transparent';
-                              }}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right mono" style={{ color: '#F8FAFC' }}>
+                        {formatCurrency(cost.monthlyValue)}
+                      </td>
+                      <td className="px-6 py-4 text-right font-medium" style={{ color: '#FFAC00' }}>
+                        {cost.allocationPercent}%
+                      </td>
+                      <td className="px-6 py-4 text-right mono" style={{ color: '#39FF14' }}>
+                        {formatCurrency(cost.monthlyValue * cost.allocationPercent / 100)}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-center gap-2">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                onClick={() => handleEdit(cost)}
+                                className="p-2 rounded-lg transition-all duration-200 hover:scale-105"
+                                style={{
+                                  background: 'rgba(0, 209, 255, 0.1)',
+                                  border: '1px solid rgba(0, 209, 255, 0.3)'
+                                }}
+                              >
+                                <Pencil className="w-4 h-4" style={{ color: '#00D1FF' }} />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>Editar</TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                onClick={() => handleDeleteClick(cost.id, cost.type)}
+                                className="p-2 rounded-lg transition-all duration-200 hover:scale-105"
+                                style={{
+                                  background: 'rgba(239, 68, 68, 0.1)',
+                                  border: '1px solid rgba(239, 68, 68, 0.3)'
+                                }}
+                              >
+                                <Trash2 className="w-4 h-4 text-red-400" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>Excluir</TooltipContent>
+                          </Tooltip>
+                        </div>
+                      </td>
+                    </>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          
+          {filteredCosts.length === 0 && !isAdding && (
+            <div className="text-center py-12" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+              <Info className="w-12 h-12 mx-auto mb-3 opacity-50" />
+              <p>Nenhum custo encontrado</p>
+              <p className="text-sm">Adicione um novo custo ou ajuste os filtros</p>
+            </div>
+          )}
         </div>
+
+        {/* Delete Confirm Dialog */}
+        <DeleteConfirmDialog
+          isOpen={deleteDialog.isOpen}
+          onClose={() => setDeleteDialog({ isOpen: false, id: '', name: '' })}
+          onConfirm={handleDeleteConfirm}
+          title="Excluir Custo Fixo"
+          description="Tem certeza que deseja excluir este custo fixo?"
+          itemName={deleteDialog.name}
+        />
       </div>
     </TooltipProvider>
   );

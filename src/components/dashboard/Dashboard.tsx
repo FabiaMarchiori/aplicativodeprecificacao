@@ -29,9 +29,9 @@ import { DashboardSettings } from './DashboardSettings';
 import { 
   mockRevenueData, 
   productMargins, 
-  costComposition,
-  mockProducts 
+  costComposition
 } from '@/data/mockData';
+import { useData } from '@/contexts/DataContext';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { DashboardConfig, defaultDashboardConfig, ChartType } from '@/types/dashboard';
 
@@ -60,6 +60,7 @@ const getMarginColor = (margin: number) => {
 };
 
 export const Dashboard = () => {
+  const { products } = useData();
   const [config, setConfig] = useLocalStorage<DashboardConfig>('dashboard-config', defaultDashboardConfig);
   const [showSettings, setShowSettings] = useState(false);
   const [expandedChart, setExpandedChart] = useState<{ type: ChartType; title: string } | null>(null);
@@ -68,16 +69,22 @@ export const Dashboard = () => {
   const totalProfit = mockRevenueData.reduce((sum, d) => sum + d.profit, 0);
   const avgMargin = (totalProfit / totalRevenue) * 100;
   
-  const mostProfitable = [...mockProducts].sort((a, b) => 
-    (b.currentPrice - b.purchaseCost - b.variableCost) - 
-    (a.currentPrice - a.purchaseCost - a.variableCost)
-  )[0];
+  const activeProducts = products.filter(p => p.status === 'active');
   
-  const lowestMargin = [...mockProducts].sort((a, b) => {
-    const marginA = ((a.currentPrice - a.purchaseCost - a.variableCost) / a.currentPrice) * 100;
-    const marginB = ((b.currentPrice - b.purchaseCost - b.variableCost) / b.currentPrice) * 100;
-    return marginA - marginB;
-  })[0];
+  const mostProfitable = activeProducts.length > 0 
+    ? [...activeProducts].sort((a, b) => 
+        (b.currentPrice - b.purchaseCost - b.variableCost) - 
+        (a.currentPrice - a.purchaseCost - a.variableCost)
+      )[0]
+    : null;
+  
+  const lowestMargin = activeProducts.length > 0
+    ? [...activeProducts].sort((a, b) => {
+        const marginA = ((a.currentPrice - a.purchaseCost - a.variableCost) / a.currentPrice) * 100;
+        const marginB = ((b.currentPrice - b.purchaseCost - b.variableCost) / b.currentPrice) * 100;
+        return marginA - marginB;
+      })[0]
+    : null;
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
@@ -216,7 +223,7 @@ export const Dashboard = () => {
               variant="green"
             />
           )}
-          {config.visibleKPIs.mostProfitable && (
+          {config.visibleKPIs.mostProfitable && mostProfitable && (
             <KPICard
               title="Mais Lucrativo"
               value={mostProfitable.name}
@@ -225,7 +232,7 @@ export const Dashboard = () => {
               variant="cyan"
             />
           )}
-          {config.visibleKPIs.lowestMargin && (
+          {config.visibleKPIs.lowestMargin && lowestMargin && (
             <KPICard
               title="Menor Margem"
               value={lowestMargin.name}

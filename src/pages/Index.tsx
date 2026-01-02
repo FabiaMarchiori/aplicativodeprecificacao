@@ -8,21 +8,25 @@ import { TaxesConfig } from '@/components/taxes/TaxesConfig';
 import { PricingCalculator } from '@/components/pricing/PricingCalculator';
 import { CompetitionAnalysis } from '@/components/competition/CompetitionAnalysis';
 import { ReportsSection } from '@/components/reports/ReportsSection';
-import { Trash2, AlertTriangle } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { RotateCcw, AlertTriangle } from 'lucide-react';
+import { useData } from '@/contexts/DataContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 
 type TabType = 'dashboard' | 'products' | 'suppliers' | 'fixed-costs' | 'taxes' | 'pricing' | 'competition' | 'reports';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
-  const { toast } = useToast();
+  const { resetToDefaults } = useData();
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
 
-  const handleClearData = () => {
-    toast({
-      title: 'Funcionalidade em desenvolvimento',
-      description: 'A opção de limpar dados e começar do zero será implementada em breve.',
-    });
+  const handleResetClick = () => {
+    setResetDialogOpen(true);
+  };
+
+  const handleResetConfirm = () => {
+    resetToDefaults();
+    setResetDialogOpen(false);
   };
 
   const renderContent = () => {
@@ -56,16 +60,16 @@ const Index = () => {
         <main className="pt-16 md:pt-18 lg:pt-24 pb-20 md:pb-8 px-3 md:px-4 lg:px-6 max-w-[1600px] mx-auto">
           {renderContent()}
           
-          {/* Clear Data Button - Fixed at bottom with Tooltip */}
+          {/* Reset Data Button - Fixed at bottom with Tooltip */}
           <div className="fixed bottom-4 md:bottom-6 right-3 md:right-6 z-40">
             <Tooltip>
               <TooltipTrigger asChild>
                 <button 
-                  onClick={handleClearData}
+                  onClick={handleResetClick}
                   className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2.5 rounded-lg md:rounded-xl bg-card border border-border shadow-lg hover:bg-secondary transition-all duration-200 text-xs md:text-sm text-muted-foreground hover:text-foreground"
                 >
-                  <Trash2 className="w-4 h-4" />
-                  <span className="hidden sm:inline">Limpar dados e começar do zero</span>
+                  <RotateCcw className="w-4 h-4" />
+                  <span className="hidden sm:inline">Restaurar dados padrão</span>
                 </button>
               </TooltipTrigger>
               <TooltipContent 
@@ -82,11 +86,11 @@ const Index = () => {
                   <div>
                     <p className="font-semibold mb-1" style={{ color: '#FF6B6B' }}>Atenção!</p>
                     <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '13px', lineHeight: 1.5 }}>
-                      Esta ação irá <strong>apagar permanentemente</strong> todos os dados cadastrados 
-                      (produtos, fornecedores, custos, etc.) e restaurar o sistema para o estado inicial.
+                      Esta ação irá <strong>restaurar todos os dados</strong> para os valores padrão iniciais 
+                      (produtos, fornecedores, custos, etc.).
                     </p>
                     <p className="mt-2" style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '12px' }}>
-                      Use apenas se desejar recomeçar do zero.
+                      As alterações que você fez serão perdidas.
                     </p>
                   </div>
                 </div>
@@ -94,6 +98,16 @@ const Index = () => {
             </Tooltip>
           </div>
         </main>
+
+        {/* Reset Confirmation Dialog */}
+        <DeleteConfirmDialog
+          isOpen={resetDialogOpen}
+          onClose={() => setResetDialogOpen(false)}
+          onConfirm={handleResetConfirm}
+          title="Restaurar Dados Padrão"
+          description="Tem certeza que deseja restaurar todos os dados para os valores padrão? Todas as suas alterações serão perdidas."
+          itemName="todos os dados customizados"
+        />
       </div>
     </TooltipProvider>
   );

@@ -9,8 +9,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Button } from '@/components/ui/button';
 import { PriceHistoryModal } from './PriceHistoryModal';
 
+// Get priceHistory from DataContext
+
 export const PricingCalculator = () => {
-  const { products: allProducts, fixedCosts, taxConfig } = useData();
+  const { products: allProducts, fixedCosts, taxConfig, priceHistory } = useData();
   const products = useMemo(() => allProducts.filter(p => p.status === 'active'), [allProducts]);
   const [margins, setMargins] = useState<Record<string, number>>({});
   const [discounts, setDiscounts] = useState<Record<string, { type: 'percent' | 'value', amount: number }>>({});
@@ -564,7 +566,7 @@ export const PricingCalculator = () => {
           isOpen={historyModal.isOpen}
           onClose={() => setHistoryModal({ isOpen: false, product: null })}
           product={historyModal.product}
-          history={mockPriceHistory.filter(h => h.productId === historyModal.product?.id)}
+          history={priceHistory.filter(h => h.productId === historyModal.product?.id)}
         />
       )}
     </div>
