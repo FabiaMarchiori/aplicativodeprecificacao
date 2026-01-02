@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, ReactNode, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { 
   Product, 
@@ -16,6 +16,35 @@ import {
   mockPriceHistory
 } from '@/data/mockData';
 import { useToast } from '@/hooks/use-toast';
+
+// Função para sanitizar dados de preços de concorrentes (migração silenciosa)
+const sanitizeCompetitorPrices = (data: unknown[]): CompetitorPrice[] => {
+  if (!Array.isArray(data)) return [];
+  
+  return data
+    .filter((item): item is Record<string, unknown> => 
+      item !== null && typeof item === 'object' && 'productId' in item
+    )
+    .map(item => ({
+      id: typeof item.id === 'string' ? item.id : Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      productId: String(item.productId),
+      competitorPrice: typeof item.competitorPrice === 'number' ? item.competitorPrice : null
+    }));
+};
+
+// Verifica se os dados precisam de migração (contém campos extras)
+const needsMigration = (data: unknown[]): boolean => {
+  if (!Array.isArray(data)) return false;
+  
+  return data.some(item => {
+    if (item === null || typeof item !== 'object') return false;
+    const obj = item as Record<string, unknown>;
+    return 'difference' in obj || 
+           'status' in obj || 
+           'productName' in obj || 
+           'ourPrice' in obj;
+  });
+};
 
 interface DataContextType {
   // Products
@@ -67,6 +96,7 @@ interface DataProviderProps {
 
 export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const { toast } = useToast();
+  const migrationDone = useRef(false);
   
   // Persisted state with localStorage
   const [products, setProducts] = useLocalStorage<Product[]>('pricing-app-products', mockProducts);
@@ -74,7 +104,26 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const [fixedCosts, setFixedCosts] = useLocalStorage<FixedCost[]>('pricing-app-fixed-costs', mockFixedCosts);
   const [taxConfig, setTaxConfig] = useLocalStorage<TaxConfig>('pricing-app-tax-config', mockTaxConfig);
   const [priceHistory, setPriceHistory] = useLocalStorage<PriceHistory[]>('pricing-app-price-history', mockPriceHistory);
-  const [competitorPrices, setCompetitorPrices] = useLocalStorage<CompetitorPrice[]>('pricing-app-competitor-prices', mockCompetitorPrices);
+  const [rawCompetitorPrices, setCompetitorPrices] = useLocalStorage<unknown[]>('pricing-app-competitor-prices', mockCompetitorPrices);
+  
+  // Aplicar sanitização aos dados brutos (sempre calcula dinamicamente)
+  const competitorPrices = useMemo(() => {
+    return sanitizeCompetitorPrices(rawCompetitorPrices);
+  }, [rawCompetitorPrices]);
+  
+  // Migração silenciosa: limpar dados antigos com campos extras (executa uma vez)
+  useEffect(() => {
+    if (migrationDone.current) return;
+    migrationDone.current = true;
+    
+    if (needsMigration(rawCompetitorPrices)) {
+      const sanitized = sanitizeCompetitorPrices(rawCompetitorPrices);
+      if (sanitized.length > 0) {
+        setCompetitorPrices(sanitized);
+        console.log('[Migração] Dados de concorrentes limpos automaticamente - campos extras removidos');
+      }
+    }
+  }, [rawCompetitorPrices, setCompetitorPrices]);
   
   // Products CRUD
   const addProduct = useCallback((product: Omit<Product, 'id'>) => {
@@ -150,15 +199,16 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   // Update competitor price (user-editable)
   const updateCompetitorPrice = useCallback((productId: string, price: number | null) => {
     setCompetitorPrices(prev => {
-      const existing = prev.find(cp => cp.productId === productId);
+      const sanitized = sanitizeCompetitorPrices(prev);
+      const existing = sanitized.find(cp => cp.productId === productId);
       if (existing) {
-        return prev.map(cp => 
+        return sanitized.map(cp => 
           cp.productId === productId 
             ? { ...cp, competitorPrice: price } 
             : cp
         );
       }
-      return [...prev, { id: Date.now().toString(), productId, competitorPrice: price }];
+      return [...sanitized, { id: Date.now().toString(), productId, competitorPrice: price }];
     });
   }, [setCompetitorPrices]);
   
