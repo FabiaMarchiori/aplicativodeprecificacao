@@ -508,6 +508,10 @@
   }
 
   @media (min-width: 1024px) {
+    .kpi-card {
+      margin: 2px;
+    }
+    
     .kpi-card.kpi-cyan,
     .kpi-card.kpi-purple {
       min-width: 220px;
@@ -515,17 +519,22 @@
   }
 
   @media (min-width: 1280px) {
+    .kpi-card {
+      margin: 4px;
+      min-height: 160px;
+    }
+    
     .kpi-card.kpi-cyan,
     .kpi-card.kpi-purple {
       min-width: 240px;
     }
-    
-    .kpi-card {
-      min-height: 160px;
-    }
   }
 
   @media (min-width: 1536px) {
+    .kpi-card {
+      margin: 6px;
+    }
+    
     .kpi-card.kpi-cyan,
     .kpi-card.kpi-purple {
       min-width: 260px;
