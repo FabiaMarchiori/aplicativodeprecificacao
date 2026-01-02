@@ -280,6 +280,13 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
                   <stop offset="0%" stopColor="#FF007A" stopOpacity={1}/>
                   <stop offset="100%" stopColor="#00D1FF" stopOpacity={1}/>
                 </linearGradient>
+                <filter id="barHoverGlowModal" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" vertical={false} />
               <XAxis 
