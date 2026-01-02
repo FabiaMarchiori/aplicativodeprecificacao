@@ -1,9 +1,13 @@
+import { useState } from 'react';
 import { TrendingUp, TrendingDown, Minus, AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Competitor } from '@/data/mockData';
 import { useData } from '@/contexts/DataContext';
+import { Input } from '@/components/ui/input';
 
 export const CompetitionAnalysis = () => {
-  const { competitors } = useData();
+  const { competitors, updateCompetitorPrice } = useData();
+  const [editingPrices, setEditingPrices] = useState<Record<string, string>>({});
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
@@ -34,9 +38,49 @@ export const CompetitionAnalysis = () => {
     }
   };
 
-  const competitiveCount = competitors.filter(c => c.status === 'competitive').length;
-  const attentionCount = competitors.filter(c => c.status === 'attention').length;
-  const aboveMarketCount = competitors.filter(c => c.status === 'above_market').length;
+  const handlePriceChange = (productId: string, value: string) => {
+    setEditingPrices(prev => ({ ...prev, [productId]: value }));
+  };
+
+  const handlePriceBlur = (productId: string) => {
+    const value = editingPrices[productId];
+    if (value === undefined) return;
+    
+    // Parse the value, handling Brazilian number format
+    const cleanValue = value.replace(/[^\d,.-]/g, '').replace(',', '.');
+    const numericValue = cleanValue ? parseFloat(cleanValue) : null;
+    
+    updateCompetitorPrice(productId, numericValue && numericValue > 0 ? numericValue : null);
+    
+    // Clear editing state
+    setEditingPrices(prev => {
+      const { [productId]: _, ...rest } = prev;
+      return rest;
+    });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent, productId: string) => {
+    if (e.key === 'Enter') {
+      handlePriceBlur(productId);
+      (e.target as HTMLInputElement).blur();
+    }
+  };
+
+  const getDisplayValue = (competitor: { productId: string; competitorPrice: number | null }) => {
+    if (editingPrices[competitor.productId] !== undefined) {
+      return editingPrices[competitor.productId];
+    }
+    if (competitor.competitorPrice !== null) {
+      return competitor.competitorPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+    }
+    return '';
+  };
+
+  // Only count products with informed prices
+  const competitiveCount = competitors.filter(c => c.competitorPrice !== null && c.status === 'competitive').length;
+  const attentionCount = competitors.filter(c => c.competitorPrice !== null && c.status === 'attention').length;
+  const aboveMarketCount = competitors.filter(c => c.competitorPrice !== null && c.status === 'above_market').length;
+  const pendingCount = competitors.filter(c => c.competitorPrice === null).length;
 
   return (
     <div className="animate-fade-in">
@@ -146,6 +190,22 @@ export const CompetitionAnalysis = () => {
         </div>
       </div>
 
+      {/* Pending info */}
+      {pendingCount > 0 && (
+        <div 
+          className="mb-4 p-3 rounded-lg flex items-center gap-2"
+          style={{
+            background: 'rgba(0, 209, 255, 0.1)',
+            border: '1px solid rgba(0, 209, 255, 0.3)'
+          }}
+        >
+          <AlertCircle className="w-4 h-4" style={{ color: '#00D1FF' }} />
+          <span className="text-sm" style={{ color: '#00D1FF' }}>
+            {pendingCount} produto{pendingCount > 1 ? 's' : ''} sem preço de concorrente informado
+          </span>
+        </div>
+      )}
+
       {/* Competition Table - Premium Style */}
       <div 
         className="rounded-xl overflow-hidden"
@@ -170,6 +230,7 @@ export const CompetitionAnalysis = () => {
               {competitors.map((competitor) => {
                 const statusConfig = getStatusConfig(competitor.status);
                 const StatusIcon = statusConfig.icon;
+                const hasPrice = competitor.competitorPrice !== null;
 
                 return (
                   <tr 
@@ -182,52 +243,78 @@ export const CompetitionAnalysis = () => {
                   >
                     <td className="font-medium" style={{ background: 'transparent' }}>{competitor.productName}</td>
                     <td className="text-right mono" style={{ background: 'transparent', color: '#00D1FF' }}>{formatCurrency(competitor.ourPrice)}</td>
-                    <td className="text-right mono" style={{ background: 'transparent', color: 'rgba(255, 255, 255, 0.5)' }}>{formatCurrency(competitor.competitorPrice)}</td>
                     <td className="text-right" style={{ background: 'transparent' }}>
-                      <div className="flex items-center justify-end gap-2">
-                        {competitor.difference > 0 ? (
-                          <TrendingUp 
-                            className="w-4 h-4" 
-                            style={{ 
-                              color: '#BC13FE',
-                              filter: 'drop-shadow(0 0 3px #BC13FE)'
-                            }} 
-                          />
-                        ) : competitor.difference < 0 ? (
-                          <TrendingDown 
-                            className="w-4 h-4" 
-                            style={{ 
-                              color: '#39FF14',
-                              filter: 'drop-shadow(0 0 3px #39FF14)'
-                            }} 
-                          />
-                        ) : (
-                          <Minus className="w-4 h-4 text-muted-foreground" />
-                        )}
-                        <span 
-                          className="mono font-medium"
-                          style={{
-                            color: competitor.difference > 5 ? '#BC13FE' : 
-                                   competitor.difference < -5 ? '#39FF14' : 
-                                   'rgba(255, 255, 255, 0.5)'
+                      <div className="flex items-center justify-end gap-1">
+                        <span className="text-muted-foreground text-xs">R$</span>
+                        <Input
+                          type="text"
+                          inputMode="decimal"
+                          placeholder="0,00"
+                          className="w-24 h-8 text-right mono bg-transparent border-cyan-500/30 
+                                     focus:border-cyan-400 focus:ring-cyan-400/20 text-sm"
+                          style={{ 
+                            color: hasPrice ? 'rgba(255, 255, 255, 0.7)' : 'rgba(255, 255, 255, 0.3)'
                           }}
-                        >
-                          {competitor.difference > 0 ? '+' : ''}{competitor.difference.toFixed(1)}%
-                        </span>
+                          value={getDisplayValue(competitor)}
+                          onChange={(e) => handlePriceChange(competitor.productId, e.target.value)}
+                          onBlur={() => handlePriceBlur(competitor.productId)}
+                          onKeyDown={(e) => handleKeyDown(e, competitor.productId)}
+                        />
                       </div>
                     </td>
+                    <td className="text-right" style={{ background: 'transparent' }}>
+                      {hasPrice ? (
+                        <div className="flex items-center justify-end gap-2">
+                          {competitor.difference > 0 ? (
+                            <TrendingUp 
+                              className="w-4 h-4" 
+                              style={{ 
+                                color: '#BC13FE',
+                                filter: 'drop-shadow(0 0 3px #BC13FE)'
+                              }} 
+                            />
+                          ) : competitor.difference < 0 ? (
+                            <TrendingDown 
+                              className="w-4 h-4" 
+                              style={{ 
+                                color: '#39FF14',
+                                filter: 'drop-shadow(0 0 3px #39FF14)'
+                              }} 
+                            />
+                          ) : (
+                            <Minus className="w-4 h-4 text-muted-foreground" />
+                          )}
+                          <span 
+                            className="mono font-medium"
+                            style={{
+                              color: competitor.difference > 5 ? '#BC13FE' : 
+                                     competitor.difference < -5 ? '#39FF14' : 
+                                     'rgba(255, 255, 255, 0.5)'
+                            }}
+                          >
+                            {competitor.difference > 0 ? '+' : ''}{competitor.difference.toFixed(1)}%
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground text-xs italic">Informe o preço</span>
+                      )}
+                    </td>
                     <td style={{ background: 'transparent' }}>
-                      <span 
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium"
-                        style={{
-                          background: `${statusConfig.color}15`,
-                          border: `1px solid ${statusConfig.color}40`,
-                          color: statusConfig.color
-                        }}
-                      >
-                        <StatusIcon className="w-3 h-3" />
-                        {statusConfig.label}
-                      </span>
+                      {hasPrice ? (
+                        <span 
+                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium"
+                          style={{
+                            background: `${statusConfig.color}15`,
+                            border: `1px solid ${statusConfig.color}40`,
+                            color: statusConfig.color
+                          }}
+                        >
+                          <StatusIcon className="w-3 h-3" />
+                          {statusConfig.label}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground text-xs italic">—</span>
+                      )}
                     </td>
                   </tr>
                 );
@@ -278,7 +365,7 @@ export const CompetitionAnalysis = () => {
               }}
             />
             <span style={{ color: '#FFAC00' }}>Atenção</span>
-            <span style={{ color: 'rgba(255, 255, 255, 0.5)' }}>— Até 10% acima</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.5)' }}>— Até 5% acima</span>
           </div>
           {/* LED Roxo */}
           <div className="flex items-center gap-3">
@@ -290,7 +377,7 @@ export const CompetitionAnalysis = () => {
               }}
             />
             <span style={{ color: '#BC13FE' }}>Acima do Mercado</span>
-            <span style={{ color: 'rgba(255, 255, 255, 0.5)' }}>— Mais de 10% acima</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.5)' }}>— Mais de 5% acima</span>
           </div>
         </div>
       </div>

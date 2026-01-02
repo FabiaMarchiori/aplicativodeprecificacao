@@ -47,10 +47,16 @@ export interface Competitor {
   id: string;
   productId: string;
   productName: string;
-  competitorPrice: number;
+  competitorPrice: number | null; // null = não informado pelo usuário
   ourPrice: number;
   difference: number;
   status: 'competitive' | 'attention' | 'above_market';
+}
+
+export interface CompetitorPrice {
+  id: string;
+  productId: string;
+  competitorPrice: number | null;
 }
 
 export interface RevenueData {
@@ -108,16 +114,8 @@ export const mockTaxConfig: TaxConfig = {
   ],
 };
 
-export const mockCompetitors: Competitor[] = [
-  { id: '1', productId: '1', productName: 'Smartphone Galaxy X200', competitorPrice: 2299, ourPrice: 2499, difference: 8.7, status: 'attention' },
-  { id: '2', productId: '2', productName: 'Fone Bluetooth Premium', competitorPrice: 279, ourPrice: 249, difference: -10.8, status: 'competitive' },
-  { id: '3', productId: '3', productName: 'Carregador Turbo 65W', competitorPrice: 149, ourPrice: 129, difference: -13.4, status: 'competitive' },
-  { id: '4', productId: '5', productName: 'Smart Watch Pro', competitorPrice: 899, ourPrice: 999, difference: 11.1, status: 'above_market' },
-  { id: '5', productId: '6', productName: 'Caixa de Som Portátil', competitorPrice: 429, ourPrice: 449, difference: 4.7, status: 'attention' },
-  { id: '6', productId: '7', productName: 'Tablet Ultra 10"', competitorPrice: 1999, ourPrice: 1899, difference: -5.0, status: 'competitive' },
-  { id: '7', productId: '9', productName: 'Mouse Gamer RGB', competitorPrice: 229, ourPrice: 249, difference: 8.7, status: 'attention' },
-  { id: '8', productId: '10', productName: 'Teclado Mecânico', competitorPrice: 599, ourPrice: 549, difference: -8.3, status: 'competitive' },
-];
+// Preços de concorrentes iniciais vazios - usuário deve preencher
+export const mockCompetitorPrices: CompetitorPrice[] = [];
 
 export const mockRevenueData: RevenueData[] = [
   { month: 'Jan', revenue: 125000, profit: 28500 },
