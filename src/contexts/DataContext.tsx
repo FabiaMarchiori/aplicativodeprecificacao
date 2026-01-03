@@ -1,5 +1,6 @@
 import React, { createContext, useContext, ReactNode, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useSuppliers } from '@/hooks/useSuppliers';
 import { 
   Product, 
   Supplier, 
@@ -9,7 +10,6 @@ import {
   CompetitorPrice,
   PriceHistory,
   mockProducts, 
-  mockSuppliers, 
   mockFixedCosts, 
   mockTaxConfig,
   mockCompetitorPrices,
@@ -55,6 +55,7 @@ interface DataContextType {
   
   // Suppliers
   suppliers: Supplier[];
+  suppliersLoading: boolean;
   addSupplier: (supplier: Omit<Supplier, 'id'>) => void;
   updateSupplier: (id: string, data: Partial<Supplier>) => void;
   deleteSupplier: (id: string) => void;
@@ -98,9 +99,17 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const { toast } = useToast();
   const migrationDone = useRef(false);
   
-  // Persisted state with localStorage
+  // Supabase-backed suppliers
+  const {
+    suppliers,
+    loading: suppliersLoading,
+    addSupplier: addSupplierToDb,
+    updateSupplier: updateSupplierInDb,
+    deleteSupplier: deleteSupplierFromDb,
+  } = useSuppliers();
+  
+  // Persisted state with localStorage (except suppliers)
   const [products, setProducts] = useLocalStorage<Product[]>('pricing-app-products', mockProducts);
-  const [suppliers, setSuppliers] = useLocalStorage<Supplier[]>('pricing-app-suppliers', mockSuppliers);
   const [fixedCosts, setFixedCosts] = useLocalStorage<FixedCost[]>('pricing-app-fixed-costs', mockFixedCosts);
   const [taxConfig, setTaxConfig] = useLocalStorage<TaxConfig>('pricing-app-tax-config', mockTaxConfig);
   const [priceHistory, setPriceHistory] = useLocalStorage<PriceHistory[]>('pricing-app-price-history', mockPriceHistory);
@@ -147,25 +156,33 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     toast({ title: 'Produto excluído', variant: 'destructive' });
   }, [setProducts, setPriceHistory, toast]);
   
-  // Suppliers CRUD
-  const addSupplier = useCallback((supplier: Omit<Supplier, 'id'>) => {
-    const newSupplier: Supplier = {
-      ...supplier,
-      id: Date.now().toString(),
-    };
-    setSuppliers(prev => [...prev, newSupplier]);
-    toast({ title: 'Fornecedor adicionado' });
-  }, [setSuppliers, toast]);
+  // Suppliers CRUD (Supabase)
+  const addSupplier = useCallback(async (supplier: Omit<Supplier, 'id'>) => {
+    try {
+      await addSupplierToDb(supplier);
+      toast({ title: 'Fornecedor adicionado' });
+    } catch (err) {
+      toast({ title: 'Erro ao adicionar fornecedor', variant: 'destructive' });
+    }
+  }, [addSupplierToDb, toast]);
   
-  const updateSupplier = useCallback((id: string, data: Partial<Supplier>) => {
-    setSuppliers(prev => prev.map(s => s.id === id ? { ...s, ...data } : s));
-    toast({ title: 'Fornecedor atualizado' });
-  }, [setSuppliers, toast]);
+  const updateSupplier = useCallback(async (id: string, data: Partial<Supplier>) => {
+    try {
+      await updateSupplierInDb(id, data);
+      toast({ title: 'Fornecedor atualizado' });
+    } catch (err) {
+      toast({ title: 'Erro ao atualizar fornecedor', variant: 'destructive' });
+    }
+  }, [updateSupplierInDb, toast]);
   
-  const deleteSupplier = useCallback((id: string) => {
-    setSuppliers(prev => prev.filter(s => s.id !== id));
-    toast({ title: 'Fornecedor excluído', variant: 'destructive' });
-  }, [setSuppliers, toast]);
+  const deleteSupplier = useCallback(async (id: string) => {
+    try {
+      await deleteSupplierFromDb(id);
+      toast({ title: 'Fornecedor excluído', variant: 'destructive' });
+    } catch (err) {
+      toast({ title: 'Erro ao excluir fornecedor', variant: 'destructive' });
+    }
+  }, [deleteSupplierFromDb, toast]);
   
   // Fixed Costs CRUD
   const addFixedCost = useCallback((cost: Omit<FixedCost, 'id'>) => {
@@ -244,19 +261,18 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       });
   }, [products, competitorPrices]);
   
-  // Reset to defaults
+  // Reset to defaults (suppliers are in Supabase, so we don't reset them here)
   const resetToDefaults = useCallback(() => {
     setProducts(mockProducts);
-    setSuppliers(mockSuppliers);
     setFixedCosts(mockFixedCosts);
     setTaxConfig(mockTaxConfig);
     setPriceHistory(mockPriceHistory);
     setCompetitorPrices(mockCompetitorPrices);
     toast({ 
       title: 'Dados restaurados', 
-      description: 'Todos os dados foram restaurados para os valores padrão.'
+      description: 'Os dados locais foram restaurados. Fornecedores no Supabase permanecem inalterados.'
     });
-  }, [setProducts, setSuppliers, setFixedCosts, setTaxConfig, setPriceHistory, setCompetitorPrices, toast]);
+  }, [setProducts, setFixedCosts, setTaxConfig, setPriceHistory, setCompetitorPrices, toast]);
   
   const value: DataContextType = {
     products,
@@ -264,6 +280,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     updateProduct,
     deleteProduct,
     suppliers,
+    suppliersLoading,
     addSupplier,
     updateSupplier,
     deleteSupplier,
