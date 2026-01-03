@@ -220,35 +220,35 @@ export type Database = {
       }
       suppliers: {
         Row: {
+          average_delivery_time_days: number | null
           created_at: string
-          custo_logistico: number | null
           id: string
-          nome: string
-          observacoes: string | null
-          prazo_medio_dias: number | null
-          tipo: Database["public"]["Enums"]["supplier_type"]
+          logistic_cost: number | null
+          name: string
+          notes: string | null
+          type: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          average_delivery_time_days?: number | null
           created_at?: string
-          custo_logistico?: number | null
           id?: string
-          nome: string
-          observacoes?: string | null
-          prazo_medio_dias?: number | null
-          tipo?: Database["public"]["Enums"]["supplier_type"]
+          logistic_cost?: number | null
+          name: string
+          notes?: string | null
+          type?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          average_delivery_time_days?: number | null
           created_at?: string
-          custo_logistico?: number | null
           id?: string
-          nome?: string
-          observacoes?: string | null
-          prazo_medio_dias?: number | null
-          tipo?: Database["public"]["Enums"]["supplier_type"]
+          logistic_cost?: number | null
+          name?: string
+          notes?: string | null
+          type?: string | null
           updated_at?: string
           user_id?: string
         }
