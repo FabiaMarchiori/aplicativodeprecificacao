@@ -1,6 +1,7 @@
 import React, { createContext, useContext, ReactNode, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useSuppliers } from '@/hooks/useSuppliers';
+import { useProducts } from '@/hooks/useProducts';
 import { 
   Product, 
   Supplier, 
@@ -9,7 +10,6 @@ import {
   Competitor,
   CompetitorPrice,
   PriceHistory,
-  mockProducts, 
   mockFixedCosts, 
   mockTaxConfig,
   mockCompetitorPrices,
@@ -49,9 +49,10 @@ const needsMigration = (data: unknown[]): boolean => {
 interface DataContextType {
   // Products
   products: Product[];
-  addProduct: (product: Omit<Product, 'id'>) => void;
-  updateProduct: (id: string, data: Partial<Product>) => void;
-  deleteProduct: (id: string) => void;
+  productsLoading: boolean;
+  addProduct: (product: Omit<Product, 'id'>) => Promise<void>;
+  updateProduct: (id: string, data: Partial<Product>) => Promise<void>;
+  deleteProduct: (id: string) => Promise<void>;
   
   // Suppliers
   suppliers: Supplier[];
@@ -108,8 +109,16 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     deleteSupplier: deleteSupplierFromDb,
   } = useSuppliers();
   
-  // Persisted state with localStorage (except suppliers)
-  const [products, setProducts] = useLocalStorage<Product[]>('pricing-app-products', mockProducts);
+  // Supabase-backed products
+  const {
+    products,
+    loading: productsLoading,
+    addProduct: addProductToDb,
+    updateProduct: updateProductInDb,
+    deleteProduct: deleteProductFromDb,
+  } = useProducts();
+  
+  // Persisted state with localStorage (products and suppliers are in Supabase)
   const [fixedCosts, setFixedCosts] = useLocalStorage<FixedCost[]>('pricing-app-fixed-costs', mockFixedCosts);
   const [taxConfig, setTaxConfig] = useLocalStorage<TaxConfig>('pricing-app-tax-config', mockTaxConfig);
   const [priceHistory, setPriceHistory] = useLocalStorage<PriceHistory[]>('pricing-app-price-history', mockPriceHistory);
@@ -134,27 +143,35 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     }
   }, [rawCompetitorPrices, setCompetitorPrices]);
   
-  // Products CRUD
-  const addProduct = useCallback((product: Omit<Product, 'id'>) => {
-    const newProduct: Product = {
-      ...product,
-      id: Date.now().toString(),
-    };
-    setProducts(prev => [...prev, newProduct]);
-    toast({ title: 'Produto adicionado', description: 'Novo produto cadastrado com sucesso.' });
-  }, [setProducts, toast]);
+  // Products CRUD (Supabase)
+  const addProduct = useCallback(async (product: Omit<Product, 'id'>) => {
+    try {
+      await addProductToDb(product);
+      toast({ title: 'Produto adicionado', description: 'Novo produto cadastrado com sucesso.' });
+    } catch (err) {
+      toast({ title: 'Erro ao adicionar produto', variant: 'destructive' });
+    }
+  }, [addProductToDb, toast]);
   
-  const updateProduct = useCallback((id: string, data: Partial<Product>) => {
-    setProducts(prev => prev.map(p => p.id === id ? { ...p, ...data } : p));
-    toast({ title: 'Produto atualizado', description: 'As alterações foram salvas.' });
-  }, [setProducts, toast]);
+  const updateProduct = useCallback(async (id: string, data: Partial<Product>) => {
+    try {
+      await updateProductInDb(id, data);
+      toast({ title: 'Produto atualizado', description: 'As alterações foram salvas.' });
+    } catch (err) {
+      toast({ title: 'Erro ao atualizar produto', variant: 'destructive' });
+    }
+  }, [updateProductInDb, toast]);
   
-  const deleteProduct = useCallback((id: string) => {
-    setProducts(prev => prev.filter(p => p.id !== id));
-    // Also remove related price history
-    setPriceHistory(prev => prev.filter(ph => ph.productId !== id));
-    toast({ title: 'Produto excluído', variant: 'destructive' });
-  }, [setProducts, setPriceHistory, toast]);
+  const deleteProduct = useCallback(async (id: string) => {
+    try {
+      await deleteProductFromDb(id);
+      // Also remove related price history from localStorage
+      setPriceHistory(prev => prev.filter(ph => ph.productId !== id));
+      toast({ title: 'Produto excluído', variant: 'destructive' });
+    } catch (err) {
+      toast({ title: 'Erro ao excluir produto', variant: 'destructive' });
+    }
+  }, [deleteProductFromDb, setPriceHistory, toast]);
   
   // Suppliers CRUD (Supabase)
   const addSupplier = useCallback(async (supplier: Omit<Supplier, 'id'>) => {
@@ -261,21 +278,21 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       });
   }, [products, competitorPrices]);
   
-  // Reset to defaults (suppliers are in Supabase, so we don't reset them here)
+  // Reset to defaults (products and suppliers are in Supabase, so we don't reset them here)
   const resetToDefaults = useCallback(() => {
-    setProducts(mockProducts);
     setFixedCosts(mockFixedCosts);
     setTaxConfig(mockTaxConfig);
     setPriceHistory(mockPriceHistory);
     setCompetitorPrices(mockCompetitorPrices);
     toast({ 
       title: 'Dados restaurados', 
-      description: 'Os dados locais foram restaurados. Fornecedores no Supabase permanecem inalterados.'
+      description: 'Os dados locais foram restaurados. Produtos e Fornecedores no Supabase permanecem inalterados.'
     });
-  }, [setProducts, setFixedCosts, setTaxConfig, setPriceHistory, setCompetitorPrices, toast]);
+  }, [setFixedCosts, setTaxConfig, setPriceHistory, setCompetitorPrices, toast]);
   
   const value: DataContextType = {
     products,
+    productsLoading,
     addProduct,
     updateProduct,
     deleteProduct,
