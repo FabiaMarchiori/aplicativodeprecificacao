@@ -507,12 +507,6 @@
     min-width: 200px;
   }
 
-  @media (min-width: 1024px) {
-    .kpi-card.kpi-cyan,
-    .kpi-card.kpi-purple {
-      min-width: 220px;
-    }
-  }
 
   /* KPI value - ensure single line */
   .kpi-card .kpi-value {
