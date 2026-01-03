@@ -7,8 +7,16 @@ import {
   Calculator, 
   Users, 
   FileBarChart,
-  TrendingUp
+  TrendingUp,
+  LogOut
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 type TabType = 'dashboard' | 'products' | 'suppliers' | 'fixed-costs' | 'taxes' | 'pricing' | 'competition' | 'reports';
 
@@ -29,6 +37,8 @@ const tabs: { id: TabType; label: string; icon: React.ElementType; colorClass: s
 ];
 
 export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) => {
+  const { signOut, user } = useAuth();
+
   return (
     <header 
       className="fixed top-0 left-0 right-0 z-50 border-b"
@@ -119,6 +129,34 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
               );
             })}
           </nav>
+
+          {/* Logout Button */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={signOut}
+                className="flex-shrink-0 rounded-lg border-0"
+                style={{
+                  color: '#FF007A',
+                  background: 'transparent',
+                }}
+              >
+                <LogOut className="w-5 h-5" style={{ filter: 'drop-shadow(0 0 4px rgba(255, 0, 122, 0.5))' }} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent 
+              side="bottom"
+              style={{
+                background: 'rgba(0, 0, 0, 0.9)',
+                border: '1px solid rgba(255, 0, 122, 0.3)',
+                color: '#fff',
+              }}
+            >
+              <p>Sair ({user?.email})</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
     </header>
