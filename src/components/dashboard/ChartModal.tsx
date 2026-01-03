@@ -12,8 +12,10 @@ import {
   Cell,
   Legend,
   Area,
-  AreaChart
+  AreaChart,
+  LabelList
 } from 'recharts';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { ChartType } from '@/types/dashboard';
 import { 
   mockRevenueData, 
@@ -40,9 +42,17 @@ const formatCurrency = (value: number) => {
 };
 
 export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProps) => {
+  const isMobile = useIsMobile();
+  
   if (!isOpen) return null;
 
   const sortedProfits = [...productMargins].sort((a, b) => b.profit - a.profit);
+  
+  // Mobile optimized data with truncated names
+  const mobileMargins = productMargins.map(p => ({
+    ...p,
+    name: p.name.length > 12 ? p.name.substring(0, 12) + '...' : p.name
+  }));
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -208,7 +218,14 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
       case 'margin':
         return (
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={productMargins} layout="vertical">
+            <BarChart 
+              data={isMobile ? mobileMargins : productMargins} 
+              layout="vertical"
+              margin={isMobile 
+                ? { top: 10, right: 40, left: 0, bottom: 10 } 
+                : { top: 20, right: 40, left: 10, bottom: 20 }
+              }
+            >
               <defs>
                 <linearGradient id="marginGradientModal" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#BC13FE" stopOpacity={1}/>
@@ -227,7 +244,7 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
                 type="number" 
                 stroke="#FFFFFF"
                 tick={{ fill: '#FFFFFF' }}
-                fontSize={14}
+                fontSize={isMobile ? 10 : 14}
                 tickFormatter={(value) => `${value}%`}
                 tickLine={false}
               />
@@ -235,8 +252,8 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
                 type="category" 
                 dataKey="name" 
                 stroke="#FFFFFF"
-                fontSize={12}
-                width={120}
+                fontSize={isMobile ? 9 : 12}
+                width={isMobile ? 80 : 120}
                 tickLine={false}
                 axisLine={false}
                 tick={{ fill: '#FFFFFF' }}
@@ -265,7 +282,19 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
                   stroke: "rgba(0, 209, 255, 0.6)",
                   strokeWidth: 1
                 }}
-              />
+              >
+                <LabelList 
+                  dataKey="margin" 
+                  position="insideRight"
+                  formatter={(value: number) => `${value}%`}
+                  style={{ 
+                    fill: '#FFFFFF', 
+                    fontSize: isMobile ? 9 : 12,
+                    fontWeight: 600,
+                    textShadow: '0 0 4px rgba(0,0,0,0.8)'
+                  }}
+                />
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         );
@@ -352,7 +381,7 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
       onClick={onClose}
     >
       <div 
-        className="relative w-[95vw] h-[90vh] rounded-2xl p-6 animate-slide-up"
+        className={`relative w-[95vw] h-[90vh] rounded-2xl animate-slide-up ${isMobile ? 'p-3' : 'p-6'}`}
         style={{
           background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.98) 0%, rgba(10, 10, 20, 0.98) 100%)',
           border: '1px solid rgba(0, 209, 255, 0.4)',
@@ -361,9 +390,9 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className={`flex items-center justify-between ${isMobile ? 'mb-3' : 'mb-6'}`}>
           <h2 
-            className="text-2xl font-bold"
+            className={`font-bold ${isMobile ? 'text-lg' : 'text-2xl'}`}
             style={{ 
               color: '#F8FAFC',
               textShadow: '0 0 20px rgba(248, 250, 252, 0.4)'
@@ -398,7 +427,7 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
         </div>
 
         {/* Chart Container */}
-        <div className="h-[calc(100%-80px)]">
+        <div className={isMobile ? "h-[calc(100%-50px)]" : "h-[calc(100%-80px)]"}>
           {renderChart()}
         </div>
       </div>
