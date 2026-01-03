@@ -269,8 +269,8 @@ export const CompetitionAnalysis = () => {
                             <TrendingUp 
                               className="w-4 h-4" 
                               style={{ 
-                                color: '#BC13FE',
-                                filter: 'drop-shadow(0 0 3px #BC13FE)'
+                                color: competitor.difference > 5 ? '#BC13FE' : '#FFAC00',
+                                filter: `drop-shadow(0 0 3px ${competitor.difference > 5 ? '#BC13FE' : '#FFAC00'})`
                               }} 
                             />
                           ) : competitor.difference < 0 ? (
@@ -288,7 +288,8 @@ export const CompetitionAnalysis = () => {
                             className="mono font-medium"
                             style={{
                               color: competitor.difference > 5 ? '#BC13FE' : 
-                                     competitor.difference < -5 ? '#39FF14' : 
+                                     competitor.difference > 0 ? '#FFAC00' :
+                                     competitor.difference < 0 ? '#39FF14' : 
                                      'rgba(255, 255, 255, 0.5)'
                             }}
                           >
