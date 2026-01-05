@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { 
   Calculator, TrendingUp, TrendingDown, Info, Download, FileSpreadsheet, 
   Clock, Smartphone, Volume2, Mouse, Cable, Battery, AlertCircle,
@@ -34,7 +35,7 @@ export const PricingCalculator = () => {
   });
   
   // Estado do perfil de negócio
-  const [businessProfile, setBusinessProfile] = useState<BusinessProfile | null>(null);
+  const [businessProfile, setBusinessProfile] = useLocalStorage<BusinessProfile | null>('pricing_business_profile', null);
   
   // Estado para modo de cálculo da margem
   const [marginMode, setMarginMode] = useState<MarginCalculationMode>('before_tax');
@@ -117,7 +118,7 @@ export const PricingCalculator = () => {
 
   const getPricingData = (product: Product): PricingResult => {
     const desiredMargin = margins[product.id] || 30;
-    const allocationMode = allocationModes[product.id] || 'distribute';
+    const allocationMode = allocationModes[product.id] || 'exclude';
     return calculatePricing(product, fixedCosts, taxConfig, desiredMargin, allocationMode, activeProductsCount, marginMode);
   };
 
