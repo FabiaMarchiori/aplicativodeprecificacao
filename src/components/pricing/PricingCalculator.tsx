@@ -361,7 +361,7 @@ export const PricingCalculator = () => {
               >
                 <SelectItem value="mei" style={{ color: '#F8FAFC' }}>MEI</SelectItem>
                 <SelectItem value="atacado" style={{ color: '#F8FAFC' }}>Atacado / Revenda</SelectItem>
-                <SelectItem value="importador" style={{ color: '#F8FAFC' }}>Importador</SelectItem>
+                <SelectItem value="distribuidor" style={{ color: '#F8FAFC' }}>Distribuidor</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs mt-2" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
