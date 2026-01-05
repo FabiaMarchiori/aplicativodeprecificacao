@@ -3,11 +3,18 @@ import {
   Calculator, TrendingUp, TrendingDown, Info, Download, FileSpreadsheet, 
   Clock, Smartphone, Volume2, Mouse, Cable, Battery, AlertCircle
 } from 'lucide-react';
-import { calculatePricing, Product, FixedCostAllocationMode, PricingResult } from '@/data/mockData';
+import { calculatePricing, Product, FixedCostAllocationMode, PricingResult, BusinessProfile, BUSINESS_PROFILE_CONFIG } from '@/data/mockData';
 import { useData } from '@/contexts/DataContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { PriceHistoryModal } from './PriceHistoryModal';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select';
 
 export const PricingCalculator = () => {
   const { products: allProducts, fixedCosts, taxConfig, priceHistory } = useData();
@@ -21,6 +28,15 @@ export const PricingCalculator = () => {
     isOpen: false,
     product: null
   });
+  
+  // Estado do perfil de negócio
+  const [businessProfile, setBusinessProfile] = useState<BusinessProfile | null>(null);
+  
+  // Rastrear alterações manuais para não sobrescrever
+  const [manualOverrides, setManualOverrides] = useState<{
+    margins: Set<string>;
+    allocationModes: Set<string>;
+  }>({ margins: new Set(), allocationModes: new Set() });
 
   // Calcula o total de custos fixos rateados
   const totalFixedCostsRateado = useMemo(() => 
@@ -34,6 +50,11 @@ export const PricingCalculator = () => {
 
   const handleMarginChange = (productId: string, value: string) => {
     setMargins({ ...margins, [productId]: parseFloat(value) || 0 });
+    // Marca como alteração manual
+    setManualOverrides(prev => ({
+      ...prev,
+      margins: new Set(prev.margins).add(productId)
+    }));
   };
 
   const handleDiscountChange = (productId: string, amount: number, type: 'percent' | 'value') => {
@@ -42,6 +63,35 @@ export const PricingCalculator = () => {
 
   const handleAllocationModeChange = (productId: string, mode: FixedCostAllocationMode) => {
     setAllocationModes({ ...allocationModes, [productId]: mode });
+    // Marca como alteração manual
+    setManualOverrides(prev => ({
+      ...prev,
+      allocationModes: new Set(prev.allocationModes).add(productId)
+    }));
+  };
+
+  // Handler para mudança de perfil de negócio
+  const handleBusinessProfileChange = (profile: BusinessProfile) => {
+    setBusinessProfile(profile);
+    const config = BUSINESS_PROFILE_CONFIG[profile];
+    
+    // Aplicar margem padrão para produtos não alterados manualmente
+    const newMargins = { ...margins };
+    products.forEach(p => {
+      if (!manualOverrides.margins.has(p.id)) {
+        newMargins[p.id] = config.defaultMargin;
+      }
+    });
+    setMargins(newMargins);
+    
+    // Aplicar modo de rateio padrão para produtos não alterados manualmente
+    const newAllocationModes = { ...allocationModes };
+    products.forEach(p => {
+      if (!manualOverrides.allocationModes.has(p.id)) {
+        newAllocationModes[p.id] = config.defaultAllocationMode;
+      }
+    });
+    setAllocationModes(newAllocationModes);
   };
 
   const getPricingData = (product: Product): PricingResult => {
@@ -95,7 +145,7 @@ export const PricingCalculator = () => {
   const totalTax = (taxConfig.salesTax + taxConfig.marketplaceFee + taxConfig.cardFee + otherFeesTotal).toFixed(1);
 
   const exportCSV = () => {
-    const headers = ['Código', 'Produto', 'Categoria', 'Custo Compra', 'Custo Variável', 'Rateio Custos Fixos', 'Custo Total', 'Impostos', 'Margem %', 'Preço Sugerido', 'Lucro/Un', 'Modo Rateio'];
+    const headers = ['Código', 'Produto', 'Categoria', 'Custo Compra', 'Custo Variável', 'Rateio Custos Fixos', 'Custo Total', 'Impostos', 'Margem %', 'Preço Sugerido', 'Lucro/Un', 'Modo Rateio', 'Perfil Negócio'];
     const rows = products.map(p => {
       const pricing = getPricingData(p);
       return [
@@ -110,7 +160,8 @@ export const PricingCalculator = () => {
         pricing.realMargin.toFixed(1),
         pricing.suggestedPrice.toFixed(2),
         pricing.profitPerUnit.toFixed(2),
-        getAllocationModeLabel(pricing.allocationMode, pricing.activeProductsCount)
+        getAllocationModeLabel(pricing.allocationMode, pricing.activeProductsCount),
+        businessProfile ? BUSINESS_PROFILE_CONFIG[businessProfile].label : 'Não definido'
       ];
     });
     
@@ -123,7 +174,7 @@ export const PricingCalculator = () => {
   };
 
   const exportExcel = () => {
-    const headers = ['Código', 'Produto', 'Categoria', 'Custo Compra', 'Custo Variável', 'Rateio Custos Fixos', 'Custo Total', 'Impostos', 'Margem %', 'Preço Sugerido', 'Lucro/Un', 'Modo Rateio'];
+    const headers = ['Código', 'Produto', 'Categoria', 'Custo Compra', 'Custo Variável', 'Rateio Custos Fixos', 'Custo Total', 'Impostos', 'Margem %', 'Preço Sugerido', 'Lucro/Un', 'Modo Rateio', 'Perfil Negócio'];
     const rows = products.map(p => {
       const pricing = getPricingData(p);
       return [
@@ -138,7 +189,8 @@ export const PricingCalculator = () => {
         pricing.realMargin.toFixed(1),
         pricing.suggestedPrice.toFixed(2),
         pricing.profitPerUnit.toFixed(2),
-        getAllocationModeLabel(pricing.allocationMode, pricing.activeProductsCount)
+        getAllocationModeLabel(pricing.allocationMode, pricing.activeProductsCount),
+        businessProfile ? BUSINESS_PROFILE_CONFIG[businessProfile].label : 'Não definido'
       ];
     });
     
@@ -245,6 +297,65 @@ export const PricingCalculator = () => {
               Taxa total: {totalTax}%
             </span>
           </div>
+        </div>
+      </div>
+
+      {/* Business Profile Selector */}
+      <div 
+        className="p-5 rounded-xl mb-6"
+        style={{
+          background: '#0a0a0c',
+          border: '1px solid rgba(0, 209, 255, 0.3)',
+          boxShadow: '0 0 15px rgba(0, 209, 255, 0.1)'
+        }}
+      >
+        <div className="flex flex-col gap-4">
+          <div>
+            <label className="text-sm font-medium mb-2 block" style={{ color: '#00D1FF' }}>
+              Perfil de Negócio
+            </label>
+            <Select value={businessProfile || ''} onValueChange={(v) => handleBusinessProfileChange(v as BusinessProfile)}>
+              <SelectTrigger 
+                className="w-full max-w-xs"
+                style={{
+                  background: '#000000',
+                  border: '1px solid rgba(0, 209, 255, 0.4)',
+                  color: '#F8FAFC'
+                }}
+              >
+                <SelectValue placeholder="Selecione o perfil..." />
+              </SelectTrigger>
+              <SelectContent
+                style={{
+                  background: '#0a0a0c',
+                  border: '1px solid rgba(0, 209, 255, 0.4)',
+                  zIndex: 50
+                }}
+              >
+                <SelectItem value="mei" style={{ color: '#F8FAFC' }}>MEI</SelectItem>
+                <SelectItem value="atacado" style={{ color: '#F8FAFC' }}>Atacado / Revenda</SelectItem>
+                <SelectItem value="importador" style={{ color: '#F8FAFC' }}>Importador</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs mt-2" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+              Define sugestões iniciais de cálculo. Você pode alterar todos os valores manualmente.
+            </p>
+          </div>
+          
+          {/* Descrição dinâmica baseada no perfil selecionado */}
+          {businessProfile && (
+            <div 
+              className="p-3 rounded-lg"
+              style={{
+                background: 'rgba(0, 209, 255, 0.08)',
+                border: '1px solid rgba(0, 209, 255, 0.2)'
+              }}
+            >
+              <p className="text-sm whitespace-pre-line" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                {BUSINESS_PROFILE_CONFIG[businessProfile].description}
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -400,7 +511,13 @@ export const PricingCalculator = () => {
                   <div className="pt-2">
                     <p className="text-xs mb-1.5" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
                       Modo de Rateio
-                      <TooltipIcon content="O rateio de custos fixos impacta diretamente o custo e o preço sugerido. Quanto mais produtos cadastrados, menor o valor rateado por produto." />
+                      <TooltipIcon 
+                        content={
+                          businessProfile 
+                            ? BUSINESS_PROFILE_CONFIG[businessProfile].tooltipRateio 
+                            : "O rateio de custos fixos impacta diretamente o custo e o preço sugerido. Quanto mais produtos cadastrados, menor o valor rateado por produto."
+                        } 
+                      />
                     </p>
                     <div className="flex flex-wrap gap-1">
                       <button
@@ -730,6 +847,22 @@ export const PricingCalculator = () => {
             </div>
           );
         })}
+      </div>
+
+      {/* Mensagem informativa fixa */}
+      <div 
+        className="mt-6 p-4 rounded-lg flex items-start gap-3"
+        style={{
+          background: 'rgba(0, 209, 255, 0.08)',
+          border: '1px solid rgba(0, 209, 255, 0.25)'
+        }}
+      >
+        <span className="text-lg">💡</span>
+        <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+          O preço sugerido considera as opções selecionadas acima.
+          <br />
+          Ative ou desative o rateio para simular diferentes cenários de precificação.
+        </p>
       </div>
 
       {/* History Modal */}
