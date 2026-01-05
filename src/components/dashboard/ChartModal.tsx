@@ -17,17 +17,15 @@ import {
 } from 'recharts';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ChartType } from '@/types/dashboard';
-import { 
-  mockRevenueData, 
-  productMargins, 
-  costComposition 
-} from '@/data/mockData';
 
 interface ChartModalProps {
   isOpen: boolean;
   onClose: () => void;
   chartType: ChartType;
   title: string;
+  productMargins: Array<{ name: string; margin: number; profit: number }>;
+  costComposition: Array<{ name: string; value: number }>;
+  revenueData: Array<{ month: string; revenue: number; profit: number }>;
 }
 
 const PIE_COLORS = [
@@ -41,7 +39,15 @@ const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 };
 
-export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProps) => {
+export const ChartModal = ({ 
+  isOpen, 
+  onClose, 
+  chartType, 
+  title,
+  productMargins,
+  costComposition,
+  revenueData
+}: ChartModalProps) => {
   const isMobile = useIsMobile();
   
   if (!isOpen) return null;
@@ -117,7 +123,7 @@ export const ChartModal = ({ isOpen, onClose, chartType, title }: ChartModalProp
       case 'revenue':
         return (
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={mockRevenueData}>
+            <AreaChart data={revenueData}>
               <defs>
                 <linearGradient id="neonRevenueModal" x1="0" y1="1" x2="0" y2="0">
                   <stop offset="0%" stopColor="#00D1FF" stopOpacity={0}/>

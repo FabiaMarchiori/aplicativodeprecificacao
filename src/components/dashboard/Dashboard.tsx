@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { 
   DollarSign, 
   Percent, 
@@ -26,11 +26,6 @@ import { KPICard } from './KPICard';
 import { InteractiveChart } from './InteractiveChart';
 import { ChartModal } from './ChartModal';
 import { DashboardSettings } from './DashboardSettings';
-import { 
-  mockRevenueData, 
-  productMargins, 
-  costComposition
-} from '@/data/mockData';
 import { useData } from '@/contexts/DataContext';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { DashboardConfig, defaultDashboardConfig, ChartType } from '@/types/dashboard';
@@ -60,16 +55,78 @@ const getMarginColor = (margin: number) => {
 };
 
 export const Dashboard = () => {
-  const { products } = useData();
+  const { products, fixedCosts, taxConfig } = useData();
   const [config, setConfig] = useLocalStorage<DashboardConfig>('dashboard-config', defaultDashboardConfig);
   const [showSettings, setShowSettings] = useState(false);
   const [expandedChart, setExpandedChart] = useState<{ type: ChartType; title: string } | null>(null);
 
-  const totalRevenue = mockRevenueData.reduce((sum, d) => sum + d.revenue, 0);
-  const totalProfit = mockRevenueData.reduce((sum, d) => sum + d.profit, 0);
-  const avgMargin = (totalProfit / totalRevenue) * 100;
-  
   const activeProducts = products.filter(p => p.status === 'active');
+  
+  // Calculate dynamic product margins from real Supabase data
+  const productMargins = useMemo(() => {
+    return activeProducts.map(p => {
+      const profit = p.currentPrice - p.purchaseCost - p.variableCost;
+      const margin = p.currentPrice > 0 ? Math.round((profit / p.currentPrice) * 100) : 0;
+      return {
+        name: p.name.length > 15 ? p.name.substring(0, 15) + '...' : p.name,
+        margin,
+        profit: Math.round(profit * 100) / 100,
+      };
+    });
+  }, [activeProducts]);
+
+  // Calculate dynamic cost composition from real data
+  const costComposition = useMemo(() => {
+    if (activeProducts.length === 0) {
+      return [
+        { name: 'Custos Fixos', value: 0 },
+        { name: 'Custos Variáveis', value: 0 },
+        { name: 'Impostos', value: 0 },
+        { name: 'Margem Líquida', value: 0 },
+      ];
+    }
+    
+    const totalRevenue = activeProducts.reduce((sum, p) => sum + p.currentPrice, 0);
+    const totalPurchaseCost = activeProducts.reduce((sum, p) => sum + p.purchaseCost, 0);
+    const totalVariableCost = activeProducts.reduce((sum, p) => sum + p.variableCost, 0);
+    const totalFixedCosts = fixedCosts.reduce((sum, c) => sum + (c.monthlyValue * c.allocationPercent / 100), 0);
+    
+    const totalTaxRate = (taxConfig.salesTax + taxConfig.marketplaceFee + taxConfig.cardFee + 
+      taxConfig.otherFees.reduce((sum, t) => sum + t.percentage, 0)) / 100;
+    const totalTaxes = totalRevenue * totalTaxRate;
+    
+    const fixedPercent = totalRevenue > 0 ? Math.round((totalFixedCosts / totalRevenue) * 100) : 0;
+    const variablePercent = totalRevenue > 0 ? Math.round(((totalPurchaseCost + totalVariableCost) / totalRevenue) * 100) : 0;
+    const taxPercent = totalRevenue > 0 ? Math.round((totalTaxes / totalRevenue) * 100) : 0;
+    const marginPercent = Math.max(0, 100 - fixedPercent - variablePercent - taxPercent);
+    
+    return [
+      { name: 'Custos Fixos', value: fixedPercent },
+      { name: 'Custos Variáveis', value: variablePercent },
+      { name: 'Impostos', value: taxPercent },
+      { name: 'Margem Líquida', value: marginPercent },
+    ];
+  }, [activeProducts, fixedCosts, taxConfig]);
+
+  // Calculate dynamic revenue data (estimated based on current products)
+  const revenueData = useMemo(() => {
+    const monthlyRevenue = activeProducts.reduce((sum, p) => sum + p.currentPrice, 0);
+    const monthlyProfit = activeProducts.reduce((sum, p) => sum + (p.currentPrice - p.purchaseCost - p.variableCost), 0);
+    
+    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    const currentMonth = new Date().getMonth();
+    
+    // Create estimated projection based on current product values
+    return months.map((month, index) => ({
+      month,
+      revenue: index <= currentMonth ? Math.round(monthlyRevenue * (0.85 + (index * 0.02))) : 0,
+      profit: index <= currentMonth ? Math.round(monthlyProfit * (0.85 + (index * 0.02))) : 0,
+    }));
+  }, [activeProducts]);
+
+  const totalRevenue = revenueData.reduce((sum, d) => sum + d.revenue, 0);
+  const totalProfit = revenueData.reduce((sum, d) => sum + d.profit, 0);
+  const avgMargin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
   
   const mostProfitable = activeProducts.length > 0 
     ? [...activeProducts].sort((a, b) => 
@@ -146,10 +203,10 @@ export const Dashboard = () => {
     return null;
   };
 
-  // Use productMargins directly - gradient will be applied via fill="url(#marginGradient)"
-  const coloredMargins = productMargins;
-
-  const sortedProfits = [...productMargins].sort((a, b) => b.profit - a.profit);
+  const sortedProfits = useMemo(() => 
+    [...productMargins].sort((a, b) => b.profit - a.profit), 
+    [productMargins]
+  );
 
   const hasVisibleKPIs = Object.values(config.visibleKPIs).some(v => v);
   const hasVisibleCharts = Object.values(config.visibleCharts).some(v => v);
@@ -256,7 +313,7 @@ export const Dashboard = () => {
             >
               <div className="h-[220px] md:h-[260px] lg:h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={mockRevenueData}>
+                  <AreaChart data={revenueData}>
                     <defs>
                       <linearGradient id="neonRevenue" x1="0" y1="1" x2="0" y2="0">
                         <stop offset="0%" stopColor="#00D1FF" stopOpacity={0}/>
@@ -381,7 +438,7 @@ export const Dashboard = () => {
             >
               <div className="h-[220px] md:h-[260px] lg:h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={coloredMargins} layout="vertical">
+                  <BarChart data={productMargins} layout="vertical">
                     <defs>
                       <linearGradient id="marginGradient" x1="0" y1="0" x2="1" y2="0">
                         <stop offset="0%" stopColor="#BC13FE" stopOpacity={1}/>
@@ -544,6 +601,9 @@ export const Dashboard = () => {
           onClose={() => setExpandedChart(null)}
           chartType={expandedChart.type}
           title={expandedChart.title}
+          productMargins={productMargins}
+          costComposition={costComposition}
+          revenueData={revenueData}
         />
       )}
     </div>
