@@ -81,6 +81,9 @@ export type FixedCostAllocationMode =
   | 'include'      // Incluir 100% dos custos fixos neste produto
   | 'exclude';     // Não considerar (análise unitária)
 
+// Tipo para modo de cálculo da margem
+export type MarginCalculationMode = 'before_tax' | 'after_tax';
+
 // Tipo para perfil de negócio
 export type BusinessProfile = 'mei' | 'atacado' | 'importador';
 
@@ -244,6 +247,7 @@ export const productMargins = mockProducts.slice(0, 6).map(p => ({
  * @param desiredMargin - Margem de lucro desejada (%)
  * @param allocationMode - Modo de rateio: 'distribute' | 'include' | 'exclude'
  * @param activeProductsCount - Número de produtos ativos para divisão
+ * @param marginMode - Modo de cálculo da margem: 'before_tax' | 'after_tax'
  */
 export const calculatePricing = (
   product: Product,
@@ -251,7 +255,8 @@ export const calculatePricing = (
   taxes: TaxConfig,
   desiredMargin: number,
   allocationMode: FixedCostAllocationMode = 'distribute',
-  activeProductsCount?: number
+  activeProductsCount?: number,
+  marginMode: MarginCalculationMode = 'before_tax'
 ): PricingResult => {
   // Calcula o total de custos fixos rateados (usando allocationPercent)
   const totalFixedCostsRateado = fixedCosts.reduce(
@@ -287,8 +292,17 @@ export const calculatePricing = (
   const otherFeesTotal = taxes.otherFees.reduce((sum, tax) => sum + tax.percentage, 0);
   const totalTaxRate = (taxes.salesTax + taxes.marketplaceFee + taxes.cardFee + otherFeesTotal) / 100;
   
-  // Preço sugerido usando a fórmula: custo / (1 - margem - taxa)
-  const suggestedPrice = totalCost / (1 - desiredMargin / 100 - totalTaxRate);
+  // Preço sugerido baseado no modo de margem
+  let suggestedPrice: number;
+  
+  if (marginMode === 'before_tax') {
+    // Fórmula padrão: margem aplicada antes dos impostos
+    suggestedPrice = totalCost / (1 - desiredMargin / 100 - totalTaxRate);
+  } else {
+    // Modo avançado: margem aplicada sobre preço líquido (após impostos)
+    const priceBeforeMargin = totalCost / (1 - totalTaxRate);
+    suggestedPrice = priceBeforeMargin / (1 - desiredMargin / 100);
+  }
   
   // Valor dos impostos
   const taxAmount = suggestedPrice * totalTaxRate;

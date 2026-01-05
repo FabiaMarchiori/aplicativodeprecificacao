@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react';
 import { 
   Calculator, TrendingUp, TrendingDown, Info, Download, FileSpreadsheet, 
-  Clock, Smartphone, Volume2, Mouse, Cable, Battery, AlertCircle
+  Clock, Smartphone, Volume2, Mouse, Cable, Battery, AlertCircle,
+  ChevronDown, ChevronUp
 } from 'lucide-react';
-import { calculatePricing, Product, FixedCostAllocationMode, PricingResult, BusinessProfile, BUSINESS_PROFILE_CONFIG } from '@/data/mockData';
+import { calculatePricing, Product, FixedCostAllocationMode, PricingResult, BusinessProfile, BUSINESS_PROFILE_CONFIG, MarginCalculationMode } from '@/data/mockData';
 import { useData } from '@/contexts/DataContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,9 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 export const PricingCalculator = () => {
   const { products: allProducts, fixedCosts, taxConfig, priceHistory } = useData();
@@ -31,6 +35,15 @@ export const PricingCalculator = () => {
   
   // Estado do perfil de negócio
   const [businessProfile, setBusinessProfile] = useState<BusinessProfile | null>(null);
+  
+  // Estado para modo de cálculo da margem
+  const [marginMode, setMarginMode] = useState<MarginCalculationMode>('before_tax');
+  
+  // Estado para texto informativo colapsável
+  const [infoExpanded, setInfoExpanded] = useState(false);
+  
+  // Estado para cards expandidos
+  const [expandedProducts, setExpandedProducts] = useState<Set<string>>(new Set());
   
   // Rastrear alterações manuais para não sobrescrever
   const [manualOverrides, setManualOverrides] = useState<{
@@ -50,7 +63,6 @@ export const PricingCalculator = () => {
 
   const handleMarginChange = (productId: string, value: string) => {
     setMargins({ ...margins, [productId]: parseFloat(value) || 0 });
-    // Marca como alteração manual
     setManualOverrides(prev => ({
       ...prev,
       margins: new Set(prev.margins).add(productId)
@@ -63,11 +75,22 @@ export const PricingCalculator = () => {
 
   const handleAllocationModeChange = (productId: string, mode: FixedCostAllocationMode) => {
     setAllocationModes({ ...allocationModes, [productId]: mode });
-    // Marca como alteração manual
     setManualOverrides(prev => ({
       ...prev,
       allocationModes: new Set(prev.allocationModes).add(productId)
     }));
+  };
+
+  const toggleProductExpanded = (productId: string) => {
+    setExpandedProducts(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(productId)) {
+        newSet.delete(productId);
+      } else {
+        newSet.add(productId);
+      }
+      return newSet;
+    });
   };
 
   // Handler para mudança de perfil de negócio
@@ -75,7 +98,6 @@ export const PricingCalculator = () => {
     setBusinessProfile(profile);
     const config = BUSINESS_PROFILE_CONFIG[profile];
     
-    // Aplicar margem padrão para produtos não alterados manualmente
     const newMargins = { ...margins };
     products.forEach(p => {
       if (!manualOverrides.margins.has(p.id)) {
@@ -84,7 +106,6 @@ export const PricingCalculator = () => {
     });
     setMargins(newMargins);
     
-    // Aplicar modo de rateio padrão para produtos não alterados manualmente
     const newAllocationModes = { ...allocationModes };
     products.forEach(p => {
       if (!manualOverrides.allocationModes.has(p.id)) {
@@ -97,7 +118,7 @@ export const PricingCalculator = () => {
   const getPricingData = (product: Product): PricingResult => {
     const desiredMargin = margins[product.id] || 30;
     const allocationMode = allocationModes[product.id] || 'distribute';
-    return calculatePricing(product, fixedCosts, taxConfig, desiredMargin, allocationMode, activeProductsCount);
+    return calculatePricing(product, fixedCosts, taxConfig, desiredMargin, allocationMode, activeProductsCount, marginMode);
   };
 
   const getDiscountedPrice = (suggestedPrice: number, productId: string) => {
@@ -145,7 +166,7 @@ export const PricingCalculator = () => {
   const totalTax = (taxConfig.salesTax + taxConfig.marketplaceFee + taxConfig.cardFee + otherFeesTotal).toFixed(1);
 
   const exportCSV = () => {
-    const headers = ['Código', 'Produto', 'Categoria', 'Custo Compra', 'Custo Variável', 'Rateio Custos Fixos', 'Custo Total', 'Impostos', 'Margem %', 'Preço Sugerido', 'Lucro/Un', 'Modo Rateio', 'Perfil Negócio'];
+    const headers = ['Código', 'Produto', 'Categoria', 'Custo Compra', 'Custo Variável', 'Rateio Custos Fixos', 'Custo Total', 'Impostos', 'Margem %', 'Preço Sugerido', 'Lucro/Un', 'Modo Rateio', 'Perfil Negócio', 'Modo Margem'];
     const rows = products.map(p => {
       const pricing = getPricingData(p);
       return [
@@ -161,7 +182,8 @@ export const PricingCalculator = () => {
         pricing.suggestedPrice.toFixed(2),
         pricing.profitPerUnit.toFixed(2),
         getAllocationModeLabel(pricing.allocationMode, pricing.activeProductsCount),
-        businessProfile ? BUSINESS_PROFILE_CONFIG[businessProfile].label : 'Não definido'
+        businessProfile ? BUSINESS_PROFILE_CONFIG[businessProfile].label : 'Não definido',
+        marginMode === 'before_tax' ? 'Antes dos impostos' : 'Após impostos'
       ];
     });
     
@@ -174,7 +196,7 @@ export const PricingCalculator = () => {
   };
 
   const exportExcel = () => {
-    const headers = ['Código', 'Produto', 'Categoria', 'Custo Compra', 'Custo Variável', 'Rateio Custos Fixos', 'Custo Total', 'Impostos', 'Margem %', 'Preço Sugerido', 'Lucro/Un', 'Modo Rateio', 'Perfil Negócio'];
+    const headers = ['Código', 'Produto', 'Categoria', 'Custo Compra', 'Custo Variável', 'Rateio Custos Fixos', 'Custo Total', 'Impostos', 'Margem %', 'Preço Sugerido', 'Lucro/Un', 'Modo Rateio', 'Perfil Negócio', 'Modo Margem'];
     const rows = products.map(p => {
       const pricing = getPricingData(p);
       return [
@@ -190,7 +212,8 @@ export const PricingCalculator = () => {
         pricing.suggestedPrice.toFixed(2),
         pricing.profitPerUnit.toFixed(2),
         getAllocationModeLabel(pricing.allocationMode, pricing.activeProductsCount),
-        businessProfile ? BUSINESS_PROFILE_CONFIG[businessProfile].label : 'Não definido'
+        businessProfile ? BUSINESS_PROFILE_CONFIG[businessProfile].label : 'Não definido',
+        marginMode === 'before_tax' ? 'Antes dos impostos' : 'Após impostos'
       ];
     });
     
@@ -248,7 +271,6 @@ export const PricingCalculator = () => {
           <p style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Calcule o preço ideal para cada produto em tempo real</p>
         </div>
         <div className="flex flex-col xs:flex-row flex-wrap items-stretch xs:items-center gap-2 sm:gap-3 w-full sm:w-auto">
-          {/* Export Buttons */}
           <Button
             variant="outline"
             size="sm"
@@ -277,7 +299,6 @@ export const PricingCalculator = () => {
             <FileSpreadsheet className="w-4 h-4 mr-2" />
             Excel
           </Button>
-          {/* Tax Badge */}
           <div 
             className="flex items-center gap-2 px-4 py-2 rounded-lg"
             style={{
@@ -300,7 +321,7 @@ export const PricingCalculator = () => {
         </div>
       </div>
 
-      {/* Business Profile Selector */}
+      {/* BLOCO 1 - CONFIGURAÇÕES GERAIS */}
       <div 
         className="p-5 rounded-xl mb-6"
         style={{
@@ -309,14 +330,20 @@ export const PricingCalculator = () => {
           boxShadow: '0 0 15px rgba(0, 209, 255, 0.1)'
         }}
       >
-        <div className="flex flex-col gap-4">
+        <h3 className="text-sm font-semibold mb-4" style={{ color: '#00D1FF' }}>
+          CONFIGURAÇÕES GERAIS
+        </h3>
+        
+        {/* Grid: Perfil de Negócio + Rateio lado a lado */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+          {/* Perfil de Negócio */}
           <div>
-            <label className="text-sm font-medium mb-2 block" style={{ color: '#00D1FF' }}>
+            <label className="text-sm font-medium mb-2 block" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
               Perfil de Negócio
             </label>
             <Select value={businessProfile || ''} onValueChange={(v) => handleBusinessProfileChange(v as BusinessProfile)}>
               <SelectTrigger 
-                className="w-full max-w-xs"
+                className="w-full"
                 style={{
                   background: '#000000',
                   border: '1px solid rgba(0, 209, 255, 0.4)',
@@ -337,53 +364,137 @@ export const PricingCalculator = () => {
                 <SelectItem value="importador" style={{ color: '#F8FAFC' }}>Importador</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-xs mt-2" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-              Define sugestões iniciais de cálculo. Você pode alterar todos os valores manualmente.
+            <p className="text-xs mt-2" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+              Define sugestões iniciais de cálculo
             </p>
+            
+            {businessProfile && (
+              <div 
+                className="p-3 rounded-lg mt-3"
+                style={{
+                  background: 'rgba(0, 209, 255, 0.08)',
+                  border: '1px solid rgba(0, 209, 255, 0.2)'
+                }}
+              >
+                <p className="text-xs whitespace-pre-line" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                  {BUSINESS_PROFILE_CONFIG[businessProfile].description}
+                </p>
+              </div>
+            )}
           </div>
           
-          {/* Descrição dinâmica baseada no perfil selecionado */}
-          {businessProfile && (
+          {/* Rateio de Custos Fixos */}
+          <div>
+            <label className="text-sm font-medium mb-2 block" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+              Rateio de Custos Fixos
+            </label>
             <div 
-              className="p-3 rounded-lg"
+              className="p-4 rounded-lg"
               style={{
-                background: 'rgba(0, 209, 255, 0.08)',
-                border: '1px solid rgba(0, 209, 255, 0.2)'
+                background: 'rgba(188, 19, 254, 0.08)',
+                border: '1px solid rgba(188, 19, 254, 0.25)'
               }}
             >
-              <p className="text-sm whitespace-pre-line" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
-                {BUSINESS_PROFILE_CONFIG[businessProfile].description}
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                  Produtos ativos:
+                </span>
+                <span className="font-semibold" style={{ color: '#00D1FF' }}>
+                  {activeProductsCount}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                  Valor por produto:
+                </span>
+                <span className="font-semibold" style={{ color: '#39FF14' }}>
+                  {formatCurrency(totalFixedCostsRateado / activeProductsCount)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between mt-2 pt-2" style={{ borderTop: '1px solid rgba(188, 19, 254, 0.2)' }}>
+                <span className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                  Total rateado:
+                </span>
+                <span className="font-semibold" style={{ color: '#BC13FE' }}>
+                  {formatCurrency(totalFixedCostsRateado)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Cálculo da Margem */}
+        <div className="mb-4 pt-4" style={{ borderTop: '1px solid rgba(0, 209, 255, 0.2)' }}>
+          <label className="text-sm font-medium mb-3 block" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+            Cálculo da Margem
+          </label>
+          <RadioGroup 
+            value={marginMode} 
+            onValueChange={(v) => setMarginMode(v as MarginCalculationMode)}
+            className="space-y-2"
+          >
+            <div className="flex items-center space-x-3">
+              <RadioGroupItem 
+                value="before_tax" 
+                id="before_tax"
+                className="border-[#00D1FF] text-[#00D1FF]"
+              />
+              <Label 
+                htmlFor="before_tax" 
+                className="text-sm cursor-pointer"
+                style={{ color: marginMode === 'before_tax' ? '#00D1FF' : 'rgba(255, 255, 255, 0.7)' }}
+              >
+                Margem aplicada <strong>ANTES</strong> dos impostos (modo recomendado)
+              </Label>
+            </div>
+            <div className="flex items-center space-x-3">
+              <RadioGroupItem 
+                value="after_tax" 
+                id="after_tax"
+                className="border-[#FFAC00] text-[#FFAC00]"
+              />
+              <Label 
+                htmlFor="after_tax" 
+                className="text-sm cursor-pointer"
+                style={{ color: marginMode === 'after_tax' ? '#FFAC00' : 'rgba(255, 255, 255, 0.7)' }}
+              >
+                Margem aplicada <strong>APÓS</strong> impostos (modo avançado)
+              </Label>
+            </div>
+          </RadioGroup>
+          <p className="text-xs mt-2" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+            Por padrão, a margem é calculada antes dos impostos, refletindo a prática mais comum de pequenos negócios.
+          </p>
+        </div>
+        
+        {/* Texto colapsável */}
+        <Collapsible open={infoExpanded} onOpenChange={setInfoExpanded}>
+          <CollapsibleTrigger 
+            className="flex items-center gap-2 text-xs cursor-pointer transition-colors"
+            style={{ color: 'rgba(255, 255, 255, 0.6)' }}
+          >
+            {infoExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            <span className="hover:underline">Saiba mais sobre o rateio de custos fixos</span>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-3">
+            <div 
+              className="p-3 rounded-lg flex items-start gap-3"
+              style={{
+                background: 'rgba(0, 209, 255, 0.05)',
+                border: '1px solid rgba(0, 209, 255, 0.15)'
+              }}
+            >
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#00D1FF' }} />
+              <p className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                Os custos fixos podem ser rateados entre os produtos ativos. Você pode ativar ou desativar o rateio a qualquer momento.
+                O rateio divide os custos fixos entre os produtos ativos. Quanto mais produtos cadastrados, menor o impacto por produto.
               </p>
             </div>
-          )}
-        </div>
+          </CollapsibleContent>
+        </Collapsible>
       </div>
 
-      {/* Info Card - Sobre Rateio de Custos Fixos */}
-      <div 
-        className="p-4 rounded-lg mb-6 flex items-start gap-3"
-        style={{
-          background: 'rgba(188, 19, 254, 0.08)',
-          border: '1px solid rgba(188, 19, 254, 0.25)',
-          boxShadow: '0 0 15px rgba(188, 19, 254, 0.1)'
-        }}
-      >
-        <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#BC13FE' }} />
-        <div>
-          <p className="text-sm font-medium" style={{ color: '#BC13FE' }}>
-            Sobre o Rateio de Custos Fixos
-          </p>
-          <p className="text-xs mt-1" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-            O rateio de custos fixos impacta diretamente o custo e o preço sugerido. 
-            Atualmente, <strong style={{ color: '#00D1FF' }}>{activeProductsCount} produtos ativos</strong> podem 
-            dividir <strong style={{ color: '#00D1FF' }}>{formatCurrency(totalFixedCostsRateado)}</strong> em 
-            custos fixos mensais (<strong style={{ color: '#39FF14' }}>{formatCurrency(totalFixedCostsRateado / activeProductsCount)}/produto</strong>).
-            Quanto mais produtos cadastrados, menor o valor rateado por produto.
-          </p>
-        </div>
-      </div>
-
-      {/* Product Cards */}
+      {/* BLOCO 2 - CARDS DE PRODUTO */}
       <div className="space-y-4">
         {products.map((product) => {
           const pricing = getPricingData(product);
@@ -395,461 +506,476 @@ export const PricingCalculator = () => {
           const hasDiscount = discount && discount.amount > 0;
           const newMargin = hasDiscount ? getNewMargin(product, pricing) : pricing.realMargin;
           const currentMode = allocationModes[product.id] || 'distribute';
+          const isExpanded = expandedProducts.has(product.id);
 
           return (
             <div 
               key={product.id} 
-              className="rounded-xl p-6 transition-all duration-300 hover:scale-[1.005]"
+              className="rounded-xl transition-all duration-300"
               style={{
                 background: '#0a0a0c',
                 border: '1px solid rgba(0, 209, 255, 0.3)',
-                boxShadow: '0 0 15px rgba(0, 209, 255, 0.12), inset 0 0 20px rgba(0, 0, 0, 0.6)',
-                paddingLeft: '24px',
-                paddingRight: '24px'
+                boxShadow: '0 0 15px rgba(0, 209, 255, 0.12), inset 0 0 20px rgba(0, 0, 0, 0.6)'
               }}
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-12 lg:grid-cols-6 gap-4 sm:gap-6 items-start">
-                {/* Product Info */}
-                <div className="xl:col-span-2 lg:col-span-2 sm:col-span-2">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span 
-                      className="text-xs mono"
-                      style={{ color: '#00D1FF', textShadow: '0 0 4px rgba(0, 209, 255, 0.2)' }}
-                    >
-                      {product.code}
-                    </span>
-                    <button
-                      onClick={() => openHistoryModal(product)}
-                      className="p-1 rounded transition-all duration-200 hover:scale-110"
-                      style={{
-                        background: 'rgba(0, 209, 255, 0.1)',
-                        border: '1px solid rgba(0, 209, 255, 0.2)'
-                      }}
-                      title="Ver histórico de preços"
-                    >
-                      <Clock className="w-3 h-3" style={{ color: '#00D1FF' }} />
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-2">
+              {/* VISÃO RESUMIDA - Sempre visível */}
+              <div className="p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  {/* Info do Produto */}
+                  <div className="flex items-start gap-3">
                     <span style={{ color: 'rgba(0, 209, 255, 0.6)' }}>
                       {getCategoryIcon(product.category)}
                     </span>
-                    <h3 
-                      className="font-semibold"
-                      style={{ color: '#F8FAFC', textShadow: '0 0 8px rgba(248, 250, 252, 0.2)' }}
-                    >
-                      {product.name}
-                    </h3>
-                  </div>
-                  <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>{product.category}</p>
-                </div>
-
-                {/* Costs - Expanded with breakdown */}
-                <div className="xl:col-span-2 lg:col-span-2 sm:col-span-1 space-y-2">
-                  <p className="text-xs font-medium" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    Composição do Custo
-                    <TooltipIcon content="Detalhamento de todos os componentes do custo do produto" />
-                  </p>
-                  
-                  {/* Cost breakdown */}
-                  <div className="space-y-1 text-xs">
-                    <div className="flex justify-between">
-                      <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Custo de Compra</span>
-                      <span className="mono font-medium" style={{ color: '#F8FAFC' }}>
-                        {formatCurrency(pricing.purchaseCost)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Custo Variável</span>
-                      <span className="mono font-medium" style={{ color: '#F8FAFC' }}>
-                        {formatCurrency(pricing.variableCost)}
-                      </span>
-                    </div>
-                    <div 
-                      className="flex justify-between pt-1"
-                      style={{ borderTop: '1px dashed rgba(188, 19, 254, 0.3)' }}
-                    >
-                      <span style={{ color: '#BC13FE' }}>
-                        Rateio Fixos
-                        {pricing.allocationMode === 'distribute' && (
-                          <span className="ml-1 opacity-70">(÷{pricing.activeProductsCount})</span>
-                        )}
-                        {pricing.allocationMode === 'include' && (
-                          <span className="ml-1 opacity-70">(100%)</span>
-                        )}
-                        {pricing.allocationMode === 'exclude' && (
-                          <span className="ml-1 opacity-70">(excluído)</span>
-                        )}
-                      </span>
-                      <span 
-                        className="mono font-medium" 
-                        style={{ 
-                          color: pricing.allocatedFixedCost > 0 ? '#BC13FE' : 'rgba(255, 255, 255, 0.4)'
-                        }}
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span 
+                          className="text-xs mono"
+                          style={{ color: '#00D1FF', textShadow: '0 0 4px rgba(0, 209, 255, 0.2)' }}
+                        >
+                          {product.code}
+                        </span>
+                        <button
+                          onClick={() => openHistoryModal(product)}
+                          className="p-1 rounded transition-all duration-200 hover:scale-110"
+                          style={{
+                            background: 'rgba(0, 209, 255, 0.1)',
+                            border: '1px solid rgba(0, 209, 255, 0.2)'
+                          }}
+                          title="Ver histórico de preços"
+                        >
+                          <Clock className="w-3 h-3" style={{ color: '#00D1FF' }} />
+                        </button>
+                      </div>
+                      <h3 
+                        className="font-semibold"
+                        style={{ color: '#F8FAFC', textShadow: '0 0 8px rgba(248, 250, 252, 0.2)' }}
                       >
-                        {formatCurrency(pricing.allocatedFixedCost)}
-                      </span>
+                        {product.name}
+                      </h3>
                     </div>
-                    <div 
-                      className="flex justify-between pt-1"
-                      style={{ borderTop: '1px solid rgba(0, 209, 255, 0.3)' }}
-                    >
-                      <span className="font-semibold" style={{ color: '#00D1FF' }}>CUSTO TOTAL</span>
-                      <span 
-                        className="mono font-bold" 
+                  </div>
+                  
+                  {/* Preço e Lucro */}
+                  <div className="flex flex-wrap items-center gap-6">
+                    <div className="text-right">
+                      <p className="text-xs mb-1" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Preço Sugerido</p>
+                      <p 
+                        className="text-2xl font-bold mono"
                         style={{ 
                           color: '#00D1FF',
-                          textShadow: '0 0 8px rgba(0, 209, 255, 0.5)'
+                          textShadow: '0 0 15px rgba(0, 209, 255, 0.7), 0 0 30px rgba(0, 209, 255, 0.3)'
                         }}
                       >
-                        {formatCurrency(pricing.totalCost)}
-                      </span>
+                        {formatCurrency(pricing.suggestedPrice)}
+                      </p>
                     </div>
-                  </div>
-
-                  {/* Allocation Mode Selector */}
-                  <div className="pt-2">
-                    <p className="text-xs mb-1.5" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-                      Modo de Rateio
-                      <TooltipIcon 
-                        content={
-                          businessProfile 
-                            ? BUSINESS_PROFILE_CONFIG[businessProfile].tooltipRateio 
-                            : "O rateio de custos fixos impacta diretamente o custo e o preço sugerido. Quanto mais produtos cadastrados, menor o valor rateado por produto."
-                        } 
-                      />
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      <button
-                        onClick={() => handleAllocationModeChange(product.id, 'distribute')}
-                        className="px-2 py-1 rounded text-xs transition-all duration-200"
-                        style={{
-                          background: currentMode === 'distribute' ? 'rgba(0, 209, 255, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                          border: currentMode === 'distribute' ? '1px solid #00D1FF' : '1px solid rgba(255, 255, 255, 0.1)',
-                          color: currentMode === 'distribute' ? '#00D1FF' : 'rgba(255, 255, 255, 0.6)',
-                          boxShadow: currentMode === 'distribute' ? '0 0 8px rgba(0, 209, 255, 0.3)' : 'none'
-                        }}
-                      >
-                        Distribuir
-                      </button>
-                      <button
-                        onClick={() => handleAllocationModeChange(product.id, 'include')}
-                        className="px-2 py-1 rounded text-xs transition-all duration-200"
-                        style={{
-                          background: currentMode === 'include' ? 'rgba(188, 19, 254, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                          border: currentMode === 'include' ? '1px solid #BC13FE' : '1px solid rgba(255, 255, 255, 0.1)',
-                          color: currentMode === 'include' ? '#BC13FE' : 'rgba(255, 255, 255, 0.6)',
-                          boxShadow: currentMode === 'include' ? '0 0 8px rgba(188, 19, 254, 0.3)' : 'none'
-                        }}
-                      >
-                        Incluir 100%
-                      </button>
-                      <button
-                        onClick={() => handleAllocationModeChange(product.id, 'exclude')}
-                        className="px-2 py-1 rounded text-xs transition-all duration-200"
-                        style={{
-                          background: currentMode === 'exclude' ? 'rgba(57, 255, 20, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                          border: currentMode === 'exclude' ? '1px solid #39FF14' : '1px solid rgba(255, 255, 255, 0.1)',
-                          color: currentMode === 'exclude' ? '#39FF14' : 'rgba(255, 255, 255, 0.6)',
-                          boxShadow: currentMode === 'exclude' ? '0 0 8px rgba(57, 255, 20, 0.3)' : 'none'
-                        }}
-                      >
-                        Não considerar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Taxes */}
-                <div className="xl:col-span-1 lg:col-span-1 space-y-1">
-                  <p className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    Impostos
-                    <TooltipIcon content="Valor calculado com base na taxa total configurada em Impostos" />
-                  </p>
-                  <p 
-                    className="text-lg font-bold mono"
-                    style={{ 
-                      color: '#FFAC00',
-                      textShadow: '0 0 8px rgba(255, 172, 0, 0.4)'
-                    }}
-                  >
-                    {formatCurrency(pricing.taxAmount)}
-                  </p>
-                </div>
-
-                {/* Margin Input */}
-                <div className="xl:col-span-2 lg:col-span-2">
-                  <p className="text-xs mb-1" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    Margem Desejada
-                    <TooltipIcon content="Percentual de lucro que você deseja obter sobre o preço de venda" />
-                  </p>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      className="text-lg font-bold pr-10 w-full rounded-lg transition-all duration-300"
-                      style={{
-                        background: '#000000',
-                        border: '1px solid rgba(0, 209, 255, 0.3)',
-                        color: '#F8FAFC',
-                        padding: '10px 40px 10px 14px',
-                        outline: 'none'
-                      }}
-                      onFocus={(e) => {
-                        e.currentTarget.style.border = '1px solid #00D1FF';
-                        e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 209, 255, 0.5), inset 0 0 10px rgba(0, 209, 255, 0.1)';
-                      }}
-                      onBlur={(e) => {
-                        e.currentTarget.style.border = '1px solid rgba(0, 209, 255, 0.3)';
-                        e.currentTarget.style.boxShadow = 'none';
-                      }}
-                      value={margins[product.id]}
-                      onChange={(e) => handleMarginChange(product.id, e.target.value)}
-                      min="0"
-                      max="100"
-                    />
-                    <span 
-                      className="absolute right-4 top-1/2 -translate-y-1/2 font-bold"
-                      style={{ color: '#00D1FF', textShadow: '0 0 8px rgba(0, 209, 255, 0.5)' }}
-                    >
-                      %
-                    </span>
-                  </div>
-                </div>
-
-                {/* Discount Field */}
-                <div className="xl:col-span-1 lg:col-span-2">
-                  <p className="text-xs mb-1" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    Desconto
-                    <TooltipIcon content="Desconto opcional aplicado sobre o preço sugerido" />
-                  </p>
-                  <div className="flex gap-2">
-                    <div className="relative flex-1">
-                      <input
-                        type="number"
-                        className="text-sm font-medium w-full rounded-lg transition-all duration-300"
-                        style={{
-                          background: '#000000',
-                          border: '1px solid rgba(255, 172, 0, 0.3)',
-                          color: '#F8FAFC',
-                          padding: '10px 14px',
-                          outline: 'none'
-                        }}
-                        onFocus={(e) => {
-                          e.currentTarget.style.border = '1px solid #FFAC00';
-                          e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 172, 0, 0.5)';
-                        }}
-                        onBlur={(e) => {
-                          e.currentTarget.style.border = '1px solid rgba(255, 172, 0, 0.3)';
-                          e.currentTarget.style.boxShadow = 'none';
-                        }}
-                        value={discount?.amount || ''}
-                        onChange={(e) => handleDiscountChange(product.id, parseFloat(e.target.value) || 0, discount?.type || 'percent')}
-                        placeholder="0"
-                        min="0"
-                      />
-                    </div>
-                    <select
-                      className="rounded-lg text-sm px-2 transition-all duration-200"
-                      style={{
-                        background: '#000000',
-                        border: '1px solid rgba(255, 172, 0, 0.3)',
-                        color: '#FFAC00',
-                        outline: 'none'
-                      }}
-                      value={discount?.type || 'percent'}
-                      onChange={(e) => handleDiscountChange(product.id, discount?.amount || 0, e.target.value as 'percent' | 'value')}
-                    >
-                      <option value="percent">%</option>
-                      <option value="value">R$</option>
-                    </select>
-                  </div>
-                  {hasDiscount && (
-                    <p className="text-xs mt-1" style={{ color: '#FFAC00' }}>
-                      Final: {formatCurrency(finalPrice)} • Margem: {newMargin.toFixed(1)}%
-                    </p>
-                  )}
-                </div>
-
-                {/* Suggested Price */}
-                <div className="xl:col-span-2 lg:col-span-2 space-y-1">
-                  <p className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    Preço Sugerido
-                    <TooltipIcon content="Preço calculado para atingir a margem desejada após custos e impostos" />
-                  </p>
-                  <p 
-                    className="text-xl font-bold mono"
-                    style={{ 
-                      color: '#00D1FF',
-                      textShadow: '0 0 15px rgba(0, 209, 255, 0.7), 0 0 30px rgba(0, 209, 255, 0.3)'
-                    }}
-                  >
-                    {formatCurrency(pricing.suggestedPrice)}
-                  </p>
-                  <div className="flex items-center gap-1 text-xs">
-                    {priceDiff >= 0 ? (
-                      <TrendingUp 
-                        className="w-3 h-3" 
-                        style={{ color: '#39FF14', filter: 'drop-shadow(0 0 3px #39FF14)' }}
-                      />
-                    ) : (
-                      <TrendingDown 
-                        className="w-3 h-3" 
-                        style={{ color: '#BC13FE', filter: 'drop-shadow(0 0 3px #BC13FE)' }}
-                      />
-                    )}
-                    <span style={{ color: priceDiff >= 0 ? '#39FF14' : '#BC13FE' }}>
-                      {priceDiff >= 0 ? '+' : ''}{formatCurrency(priceDiff)} ({priceDiffPercent.toFixed(1)}%)
-                    </span>
-                  </div>
-                </div>
-
-                {/* Results */}
-                <div className="xl:col-span-2 lg:col-span-1 space-y-1">
-                  <p className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    Lucro/Un
-                    <TooltipIcon content="Lucro líquido por unidade vendida, após todos os custos e impostos" />
-                  </p>
-                  <p 
-                    className="text-lg font-bold mono"
-                    style={{ 
-                      color: '#39FF14',
-                      textShadow: '0 0 12px rgba(57, 255, 20, 0.6), 0 0 25px rgba(57, 255, 20, 0.3)'
-                    }}
-                  >
-                    {formatCurrency(pricing.profitPerUnit)}
-                  </p>
-                  <span 
-                    className="inline-block px-3 py-1 rounded-full text-xs font-medium"
-                    style={{
-                      background: `${marginConfig.color}15`,
-                      border: `1px solid ${marginConfig.color}40`,
-                      color: marginConfig.color
-                    }}
-                  >
-                    {pricing.realMargin.toFixed(1)}% • {marginConfig.label}
-                  </span>
-                </div>
-              </div>
-
-              {/* Progress bar showing cost breakdown */}
-              <div 
-                className="mt-4 pt-4"
-                style={{ borderTop: '1px solid rgba(0, 209, 255, 0.2)' }}
-              >
-                <div className="flex flex-wrap items-center gap-4 text-xs mb-3">
-                  {/* LED Custo Base */}
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="w-3 h-3 rounded-full"
-                      style={{ 
-                        background: '#0891B2',
-                        boxShadow: '0 0 5px rgba(8, 145, 178, 0.4)'
-                      }}
-                    />
-                    <span style={{ color: '#0891B2' }}>
-                      Custo Base <span className="mono font-medium">
-                        {(((pricing.purchaseCost + pricing.variableCost) / pricing.suggestedPrice) * 100).toFixed(0)}%
-                      </span>
-                    </span>
-                  </div>
-
-                  {/* LED Rateio Fixos */}
-                  {pricing.allocatedFixedCost > 0 && (
-                    <div className="flex items-center gap-2">
-                      <div 
-                        className="w-3 h-3 rounded-full"
+                    <div className="text-right">
+                      <p className="text-xs mb-1" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Lucro</p>
+                      <p 
+                        className="text-xl font-bold mono"
                         style={{ 
-                          background: '#BC13FE',
-                          boxShadow: '0 0 5px rgba(188, 19, 254, 0.4)'
+                          color: '#39FF14',
+                          textShadow: '0 0 12px rgba(57, 255, 20, 0.6)'
                         }}
-                      />
-                      <span style={{ color: '#BC13FE' }}>
-                        Rateio Fixos <span className="mono font-medium">
-                          {((pricing.allocatedFixedCost / pricing.suggestedPrice) * 100).toFixed(0)}%
-                        </span>
+                      >
+                        {formatCurrency(pricing.profitPerUnit)} ({pricing.realMargin.toFixed(0)}%)
+                      </p>
+                      <span 
+                        className="inline-block px-2 py-0.5 rounded-full text-xs font-medium mt-1"
+                        style={{
+                          background: `${marginConfig.color}15`,
+                          border: `1px solid ${marginConfig.color}40`,
+                          color: marginConfig.color
+                        }}
+                      >
+                        {marginConfig.label}
                       </span>
                     </div>
-                  )}
-
-                  {/* LED Taxas */}
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="w-3 h-3 rounded-full"
-                      style={{ 
-                        background: '#FFAC00',
-                        boxShadow: '0 0 5px rgba(255, 172, 0, 0.4)'
-                      }}
-                    />
-                    <span style={{ color: '#FFAC00' }}>
-                      Taxas <span className="mono font-medium">{((pricing.taxAmount / pricing.suggestedPrice) * 100).toFixed(0)}%</span>
-                    </span>
-                  </div>
-
-                  {/* LED Lucro */}
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="w-3 h-3 rounded-full"
-                      style={{ 
-                        background: '#39FF14',
-                        boxShadow: '0 0 5px rgba(57, 255, 20, 0.4)'
-                      }}
-                    />
-                    <span style={{ color: '#39FF14' }}>
-                      Lucro <span className="mono font-medium">{pricing.realMargin.toFixed(0)}%</span>
-                    </span>
                   </div>
                 </div>
-
-                <div 
-                  className="overflow-hidden flex"
-                  style={{
-                    height: '12px',
-                    borderRadius: '6px',
-                    background: 'rgba(255, 255, 255, 0.05)'
-                  }}
+                
+                {/* Botão Ver Detalhes */}
+                <button
+                  onClick={() => toggleProductExpanded(product.id)}
+                  className="mt-4 flex items-center gap-2 text-sm transition-all duration-200 hover:brightness-125"
+                  style={{ color: 'rgba(0, 209, 255, 0.8)' }}
                 >
-                  {/* Segmento Custo Base - Ciano escuro */}
-                  <div 
-                    style={{ 
-                      width: `${((pricing.purchaseCost + pricing.variableCost) / pricing.suggestedPrice) * 100}%`,
-                      background: 'linear-gradient(90deg, #0891B2, #06B6D4)',
-                      boxShadow: '0 0 6px rgba(8, 145, 178, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.1)'
-                    }}
-                  />
-                  {/* Segmento Rateio Fixos - Roxo */}
-                  {pricing.allocatedFixedCost > 0 && (
-                    <div 
-                      style={{ 
-                        width: `${(pricing.allocatedFixedCost / pricing.suggestedPrice) * 100}%`,
-                        background: 'linear-gradient(90deg, #BC13FE, #D946EF)',
-                        boxShadow: '0 0 6px rgba(188, 19, 254, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.1)'
-                      }}
-                    />
-                  )}
-                  {/* Segmento Taxas */}
-                  <div 
-                    style={{ 
-                      width: `${(pricing.taxAmount / pricing.suggestedPrice) * 100}%`,
-                      background: 'linear-gradient(90deg, #FFAC00, #FFD000)',
-                      boxShadow: '0 0 6px rgba(255, 172, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.1)'
-                    }}
-                  />
-                  {/* Segmento Lucro */}
-                  <div 
-                    style={{ 
-                      width: `${pricing.realMargin}%`,
-                      background: 'linear-gradient(90deg, #39FF14, #50FF30)',
-                      boxShadow: '0 0 6px rgba(57, 255, 20, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.1)'
-                    }}
-                  />
-                </div>
+                  {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  {isExpanded ? 'Ocultar detalhes' : 'Ver detalhes do cálculo'}
+                </button>
               </div>
+              
+              {/* VISÃO DETALHADA - Expandida ao clicar */}
+              {isExpanded && (
+                <div 
+                  className="px-6 pb-6 pt-0"
+                  style={{ borderTop: '1px solid rgba(0, 209, 255, 0.15)' }}
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 pt-4">
+                    {/* Composição do Custo */}
+                    <div className="space-y-2">
+                      <p className="text-xs font-medium" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                        Composição do Custo
+                        <TooltipIcon content="Detalhamento de todos os componentes do custo do produto" />
+                      </p>
+                      
+                      <div className="space-y-1 text-xs">
+                        <div className="flex justify-between">
+                          <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Custo de Compra</span>
+                          <span className="mono font-medium" style={{ color: '#F8FAFC' }}>
+                            {formatCurrency(pricing.purchaseCost)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Custo Variável</span>
+                          <span className="mono font-medium" style={{ color: '#F8FAFC' }}>
+                            {formatCurrency(pricing.variableCost)}
+                          </span>
+                        </div>
+                        <div 
+                          className="flex justify-between pt-1"
+                          style={{ borderTop: '1px dashed rgba(188, 19, 254, 0.3)' }}
+                        >
+                          <span style={{ color: '#BC13FE' }}>
+                            Rateio Fixos
+                            {pricing.allocationMode === 'distribute' && (
+                              <span className="ml-1 opacity-70">(÷{pricing.activeProductsCount})</span>
+                            )}
+                            {pricing.allocationMode === 'include' && (
+                              <span className="ml-1 opacity-70">(100%)</span>
+                            )}
+                            {pricing.allocationMode === 'exclude' && (
+                              <span className="ml-1 opacity-70">(excluído)</span>
+                            )}
+                          </span>
+                          <span 
+                            className="mono font-medium" 
+                            style={{ 
+                              color: pricing.allocatedFixedCost > 0 ? '#BC13FE' : 'rgba(255, 255, 255, 0.4)'
+                            }}
+                          >
+                            {formatCurrency(pricing.allocatedFixedCost)}
+                          </span>
+                        </div>
+                        <div 
+                          className="flex justify-between pt-1"
+                          style={{ borderTop: '1px solid rgba(0, 209, 255, 0.3)' }}
+                        >
+                          <span className="font-semibold" style={{ color: '#00D1FF' }}>CUSTO TOTAL</span>
+                          <span 
+                            className="mono font-bold" 
+                            style={{ 
+                              color: '#00D1FF',
+                              textShadow: '0 0 8px rgba(0, 209, 255, 0.5)'
+                            }}
+                          >
+                            {formatCurrency(pricing.totalCost)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Impostos + Margem */}
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-xs mb-1" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                          Impostos
+                          <TooltipIcon content="Valor calculado com base na taxa total configurada" />
+                        </p>
+                        <p 
+                          className="text-lg font-bold mono"
+                          style={{ 
+                            color: '#FFAC00',
+                            textShadow: '0 0 8px rgba(255, 172, 0, 0.4)'
+                          }}
+                        >
+                          {formatCurrency(pricing.taxAmount)}
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <p className="text-xs mb-1" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                          Margem Desejada
+                          <TooltipIcon content="Percentual de lucro sobre o preço de venda" />
+                        </p>
+                        <div className="relative">
+                          <input
+                            type="number"
+                            className="text-lg font-bold pr-10 w-full rounded-lg transition-all duration-300"
+                            style={{
+                              background: '#000000',
+                              border: '1px solid rgba(0, 209, 255, 0.3)',
+                              color: '#F8FAFC',
+                              padding: '10px 40px 10px 14px',
+                              outline: 'none'
+                            }}
+                            onFocus={(e) => {
+                              e.currentTarget.style.border = '1px solid #00D1FF';
+                              e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 209, 255, 0.5)';
+                            }}
+                            onBlur={(e) => {
+                              e.currentTarget.style.border = '1px solid rgba(0, 209, 255, 0.3)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
+                            value={margins[product.id]}
+                            onChange={(e) => handleMarginChange(product.id, e.target.value)}
+                            min="0"
+                            max="100"
+                          />
+                          <span 
+                            className="absolute right-4 top-1/2 -translate-y-1/2 font-bold"
+                            style={{ color: '#00D1FF', textShadow: '0 0 8px rgba(0, 209, 255, 0.5)' }}
+                          >
+                            %
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Desconto + Modo Rateio */}
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-xs mb-1" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                          Desconto
+                          <TooltipIcon content="Desconto opcional aplicado sobre o preço sugerido" />
+                        </p>
+                        <div className="flex gap-2">
+                          <div className="relative flex-1">
+                            <input
+                              type="number"
+                              className="text-sm font-medium w-full rounded-lg transition-all duration-300"
+                              style={{
+                                background: '#000000',
+                                border: '1px solid rgba(255, 172, 0, 0.3)',
+                                color: '#F8FAFC',
+                                padding: '10px 14px',
+                                outline: 'none'
+                              }}
+                              onFocus={(e) => {
+                                e.currentTarget.style.border = '1px solid #FFAC00';
+                                e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 172, 0, 0.5)';
+                              }}
+                              onBlur={(e) => {
+                                e.currentTarget.style.border = '1px solid rgba(255, 172, 0, 0.3)';
+                                e.currentTarget.style.boxShadow = 'none';
+                              }}
+                              value={discount?.amount || ''}
+                              onChange={(e) => handleDiscountChange(product.id, parseFloat(e.target.value) || 0, discount?.type || 'percent')}
+                              placeholder="0"
+                              min="0"
+                            />
+                          </div>
+                          <select
+                            className="rounded-lg text-sm px-2 transition-all duration-200"
+                            style={{
+                              background: '#000000',
+                              border: '1px solid rgba(255, 172, 0, 0.3)',
+                              color: '#FFAC00',
+                              outline: 'none'
+                            }}
+                            value={discount?.type || 'percent'}
+                            onChange={(e) => handleDiscountChange(product.id, discount?.amount || 0, e.target.value as 'percent' | 'value')}
+                          >
+                            <option value="percent">%</option>
+                            <option value="value">R$</option>
+                          </select>
+                        </div>
+                        {hasDiscount && (
+                          <p className="text-xs mt-1" style={{ color: '#FFAC00' }}>
+                            Final: {formatCurrency(finalPrice)} • Margem: {newMargin.toFixed(1)}%
+                          </p>
+                        )}
+                      </div>
+                      
+                      <div>
+                        <p className="text-xs mb-1.5" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                          Modo de Rateio
+                          <TooltipIcon 
+                            content={
+                              businessProfile 
+                                ? BUSINESS_PROFILE_CONFIG[businessProfile].tooltipRateio 
+                                : "O rateio de custos fixos impacta diretamente o custo e o preço sugerido."
+                            } 
+                          />
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          <button
+                            onClick={() => handleAllocationModeChange(product.id, 'distribute')}
+                            className="px-2 py-1 rounded text-xs transition-all duration-200"
+                            style={{
+                              background: currentMode === 'distribute' ? 'rgba(0, 209, 255, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                              border: currentMode === 'distribute' ? '1px solid #00D1FF' : '1px solid rgba(255, 255, 255, 0.1)',
+                              color: currentMode === 'distribute' ? '#00D1FF' : 'rgba(255, 255, 255, 0.6)',
+                              boxShadow: currentMode === 'distribute' ? '0 0 8px rgba(0, 209, 255, 0.3)' : 'none'
+                            }}
+                          >
+                            Distribuir
+                          </button>
+                          <button
+                            onClick={() => handleAllocationModeChange(product.id, 'include')}
+                            className="px-2 py-1 rounded text-xs transition-all duration-200"
+                            style={{
+                              background: currentMode === 'include' ? 'rgba(188, 19, 254, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                              border: currentMode === 'include' ? '1px solid #BC13FE' : '1px solid rgba(255, 255, 255, 0.1)',
+                              color: currentMode === 'include' ? '#BC13FE' : 'rgba(255, 255, 255, 0.6)',
+                              boxShadow: currentMode === 'include' ? '0 0 8px rgba(188, 19, 254, 0.3)' : 'none'
+                            }}
+                          >
+                            Incluir 100%
+                          </button>
+                          <button
+                            onClick={() => handleAllocationModeChange(product.id, 'exclude')}
+                            className="px-2 py-1 rounded text-xs transition-all duration-200"
+                            style={{
+                              background: currentMode === 'exclude' ? 'rgba(57, 255, 20, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                              border: currentMode === 'exclude' ? '1px solid #39FF14' : '1px solid rgba(255, 255, 255, 0.1)',
+                              color: currentMode === 'exclude' ? '#39FF14' : 'rgba(255, 255, 255, 0.6)',
+                              boxShadow: currentMode === 'exclude' ? '0 0 8px rgba(57, 255, 20, 0.3)' : 'none'
+                            }}
+                          >
+                            Não considerar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Comparativo com preço atual */}
+                    <div>
+                      <p className="text-xs mb-1" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                        Comparativo
+                      </p>
+                      <div className="flex items-center gap-2 mb-2">
+                        {priceDiff >= 0 ? (
+                          <TrendingUp 
+                            className="w-4 h-4" 
+                            style={{ color: '#39FF14', filter: 'drop-shadow(0 0 3px #39FF14)' }}
+                          />
+                        ) : (
+                          <TrendingDown 
+                            className="w-4 h-4" 
+                            style={{ color: '#BC13FE', filter: 'drop-shadow(0 0 3px #BC13FE)' }}
+                          />
+                        )}
+                        <span className="text-sm" style={{ color: priceDiff >= 0 ? '#39FF14' : '#BC13FE' }}>
+                          {priceDiff >= 0 ? '+' : ''}{formatCurrency(priceDiff)} ({priceDiffPercent.toFixed(1)}%)
+                        </span>
+                      </div>
+                      <p className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                        vs. preço atual: {formatCurrency(product.currentPrice)}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Barra de composição de custos */}
+                  <div className="mt-6 pt-4" style={{ borderTop: '1px solid rgba(0, 209, 255, 0.2)' }}>
+                    <div className="flex flex-wrap items-center gap-4 text-xs mb-3">
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className="w-3 h-3 rounded-full"
+                          style={{ 
+                            background: '#0891B2',
+                            boxShadow: '0 0 5px rgba(8, 145, 178, 0.4)'
+                          }}
+                        />
+                        <span style={{ color: '#0891B2' }}>
+                          Custo Base <span className="mono font-medium">
+                            {(((pricing.purchaseCost + pricing.variableCost) / pricing.suggestedPrice) * 100).toFixed(0)}%
+                          </span>
+                        </span>
+                      </div>
+
+                      {pricing.allocatedFixedCost > 0 && (
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="w-3 h-3 rounded-full"
+                            style={{ 
+                              background: '#BC13FE',
+                              boxShadow: '0 0 5px rgba(188, 19, 254, 0.4)'
+                            }}
+                          />
+                          <span style={{ color: '#BC13FE' }}>
+                            Rateio Fixos <span className="mono font-medium">
+                              {((pricing.allocatedFixedCost / pricing.suggestedPrice) * 100).toFixed(0)}%
+                            </span>
+                          </span>
+                        </div>
+                      )}
+
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className="w-3 h-3 rounded-full"
+                          style={{ 
+                            background: '#FFAC00',
+                            boxShadow: '0 0 5px rgba(255, 172, 0, 0.4)'
+                          }}
+                        />
+                        <span style={{ color: '#FFAC00' }}>
+                          Taxas <span className="mono font-medium">{((pricing.taxAmount / pricing.suggestedPrice) * 100).toFixed(0)}%</span>
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className="w-3 h-3 rounded-full"
+                          style={{ 
+                            background: '#39FF14',
+                            boxShadow: '0 0 5px rgba(57, 255, 20, 0.4)'
+                          }}
+                        />
+                        <span style={{ color: '#39FF14' }}>
+                          Lucro <span className="mono font-medium">{pricing.realMargin.toFixed(0)}%</span>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div 
+                      className="overflow-hidden flex"
+                      style={{
+                        height: '12px',
+                        borderRadius: '6px',
+                        background: 'rgba(255, 255, 255, 0.05)'
+                      }}
+                    >
+                      <div 
+                        style={{ 
+                          width: `${((pricing.purchaseCost + pricing.variableCost) / pricing.suggestedPrice) * 100}%`,
+                          background: 'linear-gradient(90deg, #0891B2, #06B6D4)',
+                          boxShadow: '0 0 6px rgba(8, 145, 178, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.1)'
+                        }}
+                      />
+                      {pricing.allocatedFixedCost > 0 && (
+                        <div 
+                          style={{ 
+                            width: `${(pricing.allocatedFixedCost / pricing.suggestedPrice) * 100}%`,
+                            background: 'linear-gradient(90deg, #BC13FE, #D946EF)',
+                            boxShadow: '0 0 6px rgba(188, 19, 254, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.1)'
+                          }}
+                        />
+                      )}
+                      <div 
+                        style={{ 
+                          width: `${(pricing.taxAmount / pricing.suggestedPrice) * 100}%`,
+                          background: 'linear-gradient(90deg, #FFAC00, #FFD000)',
+                          boxShadow: '0 0 6px rgba(255, 172, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.1)'
+                        }}
+                      />
+                      <div 
+                        style={{ 
+                          width: `${pricing.realMargin}%`,
+                          background: 'linear-gradient(90deg, #39FF14, #50FF30)',
+                          boxShadow: '0 0 6px rgba(57, 255, 20, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.1)'
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}
       </div>
 
-      {/* Mensagem informativa fixa */}
+      {/* BLOCO 3 - Mensagem informativa fixa */}
       <div 
         className="mt-6 p-4 rounded-lg flex items-start gap-3"
         style={{
