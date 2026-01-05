@@ -75,6 +75,26 @@ export interface PriceHistory {
   reason?: string;
 }
 
+// Tipo para modo de rateio de custos fixos
+export type FixedCostAllocationMode = 
+  | 'distribute'   // Distribuir entre todos os produtos ativos
+  | 'include'      // Incluir 100% dos custos fixos neste produto
+  | 'exclude';     // Não considerar (análise unitária)
+
+// Interface para resultado detalhado do cálculo de precificação
+export interface PricingResult {
+  purchaseCost: number;
+  variableCost: number;
+  allocatedFixedCost: number;
+  activeProductsCount: number;
+  totalCost: number;
+  taxAmount: number;
+  suggestedPrice: number;
+  profitPerUnit: number;
+  realMargin: number;
+  allocationMode: FixedCostAllocationMode;
+}
+
 export const mockProducts: Product[] = [
   { id: '1', code: 'PRD-001', name: 'Smartphone Galaxy X200', category: 'Eletrônicos', supplier: 'Tech Import Ltda', unit: 'UN', purchaseCost: 1200, variableCost: 45, currentPrice: 2499, status: 'active' },
   { id: '2', code: 'PRD-002', name: 'Fone Bluetooth Premium', category: 'Acessórios', supplier: 'Tech Import Ltda', unit: 'UN', purchaseCost: 85, variableCost: 8, currentPrice: 249, status: 'active' },
@@ -177,30 +197,80 @@ export const productMargins = mockProducts.slice(0, 6).map(p => ({
   profit: p.currentPrice - p.purchaseCost - p.variableCost,
 }));
 
+/**
+ * Calcula a precificação de um produto com controle sobre o rateio de custos fixos
+ * 
+ * @param product - Produto a ser precificado
+ * @param fixedCosts - Lista de custos fixos
+ * @param taxes - Configuração de impostos
+ * @param desiredMargin - Margem de lucro desejada (%)
+ * @param allocationMode - Modo de rateio: 'distribute' | 'include' | 'exclude'
+ * @param activeProductsCount - Número de produtos ativos para divisão
+ */
 export const calculatePricing = (
   product: Product,
   fixedCosts: FixedCost[],
   taxes: TaxConfig,
-  desiredMargin: number
-) => {
-  const totalFixedCosts = fixedCosts.reduce((sum, c) => sum + c.monthlyValue, 0);
-  const avgFixedCostPerProduct = totalFixedCosts / mockProducts.filter(p => p.status === 'active').length;
-  const allocatedFixedCost = avgFixedCostPerProduct * 0.1; // Simplified allocation
+  desiredMargin: number,
+  allocationMode: FixedCostAllocationMode = 'distribute',
+  activeProductsCount?: number
+): PricingResult => {
+  // Calcula o total de custos fixos rateados (usando allocationPercent)
+  const totalFixedCostsRateado = fixedCosts.reduce(
+    (sum, c) => sum + (c.monthlyValue * c.allocationPercent / 100), 
+    0
+  );
   
+  // Determina o número de produtos para divisão
+  const productsCount = activeProductsCount || mockProducts.filter(p => p.status === 'active').length;
+  
+  // Calcula o rateio de custos fixos baseado no modo selecionado
+  let allocatedFixedCost = 0;
+  
+  switch (allocationMode) {
+    case 'distribute':
+      // Divide igualmente entre todos os produtos ativos
+      allocatedFixedCost = totalFixedCostsRateado / productsCount;
+      break;
+    case 'include':
+      // Inclui 100% dos custos fixos rateados neste produto
+      allocatedFixedCost = totalFixedCostsRateado;
+      break;
+    case 'exclude':
+      // Não considera custos fixos (análise unitária pura)
+      allocatedFixedCost = 0;
+      break;
+  }
+  
+  // Custo total = compra + variável + rateio fixos
   const totalCost = product.purchaseCost + product.variableCost + allocatedFixedCost;
+  
+  // Calcula taxa total de impostos
   const otherFeesTotal = taxes.otherFees.reduce((sum, tax) => sum + tax.percentage, 0);
   const totalTaxRate = (taxes.salesTax + taxes.marketplaceFee + taxes.cardFee + otherFeesTotal) / 100;
   
+  // Preço sugerido usando a fórmula: custo / (1 - margem - taxa)
   const suggestedPrice = totalCost / (1 - desiredMargin / 100 - totalTaxRate);
+  
+  // Valor dos impostos
   const taxAmount = suggestedPrice * totalTaxRate;
+  
+  // Lucro por unidade
   const profitPerUnit = suggestedPrice - totalCost - taxAmount;
+  
+  // Margem real alcançada
   const realMargin = (profitPerUnit / suggestedPrice) * 100;
   
   return {
+    purchaseCost: Math.round(product.purchaseCost * 100) / 100,
+    variableCost: Math.round(product.variableCost * 100) / 100,
+    allocatedFixedCost: Math.round(allocatedFixedCost * 100) / 100,
+    activeProductsCount: productsCount,
     totalCost: Math.round(totalCost * 100) / 100,
     taxAmount: Math.round(taxAmount * 100) / 100,
     suggestedPrice: Math.round(suggestedPrice * 100) / 100,
     profitPerUnit: Math.round(profitPerUnit * 100) / 100,
     realMargin: Math.round(realMargin * 10) / 10,
+    allocationMode
   };
 };
