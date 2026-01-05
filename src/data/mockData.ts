@@ -81,6 +81,44 @@ export type FixedCostAllocationMode =
   | 'include'      // Incluir 100% dos custos fixos neste produto
   | 'exclude';     // Não considerar (análise unitária)
 
+// Tipo para perfil de negócio
+export type BusinessProfile = 'mei' | 'atacado' | 'importador';
+
+// Configurações de cada perfil de negócio
+export const BUSINESS_PROFILE_CONFIG: Record<BusinessProfile, {
+  label: string;
+  defaultMargin: number;
+  marginRange: { min: number; max: number };
+  defaultAllocationMode: FixedCostAllocationMode;
+  description: string;
+  tooltipRateio: string;
+}> = {
+  mei: {
+    label: 'MEI',
+    defaultMargin: 25,
+    marginRange: { min: 20, max: 30 },
+    defaultAllocationMode: 'exclude',
+    description: 'MEI: Ideal para quem vende com estrutura enxuta.\nO cálculo prioriza competitividade e não inclui custos fixos automaticamente.',
+    tooltipRateio: 'Para MEI, o mais comum é não distribuir custos fixos por produto. Ative se quiser simular outro cenário.'
+  },
+  atacado: {
+    label: 'Atacado / Revenda',
+    defaultMargin: 20,
+    marginRange: { min: 15, max: 25 },
+    defaultAllocationMode: 'distribute',
+    description: 'Atacado / Revenda: Indicado para operações com volume e margens menores.\nOs custos fixos são distribuídos entre os produtos para manter a sustentabilidade.',
+    tooltipRateio: 'No atacado, o rateio ajuda a garantir que o lucro cubra os custos da operação no longo prazo.'
+  },
+  importador: {
+    label: 'Importador',
+    defaultMargin: 40,
+    marginRange: { min: 30, max: 50 },
+    defaultAllocationMode: 'distribute',
+    description: 'Importador: Ideal para operações com custos operacionais, impostos e variação cambial.\nO cálculo inclui rateio para refletir o custo real da operação.',
+    tooltipRateio: 'Importações envolvem custos indiretos relevantes. O rateio ajuda a evitar prejuízo oculto.'
+  }
+};
+
 // Interface para resultado detalhado do cálculo de precificação
 export interface PricingResult {
   purchaseCost: number;
