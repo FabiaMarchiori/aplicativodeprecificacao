@@ -576,9 +576,10 @@ export const ReportsSection = () => {
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="glass-card p-3 sm:p-4 mb-6">
-          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
+        {/* Unified Card: Filters + Charts */}
+        <div className="glass-card p-4 sm:p-6 mb-6">
+          {/* Filters Section */}
+          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 pb-4 sm:pb-6 border-b border-white/10 mb-6">
             <div className="flex items-center gap-2">
               <Filter className="w-4 h-4" style={{ color: '#FFFFFF' }} />
               <span className="text-sm font-medium text-foreground">Filtros:</span>
@@ -645,10 +646,9 @@ export const ReportsSection = () => {
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Charts Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Revenue Chart - Faturamento vs Lucro */}
           <div className="chart-container">
             <div className="flex items-center gap-2 mb-4">
@@ -791,6 +791,7 @@ export const ReportsSection = () => {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+          </div>
           </div>
         </div>
 
