@@ -577,19 +577,19 @@ export const ReportsSection = () => {
         </div>
 
         {/* Unified Card: Filters + Charts */}
-        <div className="glass-card p-0 overflow-hidden mb-6">
-          {/* Filters Bar */}
-          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 sm:py-4 border-b border-border/60 bg-card/30">
-            <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-muted-foreground" />
+        <div className="glass-card reports-main-card p-0 overflow-hidden mb-6">
+          {/* Filters Bar - integrated header */}
+          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 sm:py-4 border-b border-border/50">
+            <div className="flex items-center gap-2 min-w-0">
+              <Filter className="w-4 h-4 text-muted-foreground flex-shrink-0" />
               <span className="text-sm font-medium text-foreground">Filtros:</span>
             </div>
             
-            <div className="flex flex-col xs:flex-row flex-wrap items-stretch xs:items-center gap-2 sm:gap-3 flex-1">
-              <div className="flex items-center gap-2 w-full xs:w-auto">
+            <div className="flex flex-col xs:flex-row flex-wrap items-stretch xs:items-center gap-2 sm:gap-3 flex-1 min-w-0">
+              <div className="flex items-center gap-2 w-full xs:w-auto min-w-0">
                 <label className="text-sm whitespace-nowrap text-muted-foreground">Produto:</label>
                 <select 
-                  className="input-field py-1.5 flex-1 xs:flex-none"
+                  className="input-field py-1.5 flex-1 xs:flex-none max-w-full"
                   value={selectedProduct}
                   onChange={(e) => setSelectedProduct(e.target.value)}
                 >
@@ -600,11 +600,11 @@ export const ReportsSection = () => {
                 </select>
               </div>
 
-              {/* Category Filter - shown in detailed mode or always for better UX */}
-              <div className="flex items-center gap-2 w-full xs:w-auto">
+              {/* Category Filter */}
+              <div className="flex items-center gap-2 w-full xs:w-auto min-w-0">
                 <label className="text-sm whitespace-nowrap text-muted-foreground">Categoria:</label>
                 <select 
-                  className="input-field py-1.5 flex-1 xs:flex-none"
+                  className="input-field py-1.5 flex-1 xs:flex-none max-w-full"
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
                 >
@@ -617,10 +617,10 @@ export const ReportsSection = () => {
 
               {/* Value Range Filter */}
               {viewMode === 'detailed' && (
-                <div className="flex items-center gap-2 w-full xs:w-auto">
+                <div className="flex items-center gap-2 w-full xs:w-auto min-w-0">
                   <label className="text-sm whitespace-nowrap text-muted-foreground">Faixa de Valor:</label>
                   <select 
-                    className="input-field py-1.5 flex-1 xs:flex-none"
+                    className="input-field py-1.5 flex-1 xs:flex-none max-w-full"
                     value={selectedValueRange}
                     onChange={(e) => setSelectedValueRange(e.target.value)}
                   >
@@ -631,11 +631,11 @@ export const ReportsSection = () => {
                 </div>
               )}
 
-              <div className="flex items-center gap-2 w-full xs:w-auto">
-                <Calendar className="w-4 h-4 text-muted-foreground" />
+              <div className="flex items-center gap-2 w-full xs:w-auto min-w-0">
+                <Calendar className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                 <label className="text-sm whitespace-nowrap text-muted-foreground">Período:</label>
                 <select 
-                  className="input-field py-1.5 flex-1 xs:flex-none"
+                  className="input-field py-1.5 flex-1 xs:flex-none max-w-full"
                   value={selectedPeriod}
                   onChange={(e) => setSelectedPeriod(e.target.value)}
                 >
