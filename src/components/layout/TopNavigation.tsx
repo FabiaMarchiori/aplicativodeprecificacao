@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Tooltip,
   TooltipContent,
@@ -38,6 +39,10 @@ const tabs: { id: TabType; label: string; icon: React.ElementType; colorClass: s
 
 export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) => {
   const { signOut, user } = useAuth();
+
+  const userName = user?.user_metadata?.full_name || user?.user_metadata?.nome || user?.email?.split('@')[0] || 'Usuário';
+  const userAvatar = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
+  const userInitials = userName.substring(0, 2).toUpperCase();
 
   return (
     <header 
@@ -130,33 +135,56 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
             })}
           </nav>
 
-          {/* Logout Button */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={signOut}
-                className="flex-shrink-0 rounded-lg border-0"
-                style={{
-                  color: '#FF007A',
-                  background: 'transparent',
+          {/* User Info + Logout */}
+          <div className="flex items-center gap-2 md:gap-3">
+            <Avatar className="w-8 h-8 border" style={{ borderColor: 'rgba(0, 209, 255, 0.3)' }}>
+              <AvatarImage src={userAvatar} alt={userName} />
+              <AvatarFallback 
+                style={{ 
+                  background: 'linear-gradient(135deg, #FF007A, #00D1FF)',
+                  color: '#fff',
+                  fontSize: '0.75rem',
+                  fontWeight: 600
                 }}
               >
-                <LogOut className="w-5 h-5" style={{ filter: 'drop-shadow(0 0 4px rgba(255, 0, 122, 0.5))' }} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent 
-              side="bottom"
-              style={{
-                background: 'rgba(0, 0, 0, 0.9)',
-                border: '1px solid rgba(255, 0, 122, 0.3)',
-                color: '#fff',
-              }}
+                {userInitials}
+              </AvatarFallback>
+            </Avatar>
+            
+            <span 
+              className="hidden lg:block text-sm max-w-[120px] truncate" 
+              style={{ color: 'rgba(255,255,255,0.8)' }}
             >
-              <p>Sair ({user?.email})</p>
-            </TooltipContent>
-          </Tooltip>
+              {userName}
+            </span>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={signOut}
+                  className="flex-shrink-0 rounded-lg border-0"
+                  style={{
+                    color: '#FF007A',
+                    background: 'transparent',
+                  }}
+                >
+                  <LogOut className="w-5 h-5" style={{ filter: 'drop-shadow(0 0 4px rgba(255, 0, 122, 0.5))' }} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent 
+                side="bottom"
+                style={{
+                  background: 'rgba(0, 0, 0, 0.9)',
+                  border: '1px solid rgba(255, 0, 122, 0.3)',
+                  color: '#fff',
+                }}
+              >
+                <p>Sair ({user?.email})</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         </div>
       </div>
     </header>
