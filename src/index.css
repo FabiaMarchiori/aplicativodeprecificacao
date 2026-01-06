@@ -767,6 +767,14 @@
     align-items: center;
     justify-content: center;
   }
+
+  /* Reports main card - unified filters + charts */
+  .reports-main-card .chart-container {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
 }
 
 @layer utilities {
