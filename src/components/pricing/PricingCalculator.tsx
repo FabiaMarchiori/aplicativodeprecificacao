@@ -35,7 +35,7 @@ export const PricingCalculator = () => {
   });
   
   // Estado do perfil de negócio
-  const [businessProfile, setBusinessProfile] = useLocalStorage<BusinessProfile | null>('pricing_business_profile', null);
+  const [businessProfile, setBusinessProfile] = useLocalStorage<BusinessProfile>('pricing_business_profile', 'mei');
   
   // Estado para modo de cálculo da margem
   const [marginMode, setMarginMode] = useState<MarginCalculationMode>('before_tax');
@@ -117,7 +117,7 @@ export const PricingCalculator = () => {
   };
 
   const getPricingData = (product: Product): PricingResult => {
-    const desiredMargin = margins[product.id] || 30;
+    const desiredMargin = margins[product.id] || 25;
     const allocationMode = allocationModes[product.id] || 'exclude';
     return calculatePricing(product, fixedCosts, taxConfig, desiredMargin, allocationMode, activeProductsCount, marginMode);
   };
