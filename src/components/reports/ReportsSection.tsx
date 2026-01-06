@@ -577,17 +577,17 @@ export const ReportsSection = () => {
         </div>
 
         {/* Unified Card: Filters + Charts */}
-        <div className="glass-card p-4 sm:p-6 mb-6">
-          {/* Filters Section */}
-          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 pb-4 sm:pb-6 border-b border-white/10 mb-6">
+        <div className="glass-card p-0 overflow-hidden mb-6">
+          {/* Filters Bar */}
+          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 sm:py-4 border-b border-border/60 bg-card/30">
             <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4" style={{ color: '#FFFFFF' }} />
+              <Filter className="w-4 h-4 text-muted-foreground" />
               <span className="text-sm font-medium text-foreground">Filtros:</span>
             </div>
             
             <div className="flex flex-col xs:flex-row flex-wrap items-stretch xs:items-center gap-2 sm:gap-3 flex-1">
               <div className="flex items-center gap-2 w-full xs:w-auto">
-                <label className="text-sm whitespace-nowrap" style={{ color: '#FFFFFF' }}>Produto:</label>
+                <label className="text-sm whitespace-nowrap text-muted-foreground">Produto:</label>
                 <select 
                   className="input-field py-1.5 flex-1 xs:flex-none"
                   value={selectedProduct}
@@ -602,7 +602,7 @@ export const ReportsSection = () => {
 
               {/* Category Filter - shown in detailed mode or always for better UX */}
               <div className="flex items-center gap-2 w-full xs:w-auto">
-                <label className="text-sm whitespace-nowrap" style={{ color: '#FFFFFF' }}>Categoria:</label>
+                <label className="text-sm whitespace-nowrap text-muted-foreground">Categoria:</label>
                 <select 
                   className="input-field py-1.5 flex-1 xs:flex-none"
                   value={selectedCategory}
@@ -618,7 +618,7 @@ export const ReportsSection = () => {
               {/* Value Range Filter */}
               {viewMode === 'detailed' && (
                 <div className="flex items-center gap-2 w-full xs:w-auto">
-                  <label className="text-sm whitespace-nowrap" style={{ color: '#FFFFFF' }}>Faixa de Valor:</label>
+                  <label className="text-sm whitespace-nowrap text-muted-foreground">Faixa de Valor:</label>
                   <select 
                     className="input-field py-1.5 flex-1 xs:flex-none"
                     value={selectedValueRange}
@@ -632,8 +632,8 @@ export const ReportsSection = () => {
               )}
 
               <div className="flex items-center gap-2 w-full xs:w-auto">
-                <Calendar className="w-4 h-4" style={{ color: '#FFFFFF' }} />
-                <label className="text-sm whitespace-nowrap" style={{ color: '#FFFFFF' }}>Período:</label>
+                <Calendar className="w-4 h-4 text-muted-foreground" />
+                <label className="text-sm whitespace-nowrap text-muted-foreground">Período:</label>
                 <select 
                   className="input-field py-1.5 flex-1 xs:flex-none"
                   value={selectedPeriod}
@@ -647,10 +647,11 @@ export const ReportsSection = () => {
             </div>
           </div>
 
-          {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Revenue Chart - Faturamento vs Lucro */}
-          <div className="chart-container">
+          {/* Charts */}
+          <div className="p-4 sm:p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Revenue Chart - Faturamento vs Lucro */}
+          <div className="chart-container bg-transparent border-0 shadow-none p-0">
             <div className="flex items-center gap-2 mb-4">
               <h3 className="text-lg font-semibold text-foreground">Faturamento vs Lucro</h3>
               <UITooltip>
@@ -724,7 +725,7 @@ export const ReportsSection = () => {
           </div>
 
           {/* Margin by Product */}
-          <div className="chart-container">
+          <div className="chart-container bg-transparent border-0 shadow-none p-0">
             <div className="flex items-center gap-2 mb-4">
               <h3 className="text-lg font-semibold text-foreground">Margem por Produto</h3>
               <UITooltip>
@@ -792,6 +793,7 @@ export const ReportsSection = () => {
               </BarChart>
             </ResponsiveContainer>
           </div>
+            </div>
           </div>
         </div>
 
