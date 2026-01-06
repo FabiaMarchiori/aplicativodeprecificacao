@@ -270,6 +270,9 @@ export const PricingCalculator = () => {
             Precificação
           </h2>
           <p style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Calcule o preço ideal para cada produto em tempo real</p>
+          <p className="text-sm mt-1" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+            Preencha os dados abaixo e veja automaticamente o preço ideal de venda para cada produto.
+          </p>
         </div>
         <div className="flex flex-col xs:flex-row flex-wrap items-stretch xs:items-center gap-2 sm:gap-3 w-full sm:w-auto">
           <Button
@@ -341,6 +344,7 @@ export const PricingCalculator = () => {
           <div>
             <label className="text-sm font-medium mb-2 block" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
               Perfil de Negócio
+              <TooltipIcon content="Define o modelo de cálculo mais indicado para o seu tipo de negócio." />
             </label>
             <Select value={businessProfile || ''} onValueChange={(v) => handleBusinessProfileChange(v as BusinessProfile)}>
               <SelectTrigger 
@@ -360,9 +364,24 @@ export const PricingCalculator = () => {
                   zIndex: 50
                 }}
               >
-                <SelectItem value="mei" style={{ color: '#F8FAFC' }}>MEI</SelectItem>
-                <SelectItem value="atacado" style={{ color: '#F8FAFC' }}>Atacado / Revenda</SelectItem>
-                <SelectItem value="distribuidor" style={{ color: '#F8FAFC' }}>Distribuidor</SelectItem>
+                <SelectItem value="mei" style={{ color: '#F8FAFC' }}>
+                  <span className="flex items-center gap-1">
+                    MEI
+                    <TooltipIcon content="Ideal para quem está começando ou quer simplicidade. Usa um cálculo mais direto." />
+                  </span>
+                </SelectItem>
+                <SelectItem value="atacado" style={{ color: '#F8FAFC' }}>
+                  <span className="flex items-center gap-1">
+                    Atacado / Revenda
+                    <TooltipIcon content="Indicado para quem compra e revende produtos em maior volume." />
+                  </span>
+                </SelectItem>
+                <SelectItem value="distribuidor" style={{ color: '#F8FAFC' }}>
+                  <span className="flex items-center gap-1">
+                    Distribuidor
+                    <TooltipIcon content="Modelo mais avançado, usado por quem trabalha com margens menores e grandes volumes." />
+                  </span>
+                </SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs mt-2" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
@@ -388,12 +407,14 @@ export const PricingCalculator = () => {
           <div>
             <label className="text-sm font-medium mb-2 block" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
               Rateio de Custos Fixos
+              <TooltipIcon content="Controla se os custos fixos serão distribuídos entre os produtos." />
             </label>
             <div 
               className="p-4 rounded-lg"
               style={{
-                background: 'rgba(188, 19, 254, 0.08)',
-                border: '1px solid rgba(188, 19, 254, 0.25)'
+                background: 'linear-gradient(135deg, rgba(88, 28, 135, 0.15) 0%, rgba(30, 58, 138, 0.15) 100%)',
+                border: '1px solid rgba(139, 92, 246, 0.2)',
+                boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.05)'
               }}
             >
               <div className="flex items-center justify-between mb-2">
@@ -412,7 +433,7 @@ export const PricingCalculator = () => {
                   {formatCurrency(totalFixedCostsRateado / activeProductsCount)}
                 </span>
               </div>
-              <div className="flex items-center justify-between mt-2 pt-2" style={{ borderTop: '1px solid rgba(188, 19, 254, 0.2)' }}>
+              <div className="flex items-center justify-between mt-2 pt-2" style={{ borderTop: '1px solid rgba(139, 92, 246, 0.2)' }}>
                 <span className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                   Total rateado:
                 </span>
@@ -428,6 +449,7 @@ export const PricingCalculator = () => {
         <div className="mb-4 pt-4" style={{ borderTop: '1px solid rgba(0, 209, 255, 0.2)' }}>
           <label className="text-sm font-medium mb-3 block" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
             Cálculo da Margem
+            <TooltipIcon content="Define em que momento a margem de lucro é aplicada no cálculo." />
           </label>
           <RadioGroup 
             value={marginMode} 
@@ -442,10 +464,11 @@ export const PricingCalculator = () => {
               />
               <Label 
                 htmlFor="before_tax" 
-                className="text-sm cursor-pointer"
+                className="text-sm cursor-pointer flex items-center gap-1"
                 style={{ color: marginMode === 'before_tax' ? '#00D1FF' : 'rgba(255, 255, 255, 0.7)' }}
               >
                 Margem aplicada <strong>ANTES</strong> dos impostos (modo recomendado)
+                <TooltipIcon content="Modo recomendado para MEI e pequenos negócios." />
               </Label>
             </div>
             <div className="flex items-center space-x-3">
@@ -456,10 +479,11 @@ export const PricingCalculator = () => {
               />
               <Label 
                 htmlFor="after_tax" 
-                className="text-sm cursor-pointer"
+                className="text-sm cursor-pointer flex items-center gap-1"
                 style={{ color: marginMode === 'after_tax' ? '#FFAC00' : 'rgba(255, 255, 255, 0.7)' }}
               >
                 Margem aplicada <strong>APÓS</strong> impostos (modo avançado)
+                <TooltipIcon content="Modo avançado, indicado para quem já domina precificação." />
               </Label>
             </div>
           </RadioGroup>
@@ -559,7 +583,10 @@ export const PricingCalculator = () => {
                   {/* Preço e Lucro */}
                   <div className="flex flex-wrap items-center gap-6">
                     <div className="text-right">
-                      <p className="text-xs mb-1" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Preço Sugerido</p>
+                      <p className="text-xs mb-1 flex items-center justify-end gap-1" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                        Preço Sugerido
+                        <TooltipIcon content="Valor recomendado para venda com base nos custos, impostos e margem definidos." />
+                      </p>
                       <p 
                         className="text-2xl font-bold mono"
                         style={{ 
@@ -571,8 +598,11 @@ export const PricingCalculator = () => {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs mb-1" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Lucro</p>
-                      <p 
+                      <p className="text-xs mb-1 flex items-center justify-end gap-1" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                        Lucro
+                        <TooltipIcon content="Valor estimado que sobra após todos os custos e impostos." />
+                      </p>
+                      <p
                         className="text-xl font-bold mono"
                         style={{ 
                           color: '#39FF14',
