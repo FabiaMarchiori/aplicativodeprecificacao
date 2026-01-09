@@ -144,13 +144,19 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
               <button 
                 className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-300 hover:bg-white/10 focus:outline-none"
               >
-                <Avatar className="w-9 h-9 border-2" style={{ borderColor: '#00B4D8' }}>
+                <Avatar 
+                  className="w-9 h-9" 
+                  style={{ 
+                    border: '2px solid #00D1FF',
+                    boxShadow: '0 0 8px rgba(0, 209, 255, 0.3)'
+                  }}
+                >
                   <AvatarImage src={userAvatar} alt={userName} />
                   <AvatarFallback 
                     style={{ 
-                      background: 'linear-gradient(135deg, #00B4D8, #0077B6)',
+                      background: '#1a2332',
                       color: '#fff',
-                      fontWeight: 600
+                      fontWeight: 500
                     }}
                   >
                     {userInitials}
@@ -168,61 +174,71 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
 
             <DropdownMenuContent 
               align="end" 
-              sideOffset={12}
-              className="w-72 p-0 rounded-2xl overflow-hidden border-0"
+              sideOffset={8}
+              className="w-64 p-0 rounded-xl overflow-hidden animate-in fade-in-0 slide-in-from-top-2 duration-200"
               style={{
-                background: 'linear-gradient(180deg, #00B4D8 0%, #0096C7 100%)',
-                boxShadow: '0 20px 50px rgba(0, 180, 216, 0.4), 0 10px 30px rgba(0, 0, 0, 0.3)',
+                background: 'rgba(11, 18, 32, 0.97)',
+                border: '1px solid #00D1FF',
+                boxShadow: '0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 209, 255, 0.15)',
               }}
             >
               {/* User Info Section */}
-              <div className="p-6 flex flex-col items-center text-center">
+              <div className="px-5 py-4 flex flex-col items-center text-center">
                 <Avatar 
-                  className="w-16 h-16 mb-4" 
+                  className="w-14 h-14 mb-3" 
                   style={{ 
-                    borderWidth: '3px',
-                    borderStyle: 'solid',
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
+                    border: '2px solid #00D1FF',
+                    boxShadow: '0 0 12px rgba(0, 209, 255, 0.4)'
                   }}
                 >
                   <AvatarImage src={userAvatar} alt={userName} />
                   <AvatarFallback 
                     style={{ 
-                      background: 'linear-gradient(135deg, #0077B6, #023E8A)',
+                      background: '#1a2332',
                       color: '#fff',
-                      fontSize: '1.5rem',
-                      fontWeight: 700
+                      fontSize: '1.25rem',
+                      fontWeight: 500
                     }}
                   >
                     {userInitials}
                   </AvatarFallback>
                 </Avatar>
                 
-                <h3 className="text-lg font-bold text-white mb-1">
+                <h3 className="text-base font-medium text-white mb-0.5">
                   {userName}
                 </h3>
                 
-                <p className="text-sm truncate max-w-full" style={{ color: 'rgba(255,255,255,0.8)' }}>
+                <p className="text-sm truncate max-w-full" style={{ color: '#9CA3AF' }}>
                   {userEmail}
                 </p>
               </div>
 
               {/* Separator */}
-              <DropdownMenuSeparator className="m-0" style={{ background: 'rgba(255,255,255,0.2)' }} />
+              <DropdownMenuSeparator className="m-0" style={{ background: 'rgba(0, 209, 255, 0.2)' }} />
 
               {/* Logout Button */}
               <div className="p-3">
                 <DropdownMenuItem 
                   onClick={signOut}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300 focus:bg-white/20 hover:bg-white/20"
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all duration-300 focus:outline-none"
                   style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    background: 'transparent',
+                    border: '1px solid rgba(0, 209, 255, 0.4)',
+                    color: '#00D1FF',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(0, 209, 255, 0.1)';
+                    e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 209, 255, 0.3)';
+                    e.currentTarget.style.borderColor = '#00D1FF';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.borderColor = 'rgba(0, 209, 255, 0.4)';
                   }}
                 >
-                  <LogOut className="w-5 h-5 text-white" />
-                  <span className="text-white font-medium">Voltar ao login</span>
+                  <LogOut className="w-4 h-4" style={{ color: '#00D1FF' }} />
+                  <span className="font-medium text-sm">Voltar ao login</span>
                 </DropdownMenuItem>
               </div>
             </DropdownMenuContent>
