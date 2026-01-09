@@ -8,16 +8,18 @@ import {
   Users, 
   FileBarChart,
   TrendingUp,
-  LogOut
+  LogOut,
+  ChevronDown
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 type TabType = 'dashboard' | 'products' | 'suppliers' | 'fixed-costs' | 'taxes' | 'pricing' | 'competition' | 'reports';
 
@@ -41,6 +43,7 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
   const { signOut, user } = useAuth();
 
   const userName = user?.user_metadata?.full_name || user?.user_metadata?.nome || user?.email?.split('@')[0] || 'Usuário';
+  const userEmail = user?.email || '';
   const userAvatar = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
   const userInitials = userName.substring(0, 2).toUpperCase();
 
@@ -135,56 +138,95 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
             })}
           </nav>
 
-          {/* User Info + Logout */}
-          <div className="flex items-center gap-2 md:gap-3">
-            <Avatar className="w-8 h-8 border" style={{ borderColor: 'rgba(0, 209, 255, 0.3)' }}>
-              <AvatarImage src={userAvatar} alt={userName} />
-              <AvatarFallback 
-                style={{ 
-                  background: 'linear-gradient(135deg, #FF007A, #00D1FF)',
-                  color: '#fff',
-                  fontSize: '0.75rem',
-                  fontWeight: 600
-                }}
+          {/* User Menu - Premium Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button 
+                className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-300 hover:bg-white/10 focus:outline-none"
               >
-                {userInitials}
-              </AvatarFallback>
-            </Avatar>
-            
-            <span 
-              className="hidden lg:block text-sm max-w-[120px] truncate" 
-              style={{ color: 'rgba(255,255,255,0.8)' }}
-            >
-              {userName}
-            </span>
+                <Avatar className="w-9 h-9 border-2" style={{ borderColor: '#00B4D8' }}>
+                  <AvatarImage src={userAvatar} alt={userName} />
+                  <AvatarFallback 
+                    style={{ 
+                      background: 'linear-gradient(135deg, #00B4D8, #0077B6)',
+                      color: '#fff',
+                      fontWeight: 600
+                    }}
+                  >
+                    {userInitials}
+                  </AvatarFallback>
+                </Avatar>
+                <span 
+                  className="hidden lg:block text-sm max-w-[100px] truncate"
+                  style={{ color: 'rgba(255,255,255,0.9)' }}
+                >
+                  {userName}
+                </span>
+                <ChevronDown className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.6)' }} />
+              </button>
+            </DropdownMenuTrigger>
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={signOut}
-                  className="flex-shrink-0 rounded-lg border-0"
-                  style={{
-                    color: '#FF007A',
-                    background: 'transparent',
+            <DropdownMenuContent 
+              align="end" 
+              sideOffset={12}
+              className="w-72 p-0 rounded-2xl overflow-hidden border-0"
+              style={{
+                background: 'linear-gradient(180deg, #00B4D8 0%, #0096C7 100%)',
+                boxShadow: '0 20px 50px rgba(0, 180, 216, 0.4), 0 10px 30px rgba(0, 0, 0, 0.3)',
+              }}
+            >
+              {/* User Info Section */}
+              <div className="p-6 flex flex-col items-center text-center">
+                <Avatar 
+                  className="w-16 h-16 mb-4" 
+                  style={{ 
+                    borderWidth: '3px',
+                    borderStyle: 'solid',
+                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
                   }}
                 >
-                  <LogOut className="w-5 h-5" style={{ filter: 'drop-shadow(0 0 4px rgba(255, 0, 122, 0.5))' }} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent 
-                side="bottom"
-                style={{
-                  background: 'rgba(0, 0, 0, 0.9)',
-                  border: '1px solid rgba(255, 0, 122, 0.3)',
-                  color: '#fff',
-                }}
-              >
-                <p>Sair ({user?.email})</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
+                  <AvatarImage src={userAvatar} alt={userName} />
+                  <AvatarFallback 
+                    style={{ 
+                      background: 'linear-gradient(135deg, #0077B6, #023E8A)',
+                      color: '#fff',
+                      fontSize: '1.5rem',
+                      fontWeight: 700
+                    }}
+                  >
+                    {userInitials}
+                  </AvatarFallback>
+                </Avatar>
+                
+                <h3 className="text-lg font-bold text-white mb-1">
+                  {userName}
+                </h3>
+                
+                <p className="text-sm truncate max-w-full" style={{ color: 'rgba(255,255,255,0.8)' }}>
+                  {userEmail}
+                </p>
+              </div>
+
+              {/* Separator */}
+              <DropdownMenuSeparator className="m-0" style={{ background: 'rgba(255,255,255,0.2)' }} />
+
+              {/* Logout Button */}
+              <div className="p-3">
+                <DropdownMenuItem 
+                  onClick={signOut}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300 focus:bg-white/20 hover:bg-white/20"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <LogOut className="w-5 h-5 text-white" />
+                  <span className="text-white font-medium">Voltar ao login</span>
+                </DropdownMenuItem>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>
