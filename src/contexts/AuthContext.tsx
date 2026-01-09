@@ -60,12 +60,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return () => subscription.unsubscribe();
   }, [navigate, location.pathname]);
 
-  // Redirect to auth if not logged in
-  useEffect(() => {
-    if (!loading && !user && location.pathname !== '/auth') {
-      navigate('/auth', { replace: true });
-    }
-  }, [loading, user, location.pathname, navigate]);
 
   const signUp = async (email: string, password: string, nome?: string) => {
     const redirectUrl = `${window.location.origin}/`;
