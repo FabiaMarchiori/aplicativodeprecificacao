@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_permissions: {
+        Row: {
+          app_name: string
+          expires_at: string | null
+          granted_at: string | null
+          id: string
+          source: string
+          user_id: string
+        }
+        Insert: {
+          app_name: string
+          expires_at?: string | null
+          granted_at?: string | null
+          id?: string
+          source?: string
+          user_id: string
+        }
+        Update: {
+          app_name?: string
+          expires_at?: string | null
+          granted_at?: string | null
+          id?: string
+          source?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       fixed_costs: {
         Row: {
           created_at: string

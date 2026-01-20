@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,12 +8,21 @@ import { TrendingUp, Mail, Lock, User, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
 
+const SOPH_URL = 'https://empreendajacomsoph.netlify.app';
+
 const emailSchema = z.string().email('Email inválido');
 const passwordSchema = z.string().min(6, 'Senha deve ter no mínimo 6 caracteres');
 
 type AuthMode = 'login' | 'signup' | 'reset';
 
 const Auth = () => {
+  // Verificar se usuário veio da Soph - bloquear acesso direto
+  useEffect(() => {
+    const hasAccess = sessionStorage.getItem('soph_access_granted');
+    if (!hasAccess) {
+      window.location.href = SOPH_URL;
+    }
+  }, []);
   const [mode, setMode] = useState<AuthMode>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
