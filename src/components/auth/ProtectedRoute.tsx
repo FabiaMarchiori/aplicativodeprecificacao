@@ -1,6 +1,7 @@
 import { useAuth } from '@/contexts/AuthContext';
-import { Navigate } from 'react-router-dom';
 import { ReactNode } from 'react';
+
+const SOPH_URL = 'https://empreendajacomsoph.netlify.app';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -8,6 +9,9 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
+
+  // Verificar autorização da Soph
+  const hasAccess = sessionStorage.getItem('soph_access_granted');
 
   // Estado de loading - renderiza spinner enquanto verifica autenticação
   if (loading) {
@@ -21,11 +25,18 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
-  // Sem usuário - redireciona IMEDIATAMENTE para /auth
-  if (!user) {
-    return <Navigate to="/auth" replace />;
+  // Sem autorização da Soph - redireciona para Soph
+  if (!hasAccess) {
+    window.location.href = SOPH_URL;
+    return null;
   }
 
-  // Usuário autenticado - renderiza conteúdo protegido
+  // Sem usuário autenticado - redireciona para Soph (NÃO para /auth)
+  if (!user) {
+    window.location.href = SOPH_URL;
+    return null;
+  }
+
+  // Usuário autenticado e autorizado - renderiza conteúdo protegido
   return <>{children}</>;
 };
