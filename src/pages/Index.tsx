@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TopNavigation } from '@/components/layout/TopNavigation';
+import { Sidebar } from '@/components/layout/Sidebar';
 import { Dashboard } from '@/components/dashboard/Dashboard';
 import { ProductsTable } from '@/components/products/ProductsTable';
 import { SuppliersTable } from '@/components/suppliers/SuppliersTable';
@@ -54,11 +54,13 @@ const Index = () => {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-background overflow-x-hidden">
-        <TopNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      <div className="min-h-screen bg-background flex">
+        <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
         
-        <main className="pt-16 md:pt-18 lg:pt-24 pb-20 md:pb-8 px-3 md:px-4 lg:px-6 max-w-[1600px] mx-auto">
-          {renderContent()}
+        <main className="flex-1 ml-0 md:ml-[80px] lg:ml-[260px] pb-20 md:pb-8 px-3 md:px-4 lg:px-6 pt-16 md:pt-6">
+          <div className="max-w-[1400px] mx-auto">
+            {renderContent()}
+          </div>
           
           {/* Reset Data Button - Fixed at bottom with Tooltip */}
           <div className="fixed bottom-4 md:bottom-6 right-3 md:right-6 z-40">
