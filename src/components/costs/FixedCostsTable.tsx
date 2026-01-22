@@ -584,30 +584,31 @@ export const FixedCostsTable = () => {
             boxShadow: '0 0 20px rgba(57, 255, 20, 0.08)'
           }}
         >
-          <table className="w-full">
-            <thead>
-              <tr style={{ background: 'rgba(57, 255, 20, 0.08)' }}>
-                <th className="text-left px-6 py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
-                  Tipo de Custo
-                </th>
-                <th className="text-left px-6 py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
-                  Categoria
-                </th>
-                <th className="text-right px-6 py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
-                  Valor Mensal
-                </th>
-                <th className="text-right px-6 py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
-                  Rateio (%)
-                  <TooltipIcon content="Percentual do custo que será distribuído nos produtos" />
-                </th>
-                <th className="text-right px-6 py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
-                  Valor Rateado
-                </th>
-                <th className="text-center px-6 py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
-                  Ações
-                </th>
-              </tr>
-            </thead>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[800px]">
+              <thead>
+                <tr style={{ background: 'rgba(57, 255, 20, 0.08)' }}>
+                  <th className="text-left px-3 md:px-6 py-3 md:py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
+                    Tipo de Custo
+                  </th>
+                  <th className="text-left px-3 md:px-6 py-3 md:py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
+                    Categoria
+                  </th>
+                  <th className="text-right px-3 md:px-6 py-3 md:py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
+                    Valor Mensal
+                  </th>
+                  <th className="text-right px-3 md:px-6 py-3 md:py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
+                    Rateio (%)
+                    <TooltipIcon content="Percentual do custo que será distribuído nos produtos" />
+                  </th>
+                  <th className="text-right px-3 md:px-6 py-3 md:py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
+                    Valor Rateado
+                  </th>
+                  <th className="text-center px-3 md:px-6 py-3 md:py-4 text-sm font-semibold" style={{ color: '#39FF14' }}>
+                    Ações
+                  </th>
+                </tr>
+              </thead>
             <tbody>
               {/* Add New Row */}
               {isAdding && (
@@ -617,7 +618,7 @@ export const FixedCostsTable = () => {
                     borderBottom: '1px solid rgba(57, 255, 20, 0.1)'
                   }}
                 >
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-3 md:py-4">
                     <input
                       type="text"
                       placeholder="Nome do custo"
@@ -630,7 +631,7 @@ export const FixedCostsTable = () => {
                       autoFocus
                     />
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-3 md:py-4">
                     <select
                       className="w-full"
                       style={inputStyle}
@@ -645,7 +646,7 @@ export const FixedCostsTable = () => {
                       <option value="marketing">Marketing</option>
                     </select>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-3 md:py-4">
                     <input
                       type="number"
                       placeholder="0,00"
@@ -657,7 +658,7 @@ export const FixedCostsTable = () => {
                       onChange={(e) => setEditData({ ...editData, monthlyValue: parseFloat(e.target.value) || 0 })}
                     />
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-3 md:py-4">
                     <input
                       type="number"
                       placeholder="0"
@@ -669,10 +670,10 @@ export const FixedCostsTable = () => {
                       onChange={(e) => setEditData({ ...editData, allocationPercent: parseFloat(e.target.value) || 0 })}
                     />
                   </td>
-                  <td className="px-6 py-4 text-right" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                  <td className="px-3 md:px-6 py-3 md:py-4 text-right" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
                     {formatCurrency((editData.monthlyValue || 0) * (editData.allocationPercent || 0) / 100)}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-3 md:py-4">
                     <div className="flex items-center justify-center gap-2">
                       <button
                         onClick={handleAddNew}
@@ -711,7 +712,7 @@ export const FixedCostsTable = () => {
                 >
                   {editingId === cost.id ? (
                     <>
-                      <td className="px-6 py-4">
+                      <td className="px-3 md:px-6 py-3 md:py-4">
                         <input
                           type="text"
                           className="w-full"
@@ -723,7 +724,7 @@ export const FixedCostsTable = () => {
                           autoFocus
                         />
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 md:px-6 py-3 md:py-4">
                         <select
                           className="w-full"
                           style={inputStyle}
@@ -738,7 +739,7 @@ export const FixedCostsTable = () => {
                           <option value="marketing">Marketing</option>
                         </select>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 md:px-6 py-3 md:py-4">
                         <input
                           type="number"
                           className="w-full text-right"
@@ -749,7 +750,7 @@ export const FixedCostsTable = () => {
                           onChange={(e) => setEditData({ ...editData, monthlyValue: parseFloat(e.target.value) || 0 })}
                         />
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 md:px-6 py-3 md:py-4">
                         <input
                           type="number"
                           className="w-full text-right"
@@ -760,10 +761,10 @@ export const FixedCostsTable = () => {
                           onChange={(e) => setEditData({ ...editData, allocationPercent: parseFloat(e.target.value) || 0 })}
                         />
                       </td>
-                      <td className="px-6 py-4 text-right" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                      <td className="px-3 md:px-6 py-3 md:py-4 text-right" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
                         {formatCurrency((editData.monthlyValue || 0) * (editData.allocationPercent || 0) / 100)}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 md:px-6 py-3 md:py-4">
                         <div className="flex items-center justify-center gap-2">
                           <button
                             onClick={handleSave}
@@ -790,10 +791,10 @@ export const FixedCostsTable = () => {
                     </>
                   ) : (
                     <>
-                      <td className="px-6 py-4 font-medium" style={{ color: '#F8FAFC' }}>
+                      <td className="px-3 md:px-6 py-3 md:py-4 font-medium" style={{ color: '#F8FAFC' }}>
                         {cost.type}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 md:px-6 py-3 md:py-4">
                         <span 
                           className="px-3 py-1 rounded-full text-xs font-medium"
                           style={{
@@ -805,16 +806,16 @@ export const FixedCostsTable = () => {
                           {categoryLabels[cost.category] || cost.category}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-right mono" style={{ color: '#F8FAFC' }}>
+                      <td className="px-3 md:px-6 py-3 md:py-4 text-right mono" style={{ color: '#F8FAFC' }}>
                         {formatCurrency(cost.monthlyValue)}
                       </td>
-                      <td className="px-6 py-4 text-right font-medium" style={{ color: '#FFAC00' }}>
+                      <td className="px-3 md:px-6 py-3 md:py-4 text-right font-medium" style={{ color: '#FFAC00' }}>
                         {cost.allocationPercent}%
                       </td>
-                      <td className="px-6 py-4 text-right mono" style={{ color: '#39FF14' }}>
+                      <td className="px-3 md:px-6 py-3 md:py-4 text-right mono" style={{ color: '#39FF14' }}>
                         {formatCurrency(cost.monthlyValue * cost.allocationPercent / 100)}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 md:px-6 py-3 md:py-4">
                         <div className="flex items-center justify-center gap-2">
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -853,7 +854,8 @@ export const FixedCostsTable = () => {
                 </tr>
               ))}
             </tbody>
-          </table>
+            </table>
+          </div>
           
           {filteredCosts.length === 0 && !isAdding && (
             <div className="text-center py-12" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
