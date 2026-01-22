@@ -352,8 +352,10 @@
 
   /* === KPI CARD - REFINED NEON STYLE === */
   .kpi-card {
-    @apply relative overflow-hidden rounded-xl md:rounded-2xl p-4 md:p-5 lg:p-6 transition-all duration-300;
+    @apply relative overflow-visible rounded-xl md:rounded-2xl p-4 md:p-5 lg:p-6 transition-all duration-300;
     background: hsl(220 12% 9%);
+    min-width: 0; /* Fix for grid overflow */
+    min-height: 140px;
   }
 
   .kpi-card::before {
