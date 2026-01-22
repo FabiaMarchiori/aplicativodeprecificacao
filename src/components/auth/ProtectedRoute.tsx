@@ -1,7 +1,14 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { ReactNode } from 'react';
+import { Navigate } from 'react-router-dom';
 
 const SOPH_URL = 'https://empreendajacomsoph.netlify.app';
+
+// Verificar se está no ambiente de desenvolvimento (Lovable preview ou localhost)
+const isDevEnvironment = () => {
+  const hostname = window.location.hostname;
+  return hostname.includes('lovable.app') || hostname === 'localhost';
+};
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -9,8 +16,8 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
-
-  // Verificar autorização da Soph
+  
+  const isDev = isDevEnvironment();
   const hasAccess = sessionStorage.getItem('soph_access_granted');
 
   // Estado de loading - renderiza spinner enquanto verifica autenticação
@@ -25,14 +32,19 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
-  // Sem autorização da Soph - redireciona para Soph
-  if (!hasAccess) {
+  // Em produção: verificar acesso da Soph
+  if (!isDev && !hasAccess) {
     window.location.href = SOPH_URL;
     return null;
   }
 
-  // Sem usuário autenticado - redireciona para Soph (NÃO para /auth)
+  // Sem usuário autenticado
   if (!user) {
+    // Em dev: redirecionar para /auth local
+    if (isDev) {
+      return <Navigate to="/auth" replace />;
+    }
+    // Em prod: redirecionar para Soph
     window.location.href = SOPH_URL;
     return null;
   }

@@ -16,11 +16,16 @@ const passwordSchema = z.string().min(6, 'Senha deve ter no mínimo 6 caracteres
 type AuthMode = 'login' | 'signup' | 'reset';
 
 const Auth = () => {
-  // Verificar se usuário veio da Soph - bloquear acesso direto
+  // Verificar se usuário veio da Soph - bloquear acesso direto (apenas em produção)
   useEffect(() => {
-    const hasAccess = sessionStorage.getItem('soph_access_granted');
-    if (!hasAccess) {
-      window.location.href = SOPH_URL;
+    const isDev = window.location.hostname.includes('lovable.app') || 
+                  window.location.hostname === 'localhost';
+    
+    if (!isDev) {
+      const hasAccess = sessionStorage.getItem('soph_access_granted');
+      if (!hasAccess) {
+        window.location.href = SOPH_URL;
+      }
     }
   }, []);
   const [mode, setMode] = useState<AuthMode>('login');
