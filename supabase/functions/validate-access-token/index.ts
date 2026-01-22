@@ -104,7 +104,7 @@ Deno.serve(async (req) => {
       type: 'magiclink',
       email: payload.email,
       options: {
-        redirectTo: 'https://aplicativodeprecificacao.lovable.app/'
+        redirectTo: 'https://aplicativodeprecificacao.netlify.app/'
       }
     })
 
