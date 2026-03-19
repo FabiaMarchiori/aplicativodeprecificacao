@@ -220,7 +220,8 @@ export const Dashboard = () => {
             color: '#FFFFFF',
             fontSize: '32px',
             fontWeight: 700,
-            lineHeight: 1.2,
+            lineHeight: 1.15,
+            letterSpacing: '-0.02em',
           }}
         >
           Dashboard

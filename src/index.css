@@ -24,23 +24,23 @@
     --neon-purple-rgb: 155, 77, 202;
 
     /* Core colors - Refined Dark Theme (slightly warmer) */
-    --background: 220 10% 6%;
-    --foreground: 210 20% 95%;
+    --background: 222 14% 5%;
+    --foreground: 210 20% 96%;
 
-    --card: 220 12% 8%;
-    --card-foreground: 210 20% 95%;
+    --card: 222 16% 8%;
+    --card-foreground: 210 20% 96%;
 
-    --popover: 220 12% 10%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 222 16% 9%;
+    --popover-foreground: 210 20% 96%;
 
     --primary: var(--color-cyan);
     --primary-foreground: 210 20% 98%;
 
-    --secondary: 220 10% 12%;
-    --secondary-foreground: 210 15% 85%;
+    --secondary: 222 14% 11%;
+    --secondary-foreground: 210 15% 88%;
 
-    --muted: 220 10% 18%;
-    --muted-foreground: 210 10% 75%;
+    --muted: 222 12% 16%;
+    --muted-foreground: 210 12% 72%;
 
     --accent: var(--color-cyan);
     --accent-foreground: 210 20% 98%;
@@ -48,8 +48,8 @@
     --destructive: var(--color-pink);
     --destructive-foreground: 210 20% 98%;
 
-    --border: 220 10% 18%;
-    --input: 220 10% 12%;
+    --border: 222 12% 16%;
+    --input: 222 14% 11%;
     --ring: var(--color-cyan);
 
     --radius: 0.75rem;
@@ -80,8 +80,8 @@
     --chart-5: var(--color-purple);
 
     /* Glassmorphism */
-    --glass-bg: 220 12% 8% / 0.85;
-    --glass-border: 220 10% 22%;
+    --glass-bg: 222 16% 8% / 0.88;
+    --glass-border: 222 12% 18%;
 
     /* === REFINED SHADOWS (Softer Glow) === */
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
@@ -101,13 +101,13 @@
     --text-glow-orange: 0 0 8px rgba(var(--neon-orange-rgb), 0.6), 0 0 16px rgba(var(--neon-orange-rgb), 0.35);
     --text-glow-pink: 0 0 8px rgba(var(--neon-pink-rgb), 0.6), 0 0 16px rgba(var(--neon-pink-rgb), 0.35);
 
-    --sidebar-background: 220 10% 6%;
-    --sidebar-foreground: 210 15% 85%;
+    --sidebar-background: 225 20% 4%;
+    --sidebar-foreground: 210 20% 96%;
     --sidebar-primary: var(--color-cyan);
     --sidebar-primary-foreground: 210 20% 98%;
-    --sidebar-accent: 220 10% 14%;
-    --sidebar-accent-foreground: 210 15% 85%;
-    --sidebar-border: 220 10% 18%;
+    --sidebar-accent: 222 16% 12%;
+    --sidebar-accent-foreground: 210 20% 96%;
+    --sidebar-border: 222 14% 14%;
     --sidebar-ring: var(--color-cyan);
   }
 }
@@ -125,10 +125,11 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', system-ui, sans-serif;
-    background: hsl(220 10% 6%);
+    background: hsl(222 14% 5%);
     background-image: 
-      radial-gradient(ellipse at 20% 80%, rgba(10, 188, 232, 0.04) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 20%, rgba(155, 77, 202, 0.03) 0%, transparent 50%);
+      radial-gradient(ellipse at 15% 85%, rgba(0, 80, 180, 0.06) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 15%, rgba(0, 140, 200, 0.04) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(0, 40, 100, 0.03) 0%, transparent 70%);
     min-height: 100vh;
   }
 
@@ -145,24 +146,26 @@
   }
 
   h2 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
   }
 
   h3 {
     font-size: 18px;
     font-weight: 600;
+    letter-spacing: -0.01em;
   }
 }
 
 @layer components {
   .glass-card {
     @apply backdrop-blur-xl rounded-xl p-4 md:p-5 lg:p-6;
-    background: hsl(220 12% 8% / 0.9);
-    border: 1px solid hsl(220 10% 22%);
+    background: hsl(222 16% 8% / 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     box-shadow: 
-      var(--shadow-md),
-      0 0 16px rgba(10, 188, 232, 0.03);
+      0 4px 24px rgba(0, 0, 0, 0.4),
+      0 0 1px rgba(255, 255, 255, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.03);
     max-width: 100%;
   }
 
@@ -358,7 +361,7 @@
   /* === KPI CARD - REFINED NEON STYLE === */
   .kpi-card {
     @apply relative overflow-visible rounded-xl md:rounded-2xl p-4 md:p-5 lg:p-6 transition-all duration-300;
-    background: hsl(220 12% 9%);
+    background: hsl(222 16% 8%);
     min-width: 0; /* Fix for grid overflow */
     min-height: 140px;
   }
@@ -469,7 +472,7 @@
   /* KPI Icon styles - Refined */
   .kpi-icon {
     @apply w-10 h-10 md:w-11 md:h-11 lg:w-12 lg:h-12 rounded-full flex items-center justify-center;
-    background: hsl(220 12% 12%);
+    background: hsl(222 16% 10%);
   }
 
   .kpi-icon svg {
@@ -652,16 +655,17 @@
   /* Chart container - Refined style */
   .chart-container {
     @apply backdrop-blur-xl rounded-xl p-4 md:p-5 lg:p-6;
-    background: hsl(220 12% 8% / 0.95);
-    border: 1px solid hsl(220 10% 20%);
+    background: hsl(222 16% 8% / 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     box-shadow: 
-      0 0 16px rgba(10, 188, 232, 0.04);
+      0 4px 24px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.03);
     max-width: 100%;
   }
 
   .chart-container h3 {
     @apply relative inline-flex items-center gap-2 font-semibold mb-3 md:mb-4;
-    font-size: 30px;
+    font-size: 18px;
     color: #FFFFFF !important;
     text-shadow: none;
   }
