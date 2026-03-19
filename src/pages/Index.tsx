@@ -8,7 +8,7 @@ import { TaxesConfig } from '@/components/taxes/TaxesConfig';
 import { PricingCalculator } from '@/components/pricing/PricingCalculator';
 import { CompetitionAnalysis } from '@/components/competition/CompetitionAnalysis';
 import { ReportsSection } from '@/components/reports/ReportsSection';
-import { RotateCcw, AlertTriangle } from 'lucide-react';
+import { RotateCcw, AlertTriangle, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { useData } from '@/contexts/DataContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
@@ -19,6 +19,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
   const { resetToDefaults } = useData();
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const handleResetClick = () => {
     setResetDialogOpen(true);
@@ -55,9 +56,51 @@ const Index = () => {
   return (
     <TooltipProvider>
       <div className="min-h-screen bg-background flex">
-        <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+        <Sidebar 
+          activeTab={activeTab} 
+          onTabChange={setActiveTab} 
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+        />
         
-        <main className="flex-1 ml-0 md:ml-[80px] lg:ml-[260px] pb-20 md:pb-8 px-4 md:px-6 lg:px-8 pt-16 md:pt-6 overflow-x-hidden">
+        <main 
+          className={`flex-1 pb-20 md:pb-8 px-4 md:px-6 lg:px-8 pt-16 md:pt-6 overflow-x-hidden transition-all duration-300`}
+          style={{
+            marginLeft: '0px',
+          }}
+        >
+          {/* Sidebar Toggle Button - Desktop only */}
+          <div className="hidden md:block mb-4">
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="flex items-center justify-center transition-all duration-300"
+              style={{
+                width: '60px',
+                height: '60px',
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '16px',
+                color: '#FFFFFF',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 255, 255, 0.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              {sidebarCollapsed ? (
+                <PanelLeft className="w-6 h-6" />
+              ) : (
+                <PanelLeftClose className="w-6 h-6" />
+              )}
+            </button>
+          </div>
+
           <div className="max-w-[1600px] mx-auto w-full">
             {renderContent()}
           </div>
@@ -68,7 +111,7 @@ const Index = () => {
               <TooltipTrigger asChild>
                 <button 
                   onClick={handleResetClick}
-                  className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2.5 rounded-lg md:rounded-xl bg-card border border-border shadow-lg hover:bg-secondary transition-all duration-200 text-xs md:text-sm text-muted-foreground hover:text-foreground"
+                  className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2.5 rounded-lg md:rounded-xl bg-card border border-border shadow-lg hover:bg-secondary transition-all duration-200 text-xs md:text-sm text-white hover:text-white"
                 >
                   <RotateCcw className="w-4 h-4" />
                   <span className="hidden sm:inline">Restaurar dados padrão</span>
@@ -111,6 +154,15 @@ const Index = () => {
           itemName="todos os dados customizados"
         />
       </div>
+
+      {/* Dynamic margin style */}
+      <style>{`
+        @media (min-width: 768px) {
+          main {
+            margin-left: ${sidebarCollapsed ? '84px' : '240px'} !important;
+          }
+        }
+      `}</style>
     </TooltipProvider>
   );
 };
