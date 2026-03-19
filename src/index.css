@@ -422,17 +422,17 @@
     box-shadow: 0 0 16px rgba(155, 77, 202, 0.2), 0 0 32px rgba(155, 77, 202, 0.08);
   }
 
-  /* KPI Card Text - High visibility for beginners */
+  /* KPI Card Text - Refined premium */
   .kpi-card .kpi-title {
     color: #FFFFFF !important;
-    font-size: 23px;
+    font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
 
   .kpi-card .kpi-value {
-    font-size: 28px;
+    font-size: 16px;
     font-weight: 700;
     color: #FFFFFF !important;
     text-shadow: none !important;
