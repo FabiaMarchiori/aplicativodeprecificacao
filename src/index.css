@@ -160,11 +160,12 @@
 @layer components {
   .glass-card {
     @apply backdrop-blur-xl rounded-xl p-4 md:p-5 lg:p-6;
-    background: hsl(220 12% 8% / 0.9);
-    border: 1px solid hsl(220 10% 22%);
+    background: hsl(222 16% 8% / 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     box-shadow: 
-      var(--shadow-md),
-      0 0 16px rgba(10, 188, 232, 0.03);
+      0 4px 24px rgba(0, 0, 0, 0.4),
+      0 0 1px rgba(255, 255, 255, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.03);
     max-width: 100%;
   }
 
