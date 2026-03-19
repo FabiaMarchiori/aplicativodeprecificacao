@@ -2,12 +2,7 @@ import { useState } from 'react';
 import { 
   LayoutDashboard, 
   Package, 
-  Truck, 
   Building2, 
-  Receipt, 
-  Calculator, 
-  Users, 
-  FileBarChart,
   TrendingUp,
   LogOut,
   ChevronDown,
