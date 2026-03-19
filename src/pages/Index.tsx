@@ -2,18 +2,13 @@ import { useState } from 'react';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Dashboard } from '@/components/dashboard/Dashboard';
 import { ProductsTable } from '@/components/products/ProductsTable';
-import { SuppliersTable } from '@/components/suppliers/SuppliersTable';
-import { FixedCostsTable } from '@/components/costs/FixedCostsTable';
-import { TaxesConfig } from '@/components/taxes/TaxesConfig';
-import { PricingCalculator } from '@/components/pricing/PricingCalculator';
-import { CompetitionAnalysis } from '@/components/competition/CompetitionAnalysis';
-import { ReportsSection } from '@/components/reports/ReportsSection';
+import { FinancialSettings } from '@/components/settings/FinancialSettings';
 import { RotateCcw, AlertTriangle, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { useData } from '@/contexts/DataContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 
-type TabType = 'dashboard' | 'products' | 'suppliers' | 'fixed-costs' | 'taxes' | 'pricing' | 'competition' | 'reports';
+type TabType = 'dashboard' | 'products' | 'financial-settings';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
@@ -36,18 +31,8 @@ const Index = () => {
         return <Dashboard />;
       case 'products':
         return <ProductsTable />;
-      case 'suppliers':
-        return <SuppliersTable />;
-      case 'fixed-costs':
-        return <FixedCostsTable />;
-      case 'taxes':
-        return <TaxesConfig />;
-      case 'pricing':
-        return <PricingCalculator />;
-      case 'competition':
-        return <CompetitionAnalysis />;
-      case 'reports':
-        return <ReportsSection />;
+      case 'financial-settings':
+        return <FinancialSettings />;
       default:
         return <Dashboard />;
     }

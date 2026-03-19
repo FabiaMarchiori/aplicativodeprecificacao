@@ -2,12 +2,7 @@ import { useState } from 'react';
 import { 
   LayoutDashboard, 
   Package, 
-  Truck, 
   Building2, 
-  Receipt, 
-  Calculator, 
-  Users, 
-  FileBarChart,
   TrendingUp,
   LogOut,
   ChevronDown,
@@ -24,7 +19,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-type TabType = 'dashboard' | 'products' | 'suppliers' | 'fixed-costs' | 'taxes' | 'pricing' | 'competition' | 'reports';
+type TabType = 'dashboard' | 'products' | 'financial-settings';
 
 interface SidebarProps {
   activeTab: TabType;
@@ -35,13 +30,8 @@ interface SidebarProps {
 
 const tabs: { id: TabType; label: string; icon: React.ElementType }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'products', label: 'Produtos', icon: Package },
-  { id: 'suppliers', label: 'Fornecedores', icon: Truck },
-  { id: 'fixed-costs', label: 'Custos Fixos', icon: Building2 },
-  { id: 'taxes', label: 'Impostos', icon: Receipt },
-  { id: 'pricing', label: 'Precificação', icon: Calculator },
-  { id: 'competition', label: 'Concorrência', icon: Users },
-  { id: 'reports', label: 'Relatórios', icon: FileBarChart },
+  { id: 'products', label: 'Meus Produtos', icon: Package },
+  { id: 'financial-settings', label: 'Config. Financeiras', icon: Building2 },
 ];
 
 export const Sidebar = ({ activeTab, onTabChange, collapsed, onToggleCollapse }: SidebarProps) => {
