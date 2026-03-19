@@ -48,8 +48,8 @@
     --destructive: var(--color-pink);
     --destructive-foreground: 210 20% 98%;
 
-    --border: 220 10% 18%;
-    --input: 220 10% 12%;
+    --border: 222 12% 16%;
+    --input: 222 14% 11%;
     --ring: var(--color-cyan);
 
     --radius: 0.75rem;
