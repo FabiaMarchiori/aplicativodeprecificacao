@@ -216,10 +216,11 @@ export const Dashboard = () => {
       {/* Header with Settings Button */}
       <div className="flex items-center justify-between">
         <h2 
-          className="text-xl md:text-2xl font-bold"
           style={{ 
-            color: '#F8FAFC',
-            textShadow: '0 0 15px rgba(248, 250, 252, 0.3)'
+            color: '#FFFFFF',
+            fontSize: '50px',
+            fontWeight: 700,
+            lineHeight: 1.1,
           }}
         >
           Dashboard
