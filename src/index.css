@@ -432,8 +432,10 @@
   }
 
   .kpi-card .kpi-value {
-    font-size: clamp(1.25rem, 4vw, 1.6rem);
+    font-size: 28px;
     font-weight: 700;
+    color: #FFFFFF !important;
+    text-shadow: none !important;
     font-family: 'JetBrains Mono', monospace;
   }
 
