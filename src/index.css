@@ -531,9 +531,9 @@
 
   .data-table th {
     @apply px-2 py-2 md:px-4 md:py-3 text-left font-semibold uppercase tracking-wider text-xs;
-    color: hsl(var(--color-cyan));
+    color: #FFFFFF;
     background: hsl(var(--secondary) / 0.6);
-    border-bottom: 2px solid hsl(var(--color-cyan) / 0.3);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.15);
     white-space: nowrap;
   }
 
