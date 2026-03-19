@@ -1,95 +1,38 @@
 import { useState, useMemo } from 'react';
-import { Plus, Pencil, Trash2, Check, X, HelpCircle, Filter } from 'lucide-react';
-import { Product } from '@/data/mockData';
+import { Plus, Pencil, Trash2, Search, Calculator, Package, ChevronRight } from 'lucide-react';
+import { Product, calculatePricing } from '@/data/mockData';
 import { useData } from '@/contexts/DataContext';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
+import { ProductFormDialog } from './ProductFormDialog';
+import { PricingSimulatorSheet } from './PricingSimulatorSheet';
+import { Input } from '@/components/ui/input';
 
 export const ProductsTable = () => {
-  const { products, addProduct, updateProduct, deleteProduct } = useData();
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editData, setEditData] = useState<Partial<Product>>({});
-  const [isAdding, setIsAdding] = useState(false);
-  const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; id: string; name: string }>({
-    isOpen: false,
-    id: '',
-    name: ''
-  });
+  const { products, fixedCosts, taxConfig, addProduct, deleteProduct } = useData();
+  const [search, setSearch] = useState('');
+  const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; id: string; name: string }>({ isOpen: false, id: '', name: '' });
+  const [formDialog, setFormDialog] = useState<{ isOpen: boolean; product: Product | null }>({ isOpen: false, product: null });
+  const [simulatorSheet, setSimulatorSheet] = useState<{ isOpen: boolean; product: Product | null }>({ isOpen: false, product: null });
 
-  // Filter states
-  const [filterCategory, setFilterCategory] = useState<string>('all');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [filterSupplier, setFilterSupplier] = useState<string>('all');
+  const activeProductsCount = useMemo(() => products.filter(p => p.status === 'active').length, [products]);
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-  };
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
-  // Get unique categories and suppliers for filter options
-  const categories = useMemo(() => {
-    const unique = [...new Set(products.map(p => p.category))];
-    return unique.sort();
-  }, [products]);
-
-  const suppliers = useMemo(() => {
-    const unique = [...new Set(products.map(p => p.supplier).filter(Boolean))];
-    return unique.sort();
-  }, [products]);
-
-  // Filtered products
   const filteredProducts = useMemo(() => {
-    return products.filter(p => {
-      if (filterCategory !== 'all' && p.category !== filterCategory) return false;
-      if (filterStatus !== 'all') {
-        if (filterStatus === 'active' && p.status !== 'active') return false;
-        if (filterStatus === 'inactive' && p.status !== 'inactive') return false;
-      }
-      if (filterSupplier !== 'all' && p.supplier !== filterSupplier) return false;
-      return true;
-    });
-  }, [products, filterCategory, filterStatus, filterSupplier]);
+    if (!search.trim()) return products;
+    const q = search.toLowerCase();
+    return products.filter(p => p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q));
+  }, [products, search]);
 
-  const hasActiveFilters = filterCategory !== 'all' || filterStatus !== 'all' || filterSupplier !== 'all';
-
-  const clearFilters = () => {
-    setFilterCategory('all');
-    setFilterStatus('all');
-    setFilterSupplier('all');
+  const getPricing = (product: Product) => {
+    return calculatePricing(product, fixedCosts, taxConfig, 25, 'exclude', activeProductsCount);
   };
 
-  const handleEdit = (product: Product) => {
-    setEditingId(product.id);
-    setEditData(product);
-  };
-
-  const handleSave = () => {
-    if (editingId) {
-      updateProduct(editingId, editData);
-    }
-    setEditingId(null);
-    setEditData({});
-  };
-
-  const handleCancel = () => {
-    setEditingId(null);
-    setEditData({});
-    setIsAdding(false);
-  };
-
-  const handleDeleteClick = (id: string, name: string) => {
-    setDeleteDialog({ isOpen: true, id, name });
+  const getMarginColor = (margin: number) => {
+    if (margin >= 25) return '#22c55e';
+    if (margin >= 15) return '#eab308';
+    return '#ef4444';
   };
 
   const handleDeleteConfirm = () => {
@@ -97,659 +40,227 @@ export const ProductsTable = () => {
     setDeleteDialog({ isOpen: false, id: '', name: '' });
   };
 
-  const handleAddNew = () => {
-    const newProduct = {
-      code: `PRD-${String(products.length + 1).padStart(3, '0')}`,
-      name: editData.name || 'Novo Produto',
-      category: editData.category || 'Geral',
-      supplier: editData.supplier || '',
-      unit: editData.unit || 'UN',
-      purchaseCost: editData.purchaseCost || 0,
-      variableCost: editData.variableCost || 0,
-      currentPrice: editData.currentPrice || 0,
-      status: 'active' as const,
-    };
-    addProduct(newProduct);
-    setIsAdding(false);
-    setEditData({});
-  };
-
-  // Neon input style helper
-  const neonInputStyle = {
-    background: '#000000',
-    border: '1px solid rgba(0, 209, 255, 0.3)',
-    color: '#F8FAFC',
-    padding: '10px 14px',
-    outline: 'none',
-    borderRadius: '8px',
-    transition: 'all 0.3s ease'
-  };
-
-  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
-    e.currentTarget.style.border = '1px solid #00D1FF';
-    e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 209, 255, 0.5), inset 0 0 10px rgba(0, 209, 255, 0.1)';
-  };
-
-  const handleInputBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
-    e.currentTarget.style.border = '1px solid rgba(0, 209, 255, 0.3)';
-    e.currentTarget.style.boxShadow = 'none';
-  };
-
-  // Table header style
-  const thStyle = {
-    background: 'transparent',
-    color: '#00D1FF',
-    fontWeight: '700' as const,
-    textShadow: '0 0 10px rgba(0, 209, 255, 0.5)',
-    borderBottom: '1px solid rgba(0, 209, 255, 0.3)',
-    padding: '16px'
-  };
-
-  // Filter select styles
-  const filterSelectStyle = {
-    background: 'rgba(0, 0, 0, 0.6)',
-    border: '1px solid rgba(0, 209, 255, 0.25)',
-    borderRadius: '8px',
-  };
-
   return (
-    <TooltipProvider>
-      <div className="animate-fade-in">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 
-              className="text-2xl font-bold"
-              style={{ 
-                color: '#F8FAFC',
-                textShadow: '0 0 10px rgba(248, 250, 252, 0.3)'
-              }}
-            >
-              Cadastro de Produtos
-            </h2>
-            <p style={{ color: 'rgba(255, 255, 255, 0.75)' }}>Gerencie seus produtos e custos</p>
-          </div>
-          <button 
-            onClick={() => setIsAdding(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all duration-300"
-            style={{
-              background: 'rgba(0, 209, 255, 0.08)',
-              border: '1px solid #00D1FF',
-              color: '#00D1FF',
-              boxShadow: '0 0 15px rgba(0, 209, 255, 0.3), inset 0 0 20px rgba(0, 209, 255, 0.05)',
-              backdropFilter: 'blur(10px)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(0, 209, 255, 0.15)';
-              e.currentTarget.style.boxShadow = '0 0 25px rgba(0, 209, 255, 0.5), inset 0 0 25px rgba(0, 209, 255, 0.1)';
-              e.currentTarget.style.textShadow = '0 0 10px rgba(0, 209, 255, 0.8)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(0, 209, 255, 0.08)';
-              e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 209, 255, 0.3), inset 0 0 20px rgba(0, 209, 255, 0.05)';
-              e.currentTarget.style.textShadow = 'none';
-            }}
-          >
-            <Plus className="w-4 h-4" style={{ filter: 'drop-shadow(0 0 4px #00D1FF)' }} />
-            Novo Produto
-          </button>
+    <div className="animate-fade-in">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <h2 style={{ fontSize: '32px', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+            Meus Produtos
+          </h2>
+          <p style={{ fontSize: '15px', fontWeight: 400, color: 'rgba(255,255,255,0.6)', marginTop: '4px' }}>
+            Cadastre, edite e precifique seus produtos em um só lugar
+          </p>
         </div>
-
-        {/* Quick Filters */}
-        <div 
-          className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 mb-4 p-3 rounded-lg"
+        <button
+          onClick={() => setFormDialog({ isOpen: true, product: null })}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200"
           style={{
-            background: 'rgba(0, 0, 0, 0.4)',
-            border: '1px solid rgba(0, 209, 255, 0.15)',
+            background: 'linear-gradient(135deg, rgba(0,130,255,0.15), rgba(0,200,255,0.08))',
+            border: '1px solid rgba(0,160,255,0.4)',
+            color: '#FFFFFF',
           }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0,130,255,0.25), rgba(0,200,255,0.15))'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0,130,255,0.15), rgba(0,200,255,0.08))'; }}
         >
-          <div className="flex items-center gap-2" style={{ color: 'rgba(0, 209, 255, 0.7)' }}>
-            <Filter className="w-4 h-4" />
-            <span className="text-sm font-medium">Filtros:</span>
-          </div>
+          <Plus className="w-4 h-4" />
+          Novo Produto
+        </button>
+      </div>
 
-          <div className="flex flex-col xs:flex-row flex-wrap items-stretch xs:items-center gap-2 sm:gap-3 flex-1">
-            <Select value={filterCategory} onValueChange={setFilterCategory}>
-              <SelectTrigger 
-                className="w-full xs:w-[140px] sm:w-[160px] h-10 sm:h-9 text-sm"
-                style={{
-                  ...filterSelectStyle,
-                  color: filterCategory !== 'all' ? '#00D1FF' : 'rgba(255, 255, 255, 0.7)',
-                }}
-              >
-                <SelectValue placeholder="Categoria" />
-              </SelectTrigger>
-              <SelectContent style={{ background: '#0a0a0a', border: '1px solid rgba(0, 209, 255, 0.3)' }}>
-                <SelectItem value="all" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Todas Categorias</SelectItem>
-                {categories.map(cat => (
-                  <SelectItem key={cat} value={cat} style={{ color: '#F8FAFC' }}>{cat}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger 
-                className="w-full xs:w-[120px] sm:w-[140px] h-10 sm:h-9 text-sm"
-                style={{
-                  ...filterSelectStyle,
-                  color: filterStatus !== 'all' ? '#00D1FF' : 'rgba(255, 255, 255, 0.7)',
-                }}
-              >
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent style={{ background: '#0a0a0a', border: '1px solid rgba(0, 209, 255, 0.3)' }}>
-                <SelectItem value="all" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Todos Status</SelectItem>
-                <SelectItem value="active" style={{ color: '#39FF14' }}>Ativo</SelectItem>
-                <SelectItem value="inactive" style={{ color: '#FF007A' }}>Inativo</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={filterSupplier} onValueChange={setFilterSupplier}>
-              <SelectTrigger 
-                className="w-full xs:w-[140px] sm:w-[160px] h-10 sm:h-9 text-sm"
-                style={{
-                  ...filterSelectStyle,
-                  color: filterSupplier !== 'all' ? '#00D1FF' : 'rgba(255, 255, 255, 0.7)',
-                }}
-              >
-                <SelectValue placeholder="Fornecedor" />
-              </SelectTrigger>
-              <SelectContent style={{ background: '#0a0a0a', border: '1px solid rgba(0, 209, 255, 0.3)' }}>
-                <SelectItem value="all" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Todos Fornecedores</SelectItem>
-                {suppliers.map(sup => (
-                  <SelectItem key={sup} value={sup} style={{ color: '#F8FAFC' }}>{sup}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {hasActiveFilters && (
-            <button
-              onClick={clearFilters}
-              className="text-sm px-3 py-1.5 rounded transition-all duration-200"
-              style={{
-                color: '#FF007A',
-                border: '1px solid rgba(255, 0, 122, 0.3)',
-                background: 'rgba(255, 0, 122, 0.1)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 0, 122, 0.2)';
-                e.currentTarget.style.boxShadow = '0 0 10px rgba(255, 0, 122, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 0, 122, 0.1)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              Limpar
-            </button>
-          )}
-
-          <span className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
-            {filteredProducts.length} de {products.length} produtos
-          </span>
-        </div>
-
-        <div 
-          className="rounded-xl overflow-hidden"
+      {/* Search */}
+      <div className="relative mb-5">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'rgba(255,255,255,0.4)' }} />
+        <Input
+          placeholder="Buscar por nome ou código..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="pl-10 h-11 rounded-xl text-sm"
           style={{
-            background: '#000000',
-            border: '1px solid #00D1FF',
-            boxShadow: '0 0 20px rgba(0, 209, 255, 0.2)'
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            color: '#FFFFFF',
           }}
-        >
-          <div className="overflow-x-auto -mx-1 px-1 md:mx-0 md:px-0">
-            <table className="w-full min-w-[800px] md:min-w-0">
-              <thead>
-              <tr>
-                  <th style={thStyle}>Código</th>
-                  <th style={thStyle}>Nome</th>
-                  <th style={thStyle} className="hidden sm:table-cell">Categoria</th>
-                  <th style={thStyle} className="hidden md:table-cell">Fornecedor</th>
-                  <th style={thStyle} className="hidden lg:table-cell">Unidade</th>
-                  <th style={{ ...thStyle, textAlign: 'right' }}>Custo Compra</th>
-                  <th style={{ ...thStyle, textAlign: 'right' }}>Custo Variável</th>
-                  <th style={{ ...thStyle, textAlign: 'right' }}>
-                    <div className="flex items-center justify-end gap-1.5">
-                      <span>Preço Venda</span>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button className="focus:outline-none">
-                            <HelpCircle 
-                              className="w-4 h-4 cursor-help" 
-                              style={{ color: 'rgba(0, 209, 255, 0.6)' }} 
-                            />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent 
-                          side="top" 
-                          className="max-w-[280px] text-center"
-                          style={{
-                            background: 'rgba(0, 0, 0, 0.95)',
-                            border: '1px solid rgba(0, 209, 255, 0.4)',
-                            color: '#F8FAFC',
-                            boxShadow: '0 0 20px rgba(0, 209, 255, 0.2)'
-                          }}
-                        >
-                          <p className="text-sm">
-                            Preço final sugerido pelo módulo de precificação. Este valor é calculado automaticamente considerando custos, taxas e margem de lucro desejada.
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                  </th>
-                  <th style={thStyle}>Status</th>
-                  <th style={{ ...thStyle, textAlign: 'right' }}>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {isAdding && (
-                  <tr 
+        />
+      </div>
+
+      {/* Product count */}
+      <div className="flex items-center gap-2 mb-4">
+        <Package className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.4)' }} />
+        <span className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>
+          {filteredProducts.length} produto{filteredProducts.length !== 1 ? 's' : ''}
+        </span>
+      </div>
+
+      {/* Table */}
+      <div
+        className="rounded-xl overflow-hidden"
+        style={{
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid rgba(255,255,255,0.08)',
+        }}
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[700px]">
+            <thead>
+              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                {['Produto', 'Custo', 'Canal de Venda', 'Preço Sugerido', 'Lucro Líquido', 'Margem', 'Ações'].map((h, i) => (
+                  <th
+                    key={h}
+                    className="text-xs font-semibold uppercase tracking-wider py-3.5 px-4"
                     style={{
-                      background: 'rgba(0, 209, 255, 0.05)',
-                      boxShadow: 'inset 0 0 30px rgba(0, 209, 255, 0.08)'
+                      color: 'rgba(255,255,255,0.45)',
+                      textAlign: i >= 1 && i <= 5 ? 'right' : 'left',
+                      ...(i === 6 ? { textAlign: 'center' } : {}),
                     }}
                   >
-                    <td style={{ padding: '16px', color: 'rgba(255, 255, 255, 0.6)' }}>
-                      <span>Auto</span>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filteredProducts.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="text-center py-12" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                    {search ? 'Nenhum produto encontrado' : 'Nenhum produto cadastrado'}
+                  </td>
+                </tr>
+              )}
+              {filteredProducts.map((product) => {
+                const pricing = getPricing(product);
+                const margin = pricing.realMargin;
+                const marginColor = getMarginColor(margin);
+
+                return (
+                  <tr
+                    key={product.id}
+                    className="group transition-colors duration-150"
+                    style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                  >
+                    {/* Produto */}
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
+                          style={{ background: 'rgba(0,140,255,0.12)', color: 'rgba(0,180,255,0.9)' }}
+                        >
+                          {product.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium" style={{ color: '#FFFFFF' }}>{product.name}</p>
+                          <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{product.code}</p>
+                        </div>
+                      </div>
                     </td>
-                    <td style={{ padding: '16px' }}>
-                      <input
-                        type="text"
-                        style={neonInputStyle}
-                        placeholder="Nome do produto"
-                        value={editData.name || ''}
-                        onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-                        onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
-                      />
-                    </td>
-                    <td style={{ padding: '16px' }}>
-                      <input
-                        type="text"
-                        style={neonInputStyle}
-                        placeholder="Categoria"
-                        value={editData.category || ''}
-                        onChange={(e) => setEditData({ ...editData, category: e.target.value })}
-                        onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
-                      />
-                    </td>
-                    <td style={{ padding: '16px' }}>
-                      <input
-                        type="text"
-                        style={neonInputStyle}
-                        placeholder="Fornecedor"
-                        value={editData.supplier || ''}
-                        onChange={(e) => setEditData({ ...editData, supplier: e.target.value })}
-                        onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
-                      />
-                    </td>
-                    <td style={{ padding: '16px' }}>
-                      <input
-                        type="text"
-                        style={{ ...neonInputStyle, width: '64px' }}
-                        placeholder="UN"
-                        value={editData.unit || ''}
-                        onChange={(e) => setEditData({ ...editData, unit: e.target.value })}
-                        onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
-                      />
-                    </td>
-                    <td style={{ padding: '16px' }}>
-                      <input
-                        type="number"
-                        style={{ ...neonInputStyle, width: '96px', textAlign: 'right' }}
-                        placeholder="0.00"
-                        value={editData.purchaseCost || ''}
-                        onChange={(e) => setEditData({ ...editData, purchaseCost: parseFloat(e.target.value) })}
-                        onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
-                      />
-                    </td>
-                    <td style={{ padding: '16px' }}>
-                      <input
-                        type="number"
-                        style={{ ...neonInputStyle, width: '96px', textAlign: 'right' }}
-                        placeholder="0.00"
-                        value={editData.variableCost || ''}
-                        onChange={(e) => setEditData({ ...editData, variableCost: parseFloat(e.target.value) })}
-                        onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
-                      />
-                    </td>
-                    <td style={{ padding: '16px' }}>
-                      <input
-                        type="number"
-                        style={{ ...neonInputStyle, width: '96px', textAlign: 'right' }}
-                        placeholder="0.00"
-                        value={editData.currentPrice || ''}
-                        onChange={(e) => setEditData({ ...editData, currentPrice: parseFloat(e.target.value) })}
-                        onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
-                      />
-                    </td>
-                    <td style={{ padding: '16px' }}>
-                      <span 
-                        className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
-                        style={{
-                          background: 'transparent',
-                          border: '1px solid #39FF14',
-                          color: '#39FF14',
-                          boxShadow: '0 0 10px rgba(57, 255, 20, 0.4)',
-                        }}
-                      >
-                        Ativo
+
+                    {/* Custo */}
+                    <td className="py-3.5 px-4 text-right">
+                      <span className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>
+                        {formatCurrency(product.purchaseCost + product.variableCost)}
                       </span>
                     </td>
-                    <td style={{ padding: '16px', textAlign: 'right' }}>
+
+                    {/* Canal de Venda */}
+                    <td className="py-3.5 px-4 text-right">
+                      <span
+                        className="inline-block text-xs font-medium px-2.5 py-1 rounded-full"
+                        style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)' }}
+                      >
+                        {product.category || 'Geral'}
+                      </span>
+                    </td>
+
+                    {/* Preço Sugerido */}
+                    <td className="py-3.5 px-4 text-right">
+                      <span className="text-sm font-semibold" style={{ color: '#FFFFFF' }}>
+                        {formatCurrency(pricing.suggestedPrice)}
+                      </span>
+                    </td>
+
+                    {/* Lucro Líquido */}
+                    <td className="py-3.5 px-4 text-right">
+                      <span className="text-sm font-medium" style={{ color: pricing.profitPerUnit >= 0 ? '#22c55e' : '#ef4444' }}>
+                        {formatCurrency(pricing.profitPerUnit)}
+                      </span>
+                    </td>
+
+                    {/* Margem */}
+                    <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button 
-                          onClick={handleAddNew} 
-                          className="p-2 rounded-lg transition-all duration-300"
-                          style={{ 
-                            color: '#39FF14',
-                            filter: 'drop-shadow(0 0 6px #39FF14)'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'rgba(57, 255, 20, 0.15)';
-                            e.currentTarget.style.boxShadow = '0 0 15px rgba(57, 255, 20, 0.5)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.boxShadow = 'none';
-                          }}
+                        <div className="w-12 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                          <div className="h-full rounded-full" style={{ width: `${Math.min(margin, 100)}%`, background: marginColor }} />
+                        </div>
+                        <span className="text-sm font-semibold tabular-nums" style={{ color: marginColor }}>
+                          {margin.toFixed(1)}%
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Ações */}
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center justify-center gap-1">
+                        <button
+                          onClick={() => setSimulatorSheet({ isOpen: true, product })}
+                          className="p-2 rounded-lg transition-all duration-150"
+                          style={{ color: 'rgba(0,180,255,0.8)' }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,140,255,0.12)'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                          title="Simular preço"
                         >
-                          <Check className="w-4 h-4" />
+                          <Calculator className="w-4 h-4" />
                         </button>
-                        <button 
-                          onClick={handleCancel} 
-                          className="p-2 rounded-lg transition-all duration-300"
-                          style={{ 
-                            color: '#FF007A',
-                            filter: 'drop-shadow(0 0 6px #FF007A)'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'rgba(255, 0, 122, 0.15)';
-                            e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 0, 122, 0.5)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.boxShadow = 'none';
-                          }}
+                        <button
+                          onClick={() => setFormDialog({ isOpen: true, product })}
+                          className="p-2 rounded-lg transition-all duration-150"
+                          style={{ color: 'rgba(255,255,255,0.5)' }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#FFFFFF'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; }}
+                          title="Editar"
                         >
-                          <X className="w-4 h-4" />
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => setDeleteDialog({ isOpen: true, id: product.id, name: product.name })}
+                          className="p-2 rounded-lg transition-all duration-150"
+                          style={{ color: 'rgba(255,255,255,0.5)' }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; e.currentTarget.style.color = '#ef4444'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; }}
+                          title="Excluir"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </td>
                   </tr>
-                )}
-                {filteredProducts.map((product) => (
-                  <tr 
-                    key={product.id}
-                    className="transition-all duration-300"
-                    style={{
-                      background: 'transparent',
-                      borderBottom: '1px solid rgba(0, 209, 255, 0.1)'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (editingId !== product.id) {
-                        e.currentTarget.style.background = 'rgba(0, 209, 255, 0.05)';
-                        e.currentTarget.style.borderLeft = '3px solid #00D1FF';
-                        e.currentTarget.style.boxShadow = 'inset 0 0 30px rgba(0, 209, 255, 0.08)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (editingId !== product.id) {
-                        e.currentTarget.style.background = 'transparent';
-                        e.currentTarget.style.borderLeft = 'none';
-                        e.currentTarget.style.boxShadow = 'none';
-                      }
-                    }}
-                  >
-                    {editingId === product.id ? (
-                      <>
-                        <td style={{ padding: '16px', color: 'rgba(0, 209, 255, 0.8)' }}>{product.code}</td>
-                        <td style={{ padding: '16px' }}>
-                          <input
-                            type="text"
-                            style={neonInputStyle}
-                            value={editData.name || ''}
-                            onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-                            onFocus={handleInputFocus}
-                            onBlur={handleInputBlur}
-                          />
-                        </td>
-                        <td style={{ padding: '16px' }}>
-                          <input
-                            type="text"
-                            style={neonInputStyle}
-                            value={editData.category || ''}
-                            onChange={(e) => setEditData({ ...editData, category: e.target.value })}
-                            onFocus={handleInputFocus}
-                            onBlur={handleInputBlur}
-                          />
-                        </td>
-                        <td style={{ padding: '16px' }}>
-                          <input
-                            type="text"
-                            style={neonInputStyle}
-                            value={editData.supplier || ''}
-                            onChange={(e) => setEditData({ ...editData, supplier: e.target.value })}
-                            onFocus={handleInputFocus}
-                            onBlur={handleInputBlur}
-                          />
-                        </td>
-                        <td style={{ padding: '16px' }}>
-                          <input
-                            type="text"
-                            style={{ ...neonInputStyle, width: '64px' }}
-                            value={editData.unit || ''}
-                            onChange={(e) => setEditData({ ...editData, unit: e.target.value })}
-                            onFocus={handleInputFocus}
-                            onBlur={handleInputBlur}
-                          />
-                        </td>
-                        <td style={{ padding: '16px' }}>
-                          <input
-                            type="number"
-                            style={{ ...neonInputStyle, width: '96px', textAlign: 'right' }}
-                            value={editData.purchaseCost || ''}
-                            onChange={(e) => setEditData({ ...editData, purchaseCost: parseFloat(e.target.value) })}
-                            onFocus={handleInputFocus}
-                            onBlur={handleInputBlur}
-                          />
-                        </td>
-                        <td style={{ padding: '16px' }}>
-                          <input
-                            type="number"
-                            style={{ ...neonInputStyle, width: '96px', textAlign: 'right' }}
-                            value={editData.variableCost || ''}
-                            onChange={(e) => setEditData({ ...editData, variableCost: parseFloat(e.target.value) })}
-                            onFocus={handleInputFocus}
-                            onBlur={handleInputBlur}
-                          />
-                        </td>
-                        <td style={{ padding: '16px' }}>
-                          <input
-                            type="number"
-                            style={{ ...neonInputStyle, width: '96px', textAlign: 'right' }}
-                            value={editData.currentPrice || ''}
-                            onChange={(e) => setEditData({ ...editData, currentPrice: parseFloat(e.target.value) })}
-                            onFocus={handleInputFocus}
-                            onBlur={handleInputBlur}
-                          />
-                        </td>
-                        <td style={{ padding: '16px' }}>
-                          <select
-                            style={{
-                              ...neonInputStyle,
-                              width: '100px',
-                            }}
-                            value={editData.status || 'active'}
-                            onChange={(e) => setEditData({ ...editData, status: e.target.value as 'active' | 'inactive' })}
-                            onFocus={handleInputFocus}
-                            onBlur={handleInputBlur}
-                          >
-                            <option value="active" style={{ background: '#000000' }}>Ativo</option>
-                            <option value="inactive" style={{ background: '#000000' }}>Inativo</option>
-                          </select>
-                        </td>
-                        <td style={{ padding: '16px', textAlign: 'right' }}>
-                          <div className="flex items-center justify-end gap-2">
-                            <button 
-                              onClick={handleSave} 
-                              className="p-2 rounded-lg transition-all duration-300"
-                              style={{ 
-                                color: '#39FF14',
-                                filter: 'drop-shadow(0 0 6px #39FF14)'
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.background = 'rgba(57, 255, 20, 0.15)';
-                                e.currentTarget.style.boxShadow = '0 0 15px rgba(57, 255, 20, 0.5)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.background = 'transparent';
-                                e.currentTarget.style.boxShadow = 'none';
-                              }}
-                            >
-                              <Check className="w-4 h-4" />
-                            </button>
-                            <button 
-                              onClick={handleCancel} 
-                              className="p-2 rounded-lg transition-all duration-300"
-                              style={{ 
-                                color: '#FF007A',
-                                filter: 'drop-shadow(0 0 6px #FF007A)'
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.background = 'rgba(255, 0, 122, 0.15)';
-                                e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 0, 122, 0.5)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.background = 'transparent';
-                                e.currentTarget.style.boxShadow = 'none';
-                              }}
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </>
-                    ) : (
-                      <>
-                        <td 
-                          style={{ 
-                            color: '#00D1FF', 
-                            padding: '16px',
-                            textShadow: '0 0 8px rgba(0, 209, 255, 0.4)'
-                          }}
-                        >
-                          {product.code}
-                        </td>
-                        <td style={{ color: '#F8FAFC', padding: '16px', fontWeight: '500' }}>{product.name}</td>
-                        <td style={{ color: 'rgba(255, 255, 255, 0.7)', padding: '16px' }}>{product.category}</td>
-                        <td style={{ color: 'rgba(255, 255, 255, 0.7)', padding: '16px' }}>{product.supplier}</td>
-                        <td style={{ color: 'rgba(255, 255, 255, 0.7)', padding: '16px' }}>{product.unit}</td>
-                        <td style={{ color: '#F8FAFC', padding: '16px', textAlign: 'right', fontFamily: 'monospace' }}>{formatCurrency(product.purchaseCost)}</td>
-                        <td style={{ color: '#F8FAFC', padding: '16px', textAlign: 'right', fontFamily: 'monospace' }}>{formatCurrency(product.variableCost)}</td>
-                        <td 
-                          style={{ 
-                            color: '#39FF14', 
-                            padding: '16px', 
-                            textAlign: 'right', 
-                            fontFamily: 'monospace',
-                            fontWeight: '600',
-                            textShadow: '0 0 8px rgba(57, 255, 20, 0.5)'
-                          }}
-                        >
-                          {formatCurrency(product.currentPrice)}
-                        </td>
-                        <td style={{ padding: '16px' }}>
-                          {product.status === 'active' ? (
-                            <span 
-                              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
-                              style={{
-                                background: 'transparent',
-                                border: '1px solid #39FF14',
-                                color: '#39FF14',
-                                boxShadow: '0 0 10px rgba(57, 255, 20, 0.4), inset 0 0 8px rgba(57, 255, 20, 0.1)',
-                                textShadow: '0 0 8px rgba(57, 255, 20, 0.6)'
-                              }}
-                            >
-                              Ativo
-                            </span>
-                          ) : (
-                            <span 
-                              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
-                              style={{
-                                background: 'transparent',
-                                border: '1px solid #FF007A',
-                                color: '#FF007A',
-                                boxShadow: '0 0 10px rgba(255, 0, 122, 0.4), inset 0 0 8px rgba(255, 0, 122, 0.1)',
-                                textShadow: '0 0 8px rgba(255, 0, 122, 0.6)'
-                              }}
-                            >
-                              Inativo
-                            </span>
-                          )}
-                        </td>
-                        <td style={{ padding: '16px', textAlign: 'right' }}>
-                          <div className="flex items-center justify-end gap-2">
-                            <button 
-                              onClick={() => handleEdit(product)} 
-                              className="p-2 rounded-lg transition-all duration-300"
-                              style={{ 
-                                color: '#00D1FF',
-                                filter: 'drop-shadow(0 0 4px #00D1FF)'
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.background = 'rgba(0, 209, 255, 0.15)';
-                                e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 209, 255, 0.5)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.background = 'transparent';
-                                e.currentTarget.style.boxShadow = 'none';
-                              }}
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </button>
-                            <button 
-                              onClick={() => handleDeleteClick(product.id, product.name)} 
-                              className="p-2 rounded-lg transition-all duration-300"
-                              style={{ 
-                                color: '#FF007A',
-                                filter: 'drop-shadow(0 0 4px #FF007A)'
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.background = 'rgba(255, 0, 122, 0.15)';
-                                e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 0, 122, 0.5)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.background = 'transparent';
-                                e.currentTarget.style.boxShadow = 'none';
-                              }}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
-
-        <DeleteConfirmDialog
-          isOpen={deleteDialog.isOpen}
-          onClose={() => setDeleteDialog({ isOpen: false, id: '', name: '' })}
-          onConfirm={handleDeleteConfirm}
-          itemName={deleteDialog.name}
-        />
       </div>
-    </TooltipProvider>
+
+      {/* Dialogs */}
+      <ProductFormDialog
+        isOpen={formDialog.isOpen}
+        product={formDialog.product}
+        onClose={() => setFormDialog({ isOpen: false, product: null })}
+      />
+
+      <PricingSimulatorSheet
+        isOpen={simulatorSheet.isOpen}
+        product={simulatorSheet.product}
+        onClose={() => setSimulatorSheet({ isOpen: false, product: null })}
+      />
+
+      <DeleteConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={() => setDeleteDialog({ isOpen: false, id: '', name: '' })}
+        onConfirm={handleDeleteConfirm}
+        itemName={deleteDialog.name}
+      />
+    </div>
   );
 };
