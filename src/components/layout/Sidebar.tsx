@@ -24,7 +24,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-type TabType = 'dashboard' | 'products' | 'suppliers' | 'fixed-costs' | 'taxes' | 'pricing' | 'competition' | 'reports';
+type TabType = 'dashboard' | 'products' | 'financial-settings';
 
 interface SidebarProps {
   activeTab: TabType;
