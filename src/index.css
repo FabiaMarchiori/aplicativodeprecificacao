@@ -472,7 +472,7 @@
   /* KPI Icon styles - Refined */
   .kpi-icon {
     @apply w-10 h-10 md:w-11 md:h-11 lg:w-12 lg:h-12 rounded-full flex items-center justify-center;
-    background: hsl(220 12% 12%);
+    background: hsl(222 16% 10%);
   }
 
   .kpi-icon svg {
