@@ -148,26 +148,27 @@ export const Sidebar = ({ activeTab, onTabChange, collapsed, onToggleCollapse }:
                 onClick={() => handleTabChange(tab.id)}
                 className={`flex items-center ${collapsed ? 'justify-center' : 'gap-3'} ${collapsed ? 'px-0' : 'px-4'} py-3 rounded-xl transition-all duration-300 text-left`}
                 style={{
-                  background: isActive ? 'rgba(0, 209, 255, 0.1)' : 'transparent',
+                  background: isActive 
+                    ? 'linear-gradient(135deg, rgba(0, 150, 255, 0.18), rgba(0, 209, 255, 0.10))' 
+                    : 'transparent',
                   color: '#FFFFFF',
-                  border: isActive ? '1px solid rgba(0, 209, 255, 0.3)' : '1px solid transparent',
+                  border: isActive ? '1px solid rgba(0, 209, 255, 0.35)' : '1px solid transparent',
                   boxShadow: isActive 
-                    ? '0 0 12px rgba(0, 209, 255, 0.15), inset 0 0 8px rgba(0, 209, 255, 0.05)'
+                    ? '0 0 16px rgba(0, 209, 255, 0.15), inset 0 0 12px rgba(0, 209, 255, 0.06)'
                     : 'none',
-                  opacity: isActive ? 1 : 0.6,
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive) {
-                    e.currentTarget.style.opacity = '1';
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                    e.currentTarget.style.boxShadow = '0 0 8px rgba(255, 255, 255, 0.04)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isActive) {
-                    e.currentTarget.style.opacity = '0.6';
                     e.currentTarget.style.background = 'transparent';
                     e.currentTarget.style.borderColor = 'transparent';
+                    e.currentTarget.style.boxShadow = 'none';
                   }
                 }}
               >

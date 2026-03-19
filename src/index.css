@@ -483,7 +483,7 @@
   }
   .kpi-icon.icon-blue svg,
   .kpi-icon.icon-cyan svg {
-    color: hsl(189 85% 55%) !important;
+    color: #FFFFFF !important;
     filter: drop-shadow(0 0 3px rgba(10, 188, 232, 0.5));
   }
 
@@ -492,7 +492,7 @@
     box-shadow: 0 0 8px rgba(242, 154, 27, 0.25);
   }
   .kpi-icon.icon-orange svg {
-    color: hsl(32 90% 55%) !important;
+    color: #FFFFFF !important;
     filter: drop-shadow(0 0 3px rgba(242, 154, 27, 0.5));
   }
 
@@ -501,7 +501,7 @@
     box-shadow: 0 0 8px rgba(46, 170, 92, 0.25);
   }
   .kpi-icon.icon-green svg {
-    color: hsl(142 70% 50%) !important;
+    color: #FFFFFF !important;
     filter: drop-shadow(0 0 3px rgba(46, 170, 92, 0.5));
   }
 
@@ -510,7 +510,7 @@
     box-shadow: 0 0 8px rgba(217, 43, 94, 0.25);
   }
   .kpi-icon.icon-pink svg {
-    color: hsl(340 75% 55%) !important;
+    color: #FFFFFF !important;
     filter: drop-shadow(0 0 3px rgba(217, 43, 94, 0.5));
   }
 
@@ -520,7 +520,7 @@
     box-shadow: 0 0 8px rgba(155, 77, 202, 0.25);
   }
   .kpi-icon.icon-purple svg {
-    color: hsl(280 65% 60%) !important;
+    color: #FFFFFF !important;
     filter: drop-shadow(0 0 3px rgba(155, 77, 202, 0.5));
   }
 
