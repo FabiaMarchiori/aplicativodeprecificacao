@@ -660,9 +660,10 @@
   }
 
   .chart-container h3 {
-    @apply relative inline-flex items-center gap-2 text-sm md:text-base lg:text-lg font-semibold mb-3 md:mb-4;
-    color: hsl(189 85% 55%) !important;
-    text-shadow: 0 0 8px rgba(10, 188, 232, 0.3);
+    @apply relative inline-flex items-center gap-2 font-semibold mb-3 md:mb-4;
+    font-size: 30px;
+    color: #FFFFFF !important;
+    text-shadow: none;
   }
 
   .chart-container h3::before {
