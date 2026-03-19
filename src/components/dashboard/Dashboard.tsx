@@ -218,9 +218,9 @@ export const Dashboard = () => {
         <h2 
           style={{ 
             color: '#FFFFFF',
-            fontSize: '50px',
+            fontSize: '32px',
             fontWeight: 700,
-            lineHeight: 1.1,
+            lineHeight: 1.2,
           }}
         >
           Dashboard
