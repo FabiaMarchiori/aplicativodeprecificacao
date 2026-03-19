@@ -425,8 +425,8 @@
   /* KPI Card Text - High visibility for beginners */
   .kpi-card .kpi-title {
     color: #FFFFFF !important;
-    font-size: clamp(0.7rem, 2vw, 0.8rem);
-    font-weight: 500;
+    font-size: 23px;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
