@@ -8,7 +8,7 @@ import { useData } from '@/contexts/DataContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 
-type TabType = 'dashboard' | 'products' | 'suppliers' | 'fixed-costs' | 'taxes' | 'pricing' | 'competition' | 'reports';
+type TabType = 'dashboard' | 'products' | 'financial-settings';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
