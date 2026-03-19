@@ -80,8 +80,8 @@
     --chart-5: var(--color-purple);
 
     /* Glassmorphism */
-    --glass-bg: 220 12% 8% / 0.85;
-    --glass-border: 220 10% 22%;
+    --glass-bg: 222 16% 8% / 0.88;
+    --glass-border: 222 12% 18%;
 
     /* === REFINED SHADOWS (Softer Glow) === */
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
