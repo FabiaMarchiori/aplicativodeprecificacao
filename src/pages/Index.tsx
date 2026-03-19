@@ -31,18 +31,8 @@ const Index = () => {
         return <Dashboard />;
       case 'products':
         return <ProductsTable />;
-      case 'suppliers':
-        return <SuppliersTable />;
-      case 'fixed-costs':
-        return <FixedCostsTable />;
-      case 'taxes':
-        return <TaxesConfig />;
-      case 'pricing':
-        return <PricingCalculator />;
-      case 'competition':
-        return <CompetitionAnalysis />;
-      case 'reports':
-        return <ReportsSection />;
+      case 'financial-settings':
+        return <FinancialSettings />;
       default:
         return <Dashboard />;
     }
