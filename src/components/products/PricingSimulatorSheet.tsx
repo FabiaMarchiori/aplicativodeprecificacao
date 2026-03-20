@@ -27,7 +27,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
   const [selectedChannelId, setSelectedChannelId] = useState<string>('loja-propria');
 
   const activeCount = useMemo(() => products.filter(p => p.status === 'active').length, [products]);
-  const selectedChannel = useMemo(() => DEFAULT_SALES_CHANNELS.find(c => c.id === selectedChannelId)!, [selectedChannelId]);
+  const selectedChannel = useMemo(() => DEFAULT_SALES_CHANNELS.find(c => c.id === selectedChannelId) ?? DEFAULT_SALES_CHANNELS[0], [selectedChannelId]);
 
   // Build a TaxConfig from the selected channel
   const channelTaxConfig = useMemo<TaxConfig>(() => ({
@@ -39,18 +39,20 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
       : [],
   }), [selectedChannel]);
 
+  // Restore saved channel from product.category when opening
   useEffect(() => {
-    if (product) {
+    if (product && isOpen) {
+      // Restore channel: check if product.category matches a known channel ID
+      const savedChannel = DEFAULT_SALES_CHANNELS.find(c => c.id === product.category);
+      setSelectedChannelId(savedChannel ? savedChannel.id : 'loja-propria');
       setMargin(25);
       setAllocationMode('exclude');
       setAdvancedOpen(false);
-      setSelectedChannelId('loja-propria');
     }
-  }, [product]);
+  }, [product, isOpen]);
 
   const pricing = useMemo(() => {
     if (!product) return null;
-    // Use channel taxes instead of global taxConfig
     const productWithChannelCosts = selectedChannel.fixedFee > 0
       ? { ...product, variableCost: product.variableCost + selectedChannel.fixedFee }
       : product;
@@ -62,7 +64,11 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
 
   const handleApplyPrice = async () => {
     if (!product || !pricing) return;
-    await updateProduct(product.id, { currentPrice: pricing.suggestedPrice });
+    // Save price AND channel to the product
+    await updateProduct(product.id, {
+      currentPrice: pricing.suggestedPrice,
+      category: selectedChannelId,
+    });
     onClose();
   };
 
@@ -86,7 +92,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
           <SheetTitle className="text-xl font-bold text-white">
             Simulador de Preço
           </SheetTitle>
-          <SheetDescription className="text-white/50">
+          <SheetDescription className="text-white">
             {product.name}
           </SheetDescription>
         </SheetHeader>
@@ -94,7 +100,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
         <div className="space-y-5 mt-2">
           {/* Canal de venda */}
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-white/45 mb-2.5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-white mb-2.5">
               Onde você vai vender?
             </p>
             <div className="grid grid-cols-2 gap-2">
@@ -112,10 +118,10 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
                   >
                     <span className="text-base leading-none">{channel.icon}</span>
                     <div className="flex-1 min-w-0">
-                      <p className={`text-xs font-medium truncate ${isSelected ? 'text-white' : 'text-white/60'}`}>
+                      <p className={`text-xs font-medium truncate text-white`}>
                         {channel.name}
                       </p>
-                      <p className="text-[10px] text-white/30 tabular-nums">
+                      <p className="text-[10px] text-white/70 tabular-nums">
                         {(channel.commissionPercent + channel.salesTax + channel.cardFee + channel.additionalCost).toFixed(1)}% taxas
                       </p>
                     </div>
@@ -160,7 +166,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
               step={1}
               className="w-full"
             />
-            <div className="flex justify-between text-xs mt-1.5 text-white/30">
+            <div className="flex justify-between text-xs mt-1.5 text-white/70">
               <span>5%</span>
               <span>80%</span>
             </div>
@@ -174,7 +180,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
               border: '1px solid hsl(210 100% 50% / 0.2)',
             }}
           >
-            <p className="text-xs font-semibold uppercase tracking-wider mb-1 text-white/45">
+            <p className="text-xs font-semibold uppercase tracking-wider mb-1 text-white">
               Preço Sugerido
             </p>
             <p className="text-3xl font-bold text-white">
@@ -191,7 +197,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
 
           {/* Avançado */}
           <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen}>
-            <CollapsibleTrigger className="flex items-center gap-2 w-full py-2 text-sm font-medium text-white/40 hover:text-white/70 transition-colors">
+            <CollapsibleTrigger className="flex items-center gap-2 w-full py-2 text-sm font-medium text-white/70 hover:text-white transition-colors">
               <Settings2 className="w-3.5 h-3.5" />
               <span>Avançado</span>
               <ChevronDown className={`w-3.5 h-3.5 ml-auto transition-transform duration-200 ${advancedOpen ? 'rotate-180' : ''}`} />
@@ -199,7 +205,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
             <CollapsibleContent className="space-y-4 pt-2">
               {/* Detalhamento de taxas do canal */}
               <div className="p-4 rounded-xl space-y-2" style={{ background: 'hsl(220 20% 9%)', border: '1px solid hsl(220 20% 14%)' }}>
-                <p className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+                <p className="text-xs font-semibold uppercase tracking-wider text-white mb-2">
                   Taxas de {selectedChannel.name}
                 </p>
                 <Row label="Comissão" value={`${selectedChannel.commissionPercent}%`} />
@@ -211,7 +217,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
 
               {/* Despesas da empresa */}
               <div className="space-y-2">
-                <p className="text-xs font-medium text-white/50">Incluir despesas da empresa no preço?</p>
+                <p className="text-xs font-medium text-white">Incluir despesas da empresa no preço?</p>
                 <div className="flex gap-2">
                   {(['exclude', 'distribute', 'include'] as FixedCostAllocationMode[]).map(mode => {
                     const labels: Record<FixedCostAllocationMode, string> = {
@@ -228,7 +234,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
                         style={{
                           background: isActive ? 'hsl(210 100% 50% / 0.12)' : 'hsl(220 20% 9%)',
                           border: `1px solid ${isActive ? 'hsl(210 100% 50% / 0.35)' : 'hsl(220 20% 14%)'}`,
-                          color: isActive ? '#FFFFFF' : 'rgba(255,255,255,0.5)',
+                          color: '#FFFFFF',
                         }}
                       >
                         {labels[mode]}
@@ -268,14 +274,14 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
 
 const Row = ({ label, value, bold }: { label: string; value: string; bold?: boolean }) => (
   <div className="flex items-center justify-between">
-    <span className={`text-sm ${bold ? 'text-white/90 font-semibold' : 'text-white/55'}`}>{label}</span>
-    <span className={`text-sm tabular-nums ${bold ? 'text-white font-semibold' : 'text-white/80 font-medium'}`}>{value}</span>
+    <span className={`text-sm ${bold ? 'text-white font-semibold' : 'text-white'}`}>{label}</span>
+    <span className={`text-sm tabular-nums ${bold ? 'text-white font-semibold' : 'text-white font-medium'}`}>{value}</span>
   </div>
 );
 
 const ResultStat = ({ label, value, color }: { label: string; value: string; color: string }) => (
   <div className="text-center">
-    <p className="text-[10px] text-white/40">{label}</p>
+    <p className="text-[10px] text-white">{label}</p>
     <p className="text-sm font-semibold tabular-nums" style={{ color }}>{value}</p>
   </div>
 );

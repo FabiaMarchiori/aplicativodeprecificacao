@@ -89,14 +89,14 @@ export const ProductFormDialog = ({ isOpen, product, onClose }: ProductFormDialo
           <DialogTitle style={{ color: '#FFFFFF', fontSize: '20px', fontWeight: 700 }}>
             {isEditing ? 'Editar Produto' : 'Novo Produto'}
           </DialogTitle>
-          <DialogDescription style={{ color: 'rgba(255,255,255,0.5)' }}>
+          <DialogDescription style={{ color: '#FFFFFF' }}>
             {isEditing ? 'Atualize os dados do produto' : 'Preencha os dados para cadastrar'}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 mt-2">
           <div className="space-y-1.5">
-            <Label style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>Nome do produto *</Label>
+            <Label style={{ color: '#FFFFFF', fontSize: '13px' }}>Nome do produto *</Label>
             <Input
               placeholder="Ex: Fone Bluetooth Premium"
               value={form.name}
@@ -108,7 +108,7 @@ export const ProductFormDialog = ({ isOpen, product, onClose }: ProductFormDialo
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>Custo do produto (R$)</Label>
+              <Label style={{ color: '#FFFFFF', fontSize: '13px' }}>Custo do produto (R$)</Label>
               <Input
                 type="number"
                 placeholder="0,00"
@@ -119,7 +119,7 @@ export const ProductFormDialog = ({ isOpen, product, onClose }: ProductFormDialo
               />
             </div>
             <div className="space-y-1.5">
-              <Label style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>Frete de compra (R$)</Label>
+              <Label style={{ color: '#FFFFFF', fontSize: '13px' }}>Frete de compra (R$)</Label>
               <Input
                 type="number"
                 placeholder="0,00"
@@ -132,7 +132,7 @@ export const ProductFormDialog = ({ isOpen, product, onClose }: ProductFormDialo
           </div>
 
           <div className="space-y-1.5">
-            <Label style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>Fornecedor (opcional)</Label>
+            <Label style={{ color: '#FFFFFF', fontSize: '13px' }}>Fornecedor (opcional)</Label>
             <Input
               placeholder="Ex: Tech Import Ltda"
               value={form.supplier}
@@ -143,7 +143,7 @@ export const ProductFormDialog = ({ isOpen, product, onClose }: ProductFormDialo
           </div>
 
           <div className="space-y-1.5">
-            <Label style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>Observações (opcional)</Label>
+            <Label style={{ color: '#FFFFFF', fontSize: '13px' }}>Observações (opcional)</Label>
             <Textarea
               placeholder="Anotações sobre o produto..."
               value={form.notes}
@@ -158,7 +158,7 @@ export const ProductFormDialog = ({ isOpen, product, onClose }: ProductFormDialo
           <button
             onClick={onClose}
             className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors"
-            style={{ color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.1)' }}
+            style={{ color: '#FFFFFF', border: '1px solid rgba(255,255,255,0.1)' }}
           >
             Cancelar
           </button>

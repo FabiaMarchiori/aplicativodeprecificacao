@@ -1,11 +1,17 @@
 import { useState, useMemo } from 'react';
-import { Plus, Pencil, Trash2, Search, Calculator, Package, ChevronRight } from 'lucide-react';
-import { Product, calculatePricing } from '@/data/mockData';
+import { Plus, Pencil, Trash2, Search, Calculator, Package } from 'lucide-react';
+import { Product, calculatePricing, TaxConfig } from '@/data/mockData';
+import { DEFAULT_SALES_CHANNELS } from '@/data/salesChannels';
 import { useData } from '@/contexts/DataContext';
 import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { ProductFormDialog } from './ProductFormDialog';
 import { PricingSimulatorSheet } from './PricingSimulatorSheet';
 import { Input } from '@/components/ui/input';
+
+// Resolve a channel from product.category (which stores the channel ID)
+const getProductChannel = (product: Product) => {
+  return DEFAULT_SALES_CHANNELS.find(c => c.id === product.category) ?? DEFAULT_SALES_CHANNELS[0];
+};
 
 export const ProductsTable = () => {
   const { products, fixedCosts, taxConfig, addProduct, deleteProduct } = useData();
@@ -25,8 +31,21 @@ export const ProductsTable = () => {
     return products.filter(p => p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q));
   }, [products, search]);
 
+  // Calculate pricing per product using its saved channel
   const getPricing = (product: Product) => {
-    return calculatePricing(product, fixedCosts, taxConfig, 25, 'exclude', activeProductsCount);
+    const channel = getProductChannel(product);
+    const channelTax: TaxConfig = {
+      salesTax: channel.salesTax,
+      marketplaceFee: channel.commissionPercent,
+      cardFee: channel.cardFee,
+      otherFees: channel.additionalCost > 0
+        ? [{ id: 'ch', name: 'Custo adicional', percentage: channel.additionalCost }]
+        : [],
+    };
+    const prodWithFee = channel.fixedFee > 0
+      ? { ...product, variableCost: product.variableCost + channel.fixedFee }
+      : product;
+    return calculatePricing(prodWithFee, fixedCosts, channelTax, 25, 'exclude', activeProductsCount);
   };
 
   const getMarginColor = (margin: number) => {
@@ -48,7 +67,7 @@ export const ProductsTable = () => {
           <h2 style={{ fontSize: '32px', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
             Meus Produtos
           </h2>
-          <p style={{ fontSize: '15px', fontWeight: 400, color: 'rgba(255,255,255,0.6)', marginTop: '4px' }}>
+          <p style={{ fontSize: '15px', fontWeight: 400, color: '#FFFFFF', marginTop: '4px' }}>
             Cadastre, edite e precifique seus produtos em um só lugar
           </p>
         </div>
@@ -70,7 +89,7 @@ export const ProductsTable = () => {
 
       {/* Search */}
       <div className="relative mb-5">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'rgba(255,255,255,0.4)' }} />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white" />
         <Input
           placeholder="Buscar por nome ou código..."
           value={search}
@@ -86,8 +105,8 @@ export const ProductsTable = () => {
 
       {/* Product count */}
       <div className="flex items-center gap-2 mb-4">
-        <Package className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.4)' }} />
-        <span className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>
+        <Package className="w-4 h-4 text-white" />
+        <span className="text-xs text-white">
           {filteredProducts.length} produto{filteredProducts.length !== 1 ? 's' : ''}
         </span>
       </div>
@@ -109,7 +128,7 @@ export const ProductsTable = () => {
                     key={h}
                     className="text-xs font-semibold uppercase tracking-wider py-3.5 px-4"
                     style={{
-                      color: 'rgba(255,255,255,0.45)',
+                      color: '#FFFFFF',
                       textAlign: i >= 1 && i <= 5 ? 'right' : 'left',
                       ...(i === 6 ? { textAlign: 'center' } : {}),
                     }}
@@ -122,7 +141,7 @@ export const ProductsTable = () => {
             <tbody>
               {filteredProducts.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="text-center py-12" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                  <td colSpan={7} className="text-center py-12 text-white">
                     {search ? 'Nenhum produto encontrado' : 'Nenhum produto cadastrado'}
                   </td>
                 </tr>
@@ -131,6 +150,7 @@ export const ProductsTable = () => {
                 const pricing = getPricing(product);
                 const margin = pricing.realMargin;
                 const marginColor = getMarginColor(margin);
+                const channel = getProductChannel(product);
 
                 return (
                   <tr
@@ -150,15 +170,15 @@ export const ProductsTable = () => {
                           {product.name.charAt(0)}
                         </div>
                         <div>
-                          <p className="text-sm font-medium" style={{ color: '#FFFFFF' }}>{product.name}</p>
-                          <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{product.code}</p>
+                          <p className="text-sm font-medium text-white">{product.name}</p>
+                          <p className="text-xs text-white">{product.code}</p>
                         </div>
                       </div>
                     </td>
 
                     {/* Custo */}
                     <td className="py-3.5 px-4 text-right">
-                      <span className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>
+                      <span className="text-sm font-medium text-white">
                         {formatCurrency(product.purchaseCost + product.variableCost)}
                       </span>
                     </td>
@@ -166,17 +186,17 @@ export const ProductsTable = () => {
                     {/* Canal de Venda */}
                     <td className="py-3.5 px-4 text-right">
                       <span
-                        className="inline-block text-xs font-medium px-2.5 py-1 rounded-full"
-                        style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)' }}
+                        className="inline-block text-xs font-medium px-2.5 py-1 rounded-full text-white"
+                        style={{ background: 'rgba(255,255,255,0.06)' }}
                       >
-                        {product.category || 'Geral'}
+                        {channel.icon} {channel.name}
                       </span>
                     </td>
 
                     {/* Preço Sugerido */}
                     <td className="py-3.5 px-4 text-right">
-                      <span className="text-sm font-semibold" style={{ color: '#FFFFFF' }}>
-                        {formatCurrency(pricing.suggestedPrice)}
+                      <span className="text-sm font-semibold text-white">
+                        {formatCurrency(product.currentPrice > 0 ? product.currentPrice : pricing.suggestedPrice)}
                       </span>
                     </td>
 
@@ -214,20 +234,18 @@ export const ProductsTable = () => {
                         </button>
                         <button
                           onClick={() => setFormDialog({ isOpen: true, product })}
-                          className="p-2 rounded-lg transition-all duration-150"
-                          style={{ color: 'rgba(255,255,255,0.5)' }}
-                          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#FFFFFF'; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; }}
+                          className="p-2 rounded-lg transition-all duration-150 text-white"
+                          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
                           title="Editar"
                         >
                           <Pencil className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => setDeleteDialog({ isOpen: true, id: product.id, name: product.name })}
-                          className="p-2 rounded-lg transition-all duration-150"
-                          style={{ color: 'rgba(255,255,255,0.5)' }}
+                          className="p-2 rounded-lg transition-all duration-150 text-white"
                           onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; e.currentTarget.style.color = '#ef4444'; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#FFFFFF'; }}
                           title="Excluir"
                         >
                           <Trash2 className="w-4 h-4" />
