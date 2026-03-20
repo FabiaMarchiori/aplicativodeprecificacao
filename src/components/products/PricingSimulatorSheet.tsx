@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Product, calculatePricing, FixedCostAllocationMode } from '@/data/mockData';
+import { Product, calculatePricing, FixedCostAllocationMode, TaxConfig } from '@/data/mockData';
+import { DEFAULT_SALES_CHANNELS, SalesChannel, getChannelFixedCosts } from '@/data/salesChannels';
 import { useData } from '@/contexts/DataContext';
 import {
   Sheet,
@@ -10,7 +11,7 @@ import {
 } from '@/components/ui/sheet';
 import { Slider } from '@/components/ui/slider';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ArrowRight, ChevronDown, Settings2 } from 'lucide-react';
+import { ArrowRight, ChevronDown, Settings2, Check } from 'lucide-react';
 
 interface PricingSimulatorSheetProps {
   isOpen: boolean;
@@ -23,21 +24,38 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
   const [margin, setMargin] = useState(25);
   const [allocationMode, setAllocationMode] = useState<FixedCostAllocationMode>('exclude');
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [selectedChannelId, setSelectedChannelId] = useState<string>('loja-propria');
 
   const activeCount = useMemo(() => products.filter(p => p.status === 'active').length, [products]);
+  const selectedChannel = useMemo(() => DEFAULT_SALES_CHANNELS.find(c => c.id === selectedChannelId)!, [selectedChannelId]);
+
+  // Build a TaxConfig from the selected channel
+  const channelTaxConfig = useMemo<TaxConfig>(() => ({
+    salesTax: selectedChannel.salesTax,
+    marketplaceFee: selectedChannel.commissionPercent,
+    cardFee: selectedChannel.cardFee,
+    otherFees: selectedChannel.additionalCost > 0
+      ? [{ id: 'channel-additional', name: 'Custo adicional', percentage: selectedChannel.additionalCost }]
+      : [],
+  }), [selectedChannel]);
 
   useEffect(() => {
     if (product) {
       setMargin(25);
       setAllocationMode('exclude');
       setAdvancedOpen(false);
+      setSelectedChannelId('loja-propria');
     }
   }, [product]);
 
   const pricing = useMemo(() => {
     if (!product) return null;
-    return calculatePricing(product, fixedCosts, taxConfig, margin, allocationMode, activeCount);
-  }, [product, fixedCosts, taxConfig, margin, allocationMode, activeCount]);
+    // Use channel taxes instead of global taxConfig
+    const productWithChannelCosts = selectedChannel.fixedFee > 0
+      ? { ...product, variableCost: product.variableCost + selectedChannel.fixedFee }
+      : product;
+    return calculatePricing(productWithChannelCosts, fixedCosts, channelTaxConfig, margin, allocationMode, activeCount);
+  }, [product, fixedCosts, channelTaxConfig, margin, allocationMode, activeCount, selectedChannel]);
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
@@ -51,9 +69,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
   if (!product || !pricing) return null;
 
   const marginColor = pricing.realMargin >= 25 ? 'hsl(142 71% 45%)' : pricing.realMargin >= 15 ? 'hsl(48 96% 53%)' : 'hsl(0 84% 60%)';
-
-  const otherFeesTotal = taxConfig.otherFees.reduce((sum, t) => sum + t.percentage, 0);
-  const totalTaxRate = taxConfig.salesTax + taxConfig.marketplaceFee + taxConfig.cardFee + otherFeesTotal;
+  const totalFeePercent = selectedChannel.commissionPercent + selectedChannel.salesTax + selectedChannel.cardFee + selectedChannel.additionalCost;
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
@@ -76,28 +92,59 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
         </SheetHeader>
 
         <div className="space-y-5 mt-2">
-          {/* Resumo do custo — simplificado */}
+          {/* Canal de venda */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-white/45 mb-2.5">
+              Onde você vai vender?
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {DEFAULT_SALES_CHANNELS.filter(c => c.active).map(channel => {
+                const isSelected = channel.id === selectedChannelId;
+                return (
+                  <button
+                    key={channel.id}
+                    onClick={() => setSelectedChannelId(channel.id)}
+                    className="relative flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left transition-all duration-150"
+                    style={{
+                      background: isSelected ? 'hsl(210 100% 50% / 0.1)' : 'hsl(220 20% 9%)',
+                      border: `1px solid ${isSelected ? 'hsl(210 100% 50% / 0.35)' : 'hsl(220 20% 14%)'}`,
+                    }}
+                  >
+                    <span className="text-base leading-none">{channel.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-xs font-medium truncate ${isSelected ? 'text-white' : 'text-white/60'}`}>
+                        {channel.name}
+                      </p>
+                      <p className="text-[10px] text-white/30 tabular-nums">
+                        {(channel.commissionPercent + channel.salesTax + channel.cardFee + channel.additionalCost).toFixed(1)}% taxas
+                      </p>
+                    </div>
+                    {isSelected && (
+                      <Check className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Custo + taxas resumidos */}
           <div className="p-4 rounded-xl space-y-2" style={{ background: 'hsl(220 20% 9%)', border: '1px solid hsl(220 20% 14%)' }}>
-            <Row label="Custo do produto" value={formatCurrency(pricing.purchaseCost)} />
-            <Row label="Frete" value={formatCurrency(pricing.variableCost)} />
+            <Row label="Custo do produto" value={formatCurrency(product.purchaseCost)} />
+            <Row label="Frete" value={formatCurrency(product.variableCost)} />
+            {selectedChannel.fixedFee > 0 && (
+              <Row label="Taxa fixa da plataforma" value={formatCurrency(selectedChannel.fixedFee)} />
+            )}
             <div className="pt-2 mt-1" style={{ borderTop: '1px solid hsl(220 20% 14%)' }}>
               <Row label="Custo total" value={formatCurrency(pricing.totalCost)} bold />
             </div>
-          </div>
-
-          {/* Taxas — resumo simples */}
-          <div className="p-4 rounded-xl" style={{ background: 'hsl(220 20% 9%)', border: '1px solid hsl(220 20% 14%)' }}>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-white/55">Taxas aplicadas</span>
-              <span className="text-sm font-semibold text-white tabular-nums">{totalTaxRate.toFixed(1)}%</span>
-            </div>
-            <div className="flex items-center justify-between mt-1.5">
-              <span className="text-sm text-white/55">Total em taxas</span>
-              <span className="text-sm font-semibold text-white tabular-nums">{formatCurrency(pricing.taxAmount)}</span>
+            <div className="pt-1">
+              <Row label={`Taxas ${selectedChannel.name}`} value={`${totalFeePercent.toFixed(1)}%`} />
+              <Row label="Total em taxas" value={formatCurrency(pricing.taxAmount)} />
             </div>
           </div>
 
-          {/* Margem desejada — slider principal */}
+          {/* Margem desejada */}
           <div className="p-4 rounded-xl" style={{ background: 'hsl(220 20% 9%)', border: '1px solid hsl(220 20% 14%)' }}>
             <div className="flex items-center justify-between mb-3">
               <span className="text-sm font-medium text-white">Margem desejada</span>
@@ -119,7 +166,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
             </div>
           </div>
 
-          {/* Resultado — destaque principal */}
+          {/* Resultado principal */}
           <div
             className="p-5 rounded-xl text-center"
             style={{
@@ -133,24 +180,16 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
             <p className="text-3xl font-bold text-white">
               {formatCurrency(pricing.suggestedPrice)}
             </p>
-            <div className="flex items-center justify-center gap-4 mt-3">
-              <div>
-                <p className="text-xs text-white/40">Lucro líquido</p>
-                <p className="text-sm font-semibold" style={{ color: 'hsl(142 71% 45%)' }}>
-                  {formatCurrency(pricing.profitPerUnit)}
-                </p>
-              </div>
+            <div className="flex items-center justify-center gap-5 mt-3">
+              <ResultStat label="Lucro líquido" value={formatCurrency(pricing.profitPerUnit)} color="hsl(142 71% 45%)" />
               <div className="w-px h-7" style={{ background: 'hsl(220 20% 20%)' }} />
-              <div>
-                <p className="text-xs text-white/40">Margem final</p>
-                <p className="text-sm font-semibold" style={{ color: marginColor }}>
-                  {pricing.realMargin.toFixed(1)}%
-                </p>
-              </div>
+              <ResultStat label="Margem final" value={`${pricing.realMargin.toFixed(1)}%`} color={marginColor} />
+              <div className="w-px h-7" style={{ background: 'hsl(220 20% 20%)' }} />
+              <ResultStat label="Preço mínimo" value={formatCurrency(pricing.totalCost + pricing.taxAmount)} color="hsl(220 10% 70%)" />
             </div>
           </div>
 
-          {/* Avançado — seção recolhível */}
+          {/* Avançado */}
           <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen}>
             <CollapsibleTrigger className="flex items-center gap-2 w-full py-2 text-sm font-medium text-white/40 hover:text-white/70 transition-colors">
               <Settings2 className="w-3.5 h-3.5" />
@@ -158,18 +197,19 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
               <ChevronDown className={`w-3.5 h-3.5 ml-auto transition-transform duration-200 ${advancedOpen ? 'rotate-180' : ''}`} />
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-4 pt-2">
-              {/* Detalhamento de taxas */}
+              {/* Detalhamento de taxas do canal */}
               <div className="p-4 rounded-xl space-y-2" style={{ background: 'hsl(220 20% 9%)', border: '1px solid hsl(220 20% 14%)' }}>
-                <p className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">Detalhamento de taxas</p>
-                <Row label="Imposto sobre venda" value={`${taxConfig.salesTax}%`} />
-                <Row label="Taxa marketplace" value={`${taxConfig.marketplaceFee}%`} />
-                <Row label="Taxa cartão" value={`${taxConfig.cardFee}%`} />
-                {taxConfig.otherFees.map(f => (
-                  <Row key={f.id} label={f.name} value={`${f.percentage}%`} />
-                ))}
+                <p className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+                  Taxas de {selectedChannel.name}
+                </p>
+                <Row label="Comissão" value={`${selectedChannel.commissionPercent}%`} />
+                <Row label="Imposto sobre venda" value={`${selectedChannel.salesTax}%`} />
+                {selectedChannel.cardFee > 0 && <Row label="Taxa do cartão" value={`${selectedChannel.cardFee}%`} />}
+                {selectedChannel.additionalCost > 0 && <Row label="Custo adicional" value={`${selectedChannel.additionalCost}%`} />}
+                {selectedChannel.fixedFee > 0 && <Row label="Taxa fixa por venda" value={formatCurrency(selectedChannel.fixedFee)} />}
               </div>
 
-              {/* Incluir despesas da empresa no preço */}
+              {/* Despesas da empresa */}
               <div className="space-y-2">
                 <p className="text-xs font-medium text-white/50">Incluir despesas da empresa no preço?</p>
                 <div className="flex gap-2">
@@ -228,11 +268,14 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
 
 const Row = ({ label, value, bold }: { label: string; value: string; bold?: boolean }) => (
   <div className="flex items-center justify-between">
-    <span className={`text-sm ${bold ? 'text-white/90 font-semibold' : 'text-white/55'}`}>
-      {label}
-    </span>
-    <span className={`text-sm tabular-nums ${bold ? 'text-white font-semibold' : 'text-white/80 font-medium'}`}>
-      {value}
-    </span>
+    <span className={`text-sm ${bold ? 'text-white/90 font-semibold' : 'text-white/55'}`}>{label}</span>
+    <span className={`text-sm tabular-nums ${bold ? 'text-white font-semibold' : 'text-white/80 font-medium'}`}>{value}</span>
+  </div>
+);
+
+const ResultStat = ({ label, value, color }: { label: string; value: string; color: string }) => (
+  <div className="text-center">
+    <p className="text-[10px] text-white/40">{label}</p>
+    <p className="text-sm font-semibold tabular-nums" style={{ color }}>{value}</p>
   </div>
 );
