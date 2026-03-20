@@ -309,42 +309,26 @@ export const Dashboard = () => {
                   <AreaChart data={revenueData}>
                     <defs>
                       <linearGradient id="neonRevenue" x1="0" y1="1" x2="0" y2="0">
-                        <stop offset="0%" stopColor="#00D1FF" stopOpacity={0}/>
-                        <stop offset="50%" stopColor="#00D1FF" stopOpacity={0.4}/>
-                        <stop offset="100%" stopColor="#00D1FF" stopOpacity={0.8}/>
+                        <stop offset="0%" stopColor="hsl(210 80% 58%)" stopOpacity={0}/>
+                        <stop offset="100%" stopColor="hsl(210 80% 58%)" stopOpacity={0.3}/>
                       </linearGradient>
                       <linearGradient id="neonProfit" x1="0" y1="1" x2="0" y2="0">
-                        <stop offset="0%" stopColor="#39FF14" stopOpacity={0}/>
-                        <stop offset="50%" stopColor="#39FF14" stopOpacity={0.4}/>
-                        <stop offset="100%" stopColor="#39FF14" stopOpacity={0.8}/>
+                        <stop offset="0%" stopColor="hsl(152 60% 48%)" stopOpacity={0}/>
+                        <stop offset="100%" stopColor="hsl(152 60% 48%)" stopOpacity={0.3}/>
                       </linearGradient>
-                      <filter id="glowCyan" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                        <feMerge>
-                          <feMergeNode in="coloredBlur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
-                      <filter id="glowGreen" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                        <feMerge>
-                          <feMergeNode in="coloredBlur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(220 10% 18%)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(225 14% 12%)" />
                     <XAxis 
                       dataKey="month" 
-                      stroke="#FFFFFF"
-                      tick={{ fill: '#FFFFFF' }}
+                      stroke="hsl(215 10% 30%)"
+                      tick={{ fill: 'hsl(215 10% 45%)' }}
                       fontSize={10}
                       tickLine={false}
                       interval="preserveStartEnd"
                     />
                     <YAxis 
-                      stroke="#FFFFFF"
-                      tick={{ fill: '#FFFFFF' }}
+                      stroke="hsl(215 10% 30%)"
+                      tick={{ fill: 'hsl(215 10% 45%)' }}
                       fontSize={10}
                       tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
                       tickLine={false}
@@ -355,22 +339,20 @@ export const Dashboard = () => {
                     <Area
                       type="monotone"
                       dataKey="revenue"
-                      stroke="#00D1FF"
-                      strokeWidth={4}
+                      stroke="hsl(210 80% 58%)"
+                      strokeWidth={2}
                       fillOpacity={1}
                       fill="url(#neonRevenue)"
                       name="Faturamento"
-                      filter="url(#glowCyan)"
                     />
                     <Area
                       type="monotone"
                       dataKey="profit"
-                      stroke="#39FF14"
-                      strokeWidth={4}
+                      stroke="hsl(152 60% 48%)"
+                      strokeWidth={2}
                       fillOpacity={1}
                       fill="url(#neonProfit)"
                       name="Lucro"
-                      filter="url(#glowGreen)"
                     />
                   </AreaChart>
                 </ResponsiveContainer>
