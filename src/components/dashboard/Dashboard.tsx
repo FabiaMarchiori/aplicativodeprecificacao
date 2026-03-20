@@ -30,20 +30,21 @@ import { useData } from '@/contexts/DataContext';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { DashboardConfig, defaultDashboardConfig, ChartType } from '@/types/dashboard';
 
-// Refined chart colors (softer, eye-comfort optimized)
+// Refined chart colors
 const CHART_COLORS = {
-  cyan: '#0ABCE8',    // Ciano Principal
-  green: '#2EAA5C',   // Verde para lucro
-  orange: '#F29A1B',  // Laranja para alerta
-  pink: '#D92B5E',    // Rosa para perigo
-  purple: '#9B4DCA',  // Roxo informativo
+  cyan: 'hsl(200 80% 55%)',
+  green: 'hsl(152 60% 48%)',
+  orange: 'hsl(32 85% 52%)',
+  pink: 'hsl(345 70% 50%)',
+  purple: 'hsl(270 55% 55%)',
+  blue: 'hsl(210 80% 58%)',
 };
 
 const PIE_COLORS = [
-  '#BC13FE', // Roxo Neon - Custos Fixos
-  '#39FF14', // Verde Neon Vibrante - Custos Variáveis
-  '#F29A1B', // Laranja - Impostos
-  '#0ABCE8', // Ciano - Margem
+  'hsl(270 55% 55%)',
+  'hsl(152 60% 48%)',
+  'hsl(32 85% 52%)',
+  'hsl(200 80% 55%)',
 ];
 
 // Color function based on margin value
@@ -150,22 +151,18 @@ export const Dashboard = () => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="backdrop-blur-lg rounded-xl p-3 md:p-4 shadow-lg"
+        <div className="rounded-lg p-3 shadow-lg"
           style={{
-            background: 'hsl(220 12% 10% / 0.95)',
-            border: '1px solid hsl(220 10% 25%)',
-            boxShadow: '0 0 12px rgba(10, 188, 232, 0.1)'
+            background: 'hsl(225 18% 8%)',
+            border: '1px solid hsl(225 14% 16%)',
           }}
         >
-          <p className="text-xs md:text-sm font-semibold text-foreground mb-2">{label}</p>
+          <p className="text-xs font-semibold text-white mb-1.5">{label}</p>
           {payload.map((entry: any, index: number) => (
-            <div key={index} className="flex items-center gap-2 text-xs md:text-sm">
-              <div 
-                className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full" 
-                style={{ backgroundColor: entry.color, boxShadow: `0 0 4px ${entry.color}50` }}
-              />
-              <span className="text-white">{entry.name}:</span>
-              <span className="font-semibold" style={{ color: entry.color, textShadow: `0 0 6px ${entry.color}40` }}>
+            <div key={index} className="flex items-center gap-2 text-xs">
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+              <span style={{ color: 'hsl(215 10% 55%)' }}>{entry.name}:</span>
+              <span className="font-semibold" style={{ color: entry.color }}>
                 {formatCurrency(entry.value)}
               </span>
             </div>
@@ -180,20 +177,16 @@ export const Dashboard = () => {
     if (active && payload && payload.length) {
       const color = payload[0].payload.fill;
       return (
-        <div className="backdrop-blur-lg rounded-xl p-2 md:p-3 shadow-lg"
+        <div className="rounded-lg p-2.5 shadow-lg"
           style={{
-            background: 'hsl(220 12% 10% / 0.95)',
-            border: `1px solid ${color}60`,
-            boxShadow: `0 0 10px ${color}20`
+            background: 'hsl(225 18% 8%)',
+            border: '1px solid hsl(225 14% 16%)',
           }}
         >
           <div className="flex items-center gap-2">
-            <div 
-              className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full" 
-              style={{ backgroundColor: color, boxShadow: `0 0 4px ${color}50` }}
-            />
-            <span className="text-foreground font-medium text-xs md:text-sm">{payload[0].name}</span>
-            <span className="font-bold text-xs md:text-sm" style={{ color: color, textShadow: `0 0 6px ${color}40` }}>
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
+            <span className="text-xs font-medium" style={{ color: 'hsl(215 10% 65%)' }}>{payload[0].name}</span>
+            <span className="font-bold text-xs" style={{ color }}>
               {payload[0].value}%
             </span>
           </div>
@@ -213,38 +206,28 @@ export const Dashboard = () => {
 
   return (
     <div className="space-y-4 md:space-y-6 animate-fade-in">
-      {/* Header with Settings Button */}
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 
-          style={{ 
-            color: '#FFFFFF',
-            fontSize: '32px',
-            fontWeight: 700,
-            lineHeight: 1.15,
-            letterSpacing: '-0.02em',
-          }}
-        >
-          Dashboard
-        </h2>
+        <h1 className="text-white">Dashboard</h1>
         <button 
           onClick={() => setShowSettings(true)}
-          className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-lg font-medium transition-all duration-300"
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200"
           style={{
-            background: 'rgba(0, 209, 255, 0.08)',
-            border: '1px solid rgba(0, 209, 255, 0.4)',
-            color: '#00D1FF',
+            background: 'hsl(225 16% 8%)',
+            border: '1px solid hsl(225 14% 13%)',
+            color: 'hsl(215 10% 50%)',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 209, 255, 0.4)';
-            e.currentTarget.style.borderColor = '#00D1FF';
+            e.currentTarget.style.borderColor = 'hsl(225 14% 20%)';
+            e.currentTarget.style.color = 'hsl(0 0% 100%)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.boxShadow = '';
-            e.currentTarget.style.borderColor = 'rgba(0, 209, 255, 0.4)';
+            e.currentTarget.style.borderColor = 'hsl(225 14% 13%)';
+            e.currentTarget.style.color = 'hsl(215 10% 50%)';
           }}
         >
-          <Settings className="w-4 h-4" style={{ filter: 'drop-shadow(0 0 6px rgba(0, 209, 255, 0.8))' }} />
-          <span className="hidden sm:inline text-sm">Personalizar</span>
+          <Settings className="w-4 h-4" />
+          <span className="hidden sm:inline">Personalizar</span>
         </button>
       </div>
 
@@ -318,42 +301,26 @@ export const Dashboard = () => {
                   <AreaChart data={revenueData}>
                     <defs>
                       <linearGradient id="neonRevenue" x1="0" y1="1" x2="0" y2="0">
-                        <stop offset="0%" stopColor="#00D1FF" stopOpacity={0}/>
-                        <stop offset="50%" stopColor="#00D1FF" stopOpacity={0.4}/>
-                        <stop offset="100%" stopColor="#00D1FF" stopOpacity={0.8}/>
+                        <stop offset="0%" stopColor="hsl(210 80% 58%)" stopOpacity={0}/>
+                        <stop offset="100%" stopColor="hsl(210 80% 58%)" stopOpacity={0.3}/>
                       </linearGradient>
                       <linearGradient id="neonProfit" x1="0" y1="1" x2="0" y2="0">
-                        <stop offset="0%" stopColor="#39FF14" stopOpacity={0}/>
-                        <stop offset="50%" stopColor="#39FF14" stopOpacity={0.4}/>
-                        <stop offset="100%" stopColor="#39FF14" stopOpacity={0.8}/>
+                        <stop offset="0%" stopColor="hsl(152 60% 48%)" stopOpacity={0}/>
+                        <stop offset="100%" stopColor="hsl(152 60% 48%)" stopOpacity={0.3}/>
                       </linearGradient>
-                      <filter id="glowCyan" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                        <feMerge>
-                          <feMergeNode in="coloredBlur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
-                      <filter id="glowGreen" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                        <feMerge>
-                          <feMergeNode in="coloredBlur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(220 10% 18%)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(225 14% 12%)" />
                     <XAxis 
                       dataKey="month" 
-                      stroke="#FFFFFF"
-                      tick={{ fill: '#FFFFFF' }}
+                      stroke="hsl(215 10% 30%)"
+                      tick={{ fill: 'hsl(215 10% 45%)' }}
                       fontSize={10}
                       tickLine={false}
                       interval="preserveStartEnd"
                     />
                     <YAxis 
-                      stroke="#FFFFFF"
-                      tick={{ fill: '#FFFFFF' }}
+                      stroke="hsl(215 10% 30%)"
+                      tick={{ fill: 'hsl(215 10% 45%)' }}
                       fontSize={10}
                       tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
                       tickLine={false}
@@ -364,22 +331,20 @@ export const Dashboard = () => {
                     <Area
                       type="monotone"
                       dataKey="revenue"
-                      stroke="#00D1FF"
-                      strokeWidth={4}
+                      stroke="hsl(210 80% 58%)"
+                      strokeWidth={2}
                       fillOpacity={1}
                       fill="url(#neonRevenue)"
                       name="Faturamento"
-                      filter="url(#glowCyan)"
                     />
                     <Area
                       type="monotone"
                       dataKey="profit"
-                      stroke="#39FF14"
-                      strokeWidth={4}
+                      stroke="hsl(152 60% 48%)"
+                      strokeWidth={2}
                       fillOpacity={1}
                       fill="url(#neonProfit)"
                       name="Lucro"
-                      filter="url(#glowGreen)"
                     />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -418,7 +383,7 @@ export const Dashboard = () => {
                     <Tooltip content={<CustomPieTooltip />} />
                     <Legend 
                       wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
-                      formatter={(value) => <span style={{ color: '#FFFFFF', fontWeight: 500 }} className="text-xs md:text-sm">{value}</span>}
+                      formatter={(value) => <span style={{ color: 'hsl(215 10% 65%)', fontWeight: 500 }} className="text-xs">{value}</span>}
                     />
                   </PieChart>
                 </ResponsiveContainer>
@@ -443,22 +408,15 @@ export const Dashboard = () => {
                   <BarChart data={productMargins} layout="vertical">
                     <defs>
                       <linearGradient id="marginGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#BC13FE" stopOpacity={1}/>
-                        <stop offset="100%" stopColor="#00D1FF" stopOpacity={1}/>
+                        <stop offset="0%" stopColor="hsl(210 80% 58%)" stopOpacity={0.8}/>
+                        <stop offset="100%" stopColor="hsl(200 80% 55%)" stopOpacity={1}/>
                       </linearGradient>
-                      <filter id="barHoverGlow" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
-                        <feMerge>
-                          <feMergeNode in="blur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" horizontal={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(225 14% 12%)" horizontal={false} />
                     <XAxis 
                       type="number" 
-                      stroke="#FFFFFF"
-                      tick={{ fill: '#FFFFFF' }}
+                      stroke="hsl(215 10% 30%)"
+                      tick={{ fill: 'hsl(215 10% 45%)' }}
                       fontSize={10}
                       tickFormatter={(value) => `${value}%`}
                       tickLine={false}
@@ -466,37 +424,29 @@ export const Dashboard = () => {
                     <YAxis 
                       type="category" 
                       dataKey="name" 
-                      stroke="#FFFFFF"
+                      stroke="hsl(215 10% 30%)"
                       fontSize={9}
                       width={80}
                       tickLine={false}
                       axisLine={false}
-                      tick={{ fill: '#FFFFFF' }}
+                      tick={{ fill: 'hsl(215 10% 55%)' }}
                     />
                     <Tooltip 
                       formatter={(value: number) => [`${value}%`, 'Margem']}
                       contentStyle={{
-                        backgroundColor: 'hsl(234, 35%, 12%)',
-                        border: '1px solid hsl(234, 25%, 28%)',
-                        borderRadius: '12px',
-                        boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+                        backgroundColor: 'hsl(225 18% 8%)',
+                        border: '1px solid hsl(225 14% 16%)',
+                        borderRadius: '8px',
                       }}
-                      labelStyle={{ color: '#FFFFFF', fontWeight: 600 }}
-                      itemStyle={{ color: '#FFFFFF' }}
+                      labelStyle={{ color: 'hsl(0 0% 100%)', fontWeight: 600 }}
+                      itemStyle={{ color: 'hsl(0 0% 100%)' }}
                       cursor={false}
                     />
                     <Bar 
                       dataKey="margin" 
                       fill="url(#marginGradient)"
-                      radius={[0, 6, 6, 0]}
+                      radius={[0, 4, 4, 0]}
                       name="Margem"
-                      activeBar={{
-                        fill: "url(#marginGradient)",
-                        filter: "url(#barHoverGlow)",
-                        fillOpacity: 1,
-                        stroke: "rgba(0, 209, 255, 0.6)",
-                        strokeWidth: 1
-                      }}
                     />
                   </BarChart>
                 </ResponsiveContainer>
@@ -516,29 +466,15 @@ export const Dashboard = () => {
                   <BarChart data={sortedProfits}>
                     <defs>
                       <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#BC13FE" stopOpacity={1}/>
-                        <stop offset="100%" stopColor="#00D1FF" stopOpacity={1}/>
+                        <stop offset="0%" stopColor="hsl(152 60% 48%)" stopOpacity={1}/>
+                        <stop offset="100%" stopColor="hsl(210 80% 58%)" stopOpacity={0.7}/>
                       </linearGradient>
-                      <filter id="glowBar" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                        <feMerge>
-                          <feMergeNode in="coloredBlur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
-                      <filter id="barHoverGlow" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
-                        <feMerge>
-                          <feMergeNode in="blur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(225 14% 12%)" vertical={false} />
                     <XAxis 
                       dataKey="name" 
-                      stroke="#FFFFFF"
-                      tick={{ fill: '#FFFFFF' }}
+                      stroke="hsl(215 10% 30%)"
+                      tick={{ fill: 'hsl(215 10% 45%)' }}
                       fontSize={8}
                       angle={-25}
                       textAnchor="end"
@@ -547,8 +483,8 @@ export const Dashboard = () => {
                       interval={0}
                     />
                     <YAxis 
-                      stroke="#FFFFFF"
-                      tick={{ fill: '#FFFFFF' }}
+                      stroke="hsl(215 10% 30%)"
+                      tick={{ fill: 'hsl(215 10% 45%)' }}
                       fontSize={10}
                       tickFormatter={(value) => `R$${value}`}
                       tickLine={false}
@@ -558,27 +494,19 @@ export const Dashboard = () => {
                     <Tooltip 
                       formatter={(value: number) => [formatCurrency(value), 'Lucro/Un']}
                       contentStyle={{
-                        backgroundColor: 'hsl(234, 35%, 12%)',
-                        border: '1px solid hsl(234, 25%, 28%)',
-                        borderRadius: '12px',
-                        boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+                        backgroundColor: 'hsl(225 18% 8%)',
+                        border: '1px solid hsl(225 14% 16%)',
+                        borderRadius: '8px',
                       }}
-                      labelStyle={{ color: '#FFFFFF', fontWeight: 600 }}
-                      itemStyle={{ color: '#FFFFFF' }}
+                      labelStyle={{ color: 'hsl(0 0% 100%)', fontWeight: 600 }}
+                      itemStyle={{ color: 'hsl(0 0% 100%)' }}
                       cursor={false}
                     />
                     <Bar 
                       dataKey="profit" 
                       fill="url(#profitGradient)"
-                      radius={[6, 6, 0, 0]}
+                      radius={[4, 4, 0, 0]}
                       name="Lucro/Un"
-                      activeBar={{
-                        fill: "url(#profitGradient)",
-                        filter: "url(#barHoverGlow)",
-                        fillOpacity: 1,
-                        stroke: "rgba(188, 19, 254, 0.6)",
-                        strokeWidth: 1
-                      }}
                     />
                   </BarChart>
                 </ResponsiveContainer>
