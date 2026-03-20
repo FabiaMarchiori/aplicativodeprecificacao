@@ -474,29 +474,15 @@ export const Dashboard = () => {
                   <BarChart data={sortedProfits}>
                     <defs>
                       <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#BC13FE" stopOpacity={1}/>
-                        <stop offset="100%" stopColor="#00D1FF" stopOpacity={1}/>
+                        <stop offset="0%" stopColor="hsl(152 60% 48%)" stopOpacity={1}/>
+                        <stop offset="100%" stopColor="hsl(210 80% 58%)" stopOpacity={0.7}/>
                       </linearGradient>
-                      <filter id="glowBar" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                        <feMerge>
-                          <feMergeNode in="coloredBlur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
-                      <filter id="barHoverGlow" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
-                        <feMerge>
-                          <feMergeNode in="blur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(225 14% 12%)" vertical={false} />
                     <XAxis 
                       dataKey="name" 
-                      stroke="#FFFFFF"
-                      tick={{ fill: '#FFFFFF' }}
+                      stroke="hsl(215 10% 30%)"
+                      tick={{ fill: 'hsl(215 10% 45%)' }}
                       fontSize={8}
                       angle={-25}
                       textAnchor="end"
@@ -505,8 +491,8 @@ export const Dashboard = () => {
                       interval={0}
                     />
                     <YAxis 
-                      stroke="#FFFFFF"
-                      tick={{ fill: '#FFFFFF' }}
+                      stroke="hsl(215 10% 30%)"
+                      tick={{ fill: 'hsl(215 10% 45%)' }}
                       fontSize={10}
                       tickFormatter={(value) => `R$${value}`}
                       tickLine={false}
@@ -516,27 +502,19 @@ export const Dashboard = () => {
                     <Tooltip 
                       formatter={(value: number) => [formatCurrency(value), 'Lucro/Un']}
                       contentStyle={{
-                        backgroundColor: 'hsl(234, 35%, 12%)',
-                        border: '1px solid hsl(234, 25%, 28%)',
-                        borderRadius: '12px',
-                        boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+                        backgroundColor: 'hsl(225 18% 8%)',
+                        border: '1px solid hsl(225 14% 16%)',
+                        borderRadius: '8px',
                       }}
-                      labelStyle={{ color: '#FFFFFF', fontWeight: 600 }}
-                      itemStyle={{ color: '#FFFFFF' }}
+                      labelStyle={{ color: 'hsl(0 0% 100%)', fontWeight: 600 }}
+                      itemStyle={{ color: 'hsl(0 0% 100%)' }}
                       cursor={false}
                     />
                     <Bar 
                       dataKey="profit" 
                       fill="url(#profitGradient)"
-                      radius={[6, 6, 0, 0]}
+                      radius={[4, 4, 0, 0]}
                       name="Lucro/Un"
-                      activeBar={{
-                        fill: "url(#profitGradient)",
-                        filter: "url(#barHoverGlow)",
-                        fillOpacity: 1,
-                        stroke: "rgba(188, 19, 254, 0.6)",
-                        strokeWidth: 1
-                      }}
                     />
                   </BarChart>
                 </ResponsiveContainer>
