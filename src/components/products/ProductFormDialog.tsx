@@ -119,7 +119,7 @@ export const ProductFormDialog = ({ isOpen, product, onClose }: ProductFormDialo
               />
             </div>
             <div className="space-y-1.5">
-              <Label style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>Frete de compra (R$)</Label>
+              <Label style={{ color: '#FFFFFF', fontSize: '13px' }}>Frete de compra (R$)</Label>
               <Input
                 type="number"
                 placeholder="0,00"
