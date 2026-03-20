@@ -143,7 +143,7 @@ export const ProductFormDialog = ({ isOpen, product, onClose }: ProductFormDialo
           </div>
 
           <div className="space-y-1.5">
-            <Label style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>Observações (opcional)</Label>
+            <Label style={{ color: '#FFFFFF', fontSize: '13px' }}>Observações (opcional)</Label>
             <Textarea
               placeholder="Anotações sobre o produto..."
               value={form.notes}
