@@ -89,7 +89,7 @@ export const ProductFormDialog = ({ isOpen, product, onClose }: ProductFormDialo
           <DialogTitle style={{ color: '#FFFFFF', fontSize: '20px', fontWeight: 700 }}>
             {isEditing ? 'Editar Produto' : 'Novo Produto'}
           </DialogTitle>
-          <DialogDescription style={{ color: 'rgba(255,255,255,0.5)' }}>
+          <DialogDescription style={{ color: '#FFFFFF' }}>
             {isEditing ? 'Atualize os dados do produto' : 'Preencha os dados para cadastrar'}
           </DialogDescription>
         </DialogHeader>
