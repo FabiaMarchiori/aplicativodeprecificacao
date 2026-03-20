@@ -96,7 +96,7 @@ export const ProductFormDialog = ({ isOpen, product, onClose }: ProductFormDialo
 
         <div className="space-y-4 mt-2">
           <div className="space-y-1.5">
-            <Label style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>Nome do produto *</Label>
+            <Label style={{ color: '#FFFFFF', fontSize: '13px' }}>Nome do produto *</Label>
             <Input
               placeholder="Ex: Fone Bluetooth Premium"
               value={form.name}
