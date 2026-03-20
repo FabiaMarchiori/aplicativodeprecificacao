@@ -30,20 +30,21 @@ import { useData } from '@/contexts/DataContext';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { DashboardConfig, defaultDashboardConfig, ChartType } from '@/types/dashboard';
 
-// Refined chart colors (softer, eye-comfort optimized)
+// Refined chart colors
 const CHART_COLORS = {
-  cyan: '#0ABCE8',    // Ciano Principal
-  green: '#2EAA5C',   // Verde para lucro
-  orange: '#F29A1B',  // Laranja para alerta
-  pink: '#D92B5E',    // Rosa para perigo
-  purple: '#9B4DCA',  // Roxo informativo
+  cyan: 'hsl(200 80% 55%)',
+  green: 'hsl(152 60% 48%)',
+  orange: 'hsl(32 85% 52%)',
+  pink: 'hsl(345 70% 50%)',
+  purple: 'hsl(270 55% 55%)',
+  blue: 'hsl(210 80% 58%)',
 };
 
 const PIE_COLORS = [
-  '#BC13FE', // Roxo Neon - Custos Fixos
-  '#39FF14', // Verde Neon Vibrante - Custos Variáveis
-  '#F29A1B', // Laranja - Impostos
-  '#0ABCE8', // Ciano - Margem
+  'hsl(270 55% 55%)',
+  'hsl(152 60% 48%)',
+  'hsl(32 85% 52%)',
+  'hsl(200 80% 55%)',
 ];
 
 // Color function based on margin value
