@@ -214,38 +214,28 @@ export const Dashboard = () => {
 
   return (
     <div className="space-y-4 md:space-y-6 animate-fade-in">
-      {/* Header with Settings Button */}
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 
-          style={{ 
-            color: '#FFFFFF',
-            fontSize: '32px',
-            fontWeight: 700,
-            lineHeight: 1.15,
-            letterSpacing: '-0.02em',
-          }}
-        >
-          Dashboard
-        </h2>
+        <h1 className="text-white">Dashboard</h1>
         <button 
           onClick={() => setShowSettings(true)}
-          className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-lg font-medium transition-all duration-300"
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200"
           style={{
-            background: 'rgba(0, 209, 255, 0.08)',
-            border: '1px solid rgba(0, 209, 255, 0.4)',
-            color: '#00D1FF',
+            background: 'hsl(225 16% 8%)',
+            border: '1px solid hsl(225 14% 13%)',
+            color: 'hsl(215 10% 50%)',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 209, 255, 0.4)';
-            e.currentTarget.style.borderColor = '#00D1FF';
+            e.currentTarget.style.borderColor = 'hsl(225 14% 20%)';
+            e.currentTarget.style.color = 'hsl(0 0% 100%)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.boxShadow = '';
-            e.currentTarget.style.borderColor = 'rgba(0, 209, 255, 0.4)';
+            e.currentTarget.style.borderColor = 'hsl(225 14% 13%)';
+            e.currentTarget.style.color = 'hsl(215 10% 50%)';
           }}
         >
-          <Settings className="w-4 h-4" style={{ filter: 'drop-shadow(0 0 6px rgba(0, 209, 255, 0.8))' }} />
-          <span className="hidden sm:inline text-sm">Personalizar</span>
+          <Settings className="w-4 h-4" />
+          <span className="hidden sm:inline">Personalizar</span>
         </button>
       </div>
 
