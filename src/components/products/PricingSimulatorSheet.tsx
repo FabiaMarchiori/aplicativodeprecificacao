@@ -9,7 +9,8 @@ import {
   SheetDescription,
 } from '@/components/ui/sheet';
 import { Slider } from '@/components/ui/slider';
-import { TrendingUp, DollarSign, Percent, ArrowRight, Package } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { ArrowRight, ChevronDown, Settings2 } from 'lucide-react';
 
 interface PricingSimulatorSheetProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
   const { fixedCosts, taxConfig, products, updateProduct } = useData();
   const [margin, setMargin] = useState(25);
   const [allocationMode, setAllocationMode] = useState<FixedCostAllocationMode>('exclude');
+  const [advancedOpen, setAdvancedOpen] = useState(false);
 
   const activeCount = useMemo(() => products.filter(p => p.status === 'active').length, [products]);
 
@@ -28,6 +30,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
     if (product) {
       setMargin(25);
       setAllocationMode('exclude');
+      setAdvancedOpen(false);
     }
   }, [product]);
 
@@ -47,7 +50,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
 
   if (!product || !pricing) return null;
 
-  const marginColor = pricing.realMargin >= 25 ? '#22c55e' : pricing.realMargin >= 15 ? '#eab308' : '#ef4444';
+  const marginColor = pricing.realMargin >= 25 ? 'hsl(142 71% 45%)' : pricing.realMargin >= 15 ? 'hsl(48 96% 53%)' : 'hsl(0 84% 60%)';
 
   const otherFeesTotal = taxConfig.otherFees.reduce((sum, t) => sum + t.percentage, 0);
   const totalTaxRate = taxConfig.salesTax + taxConfig.marketplaceFee + taxConfig.cardFee + otherFeesTotal;
@@ -60,73 +63,44 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
         style={{
           background: 'hsl(220 25% 6%)',
           border: 'none',
-          borderLeft: '1px solid rgba(255,255,255,0.08)',
+          borderLeft: '1px solid hsl(220 20% 15%)',
         }}
       >
         <SheetHeader className="pb-4">
-          <SheetTitle style={{ color: '#FFFFFF', fontSize: '20px', fontWeight: 700 }}>
+          <SheetTitle className="text-xl font-bold text-white">
             Simulador de Preço
           </SheetTitle>
-          <SheetDescription style={{ color: 'rgba(255,255,255,0.5)' }}>
+          <SheetDescription className="text-white/50">
             {product.name}
           </SheetDescription>
         </SheetHeader>
 
         <div className="space-y-5 mt-2">
-          {/* Custo Base */}
-          <div
-            className="p-4 rounded-xl space-y-3"
-            style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
-          >
-            <div className="flex items-center gap-2 mb-1">
-              <Package className="w-4 h-4" style={{ color: 'rgba(0,180,255,0.8)' }} />
-              <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.45)' }}>
-                Custo Base
-              </span>
-            </div>
-            <div className="space-y-2">
-              <Row label="Custo do produto" value={formatCurrency(pricing.purchaseCost)} />
-              <Row label="Frete / custo variável" value={formatCurrency(pricing.variableCost)} />
-              <Row label="Rateio custos fixos" value={formatCurrency(pricing.allocatedFixedCost)} />
-              <div className="pt-2 mt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                <Row label="Custo total" value={formatCurrency(pricing.totalCost)} bold />
-              </div>
+          {/* Resumo do custo — simplificado */}
+          <div className="p-4 rounded-xl space-y-2" style={{ background: 'hsl(220 20% 9%)', border: '1px solid hsl(220 20% 14%)' }}>
+            <Row label="Custo do produto" value={formatCurrency(pricing.purchaseCost)} />
+            <Row label="Frete" value={formatCurrency(pricing.variableCost)} />
+            <div className="pt-2 mt-1" style={{ borderTop: '1px solid hsl(220 20% 14%)' }}>
+              <Row label="Custo total" value={formatCurrency(pricing.totalCost)} bold />
             </div>
           </div>
 
-          {/* Taxas */}
-          <div
-            className="p-4 rounded-xl space-y-3"
-            style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
-          >
-            <div className="flex items-center gap-2 mb-1">
-              <Percent className="w-4 h-4" style={{ color: 'rgba(0,180,255,0.8)' }} />
-              <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.45)' }}>
-                Taxas Aplicadas ({totalTaxRate.toFixed(1)}%)
-              </span>
+          {/* Taxas — resumo simples */}
+          <div className="p-4 rounded-xl" style={{ background: 'hsl(220 20% 9%)', border: '1px solid hsl(220 20% 14%)' }}>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-white/55">Taxas aplicadas</span>
+              <span className="text-sm font-semibold text-white tabular-nums">{totalTaxRate.toFixed(1)}%</span>
             </div>
-            <div className="space-y-2">
-              <Row label="Imposto sobre venda" value={`${taxConfig.salesTax}%`} />
-              <Row label="Taxa marketplace" value={`${taxConfig.marketplaceFee}%`} />
-              <Row label="Taxa cartão" value={`${taxConfig.cardFee}%`} />
-              {taxConfig.otherFees.map(f => (
-                <Row key={f.id} label={f.name} value={`${f.percentage}%`} />
-              ))}
-              <div className="pt-2 mt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                <Row label="Total em impostos" value={formatCurrency(pricing.taxAmount)} bold />
-              </div>
+            <div className="flex items-center justify-between mt-1.5">
+              <span className="text-sm text-white/55">Total em taxas</span>
+              <span className="text-sm font-semibold text-white tabular-nums">{formatCurrency(pricing.taxAmount)}</span>
             </div>
           </div>
 
-          {/* Margem */}
-          <div
-            className="p-4 rounded-xl"
-            style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
-          >
+          {/* Margem desejada — slider principal */}
+          <div className="p-4 rounded-xl" style={{ background: 'hsl(220 20% 9%)', border: '1px solid hsl(220 20% 14%)' }}>
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.45)' }}>
-                Margem desejada
-              </span>
+              <span className="text-sm font-medium text-white">Margem desejada</span>
               <span className="text-lg font-bold tabular-nums" style={{ color: marginColor }}>
                 {margin}%
               </span>
@@ -139,62 +113,36 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
               step={1}
               className="w-full"
             />
-            <div className="flex justify-between text-xs mt-1" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            <div className="flex justify-between text-xs mt-1.5 text-white/30">
               <span>5%</span>
               <span>80%</span>
             </div>
           </div>
 
-          {/* Rateio mode */}
-          <div className="flex gap-2">
-            {(['exclude', 'distribute', 'include'] as FixedCostAllocationMode[]).map(mode => {
-              const labels: Record<FixedCostAllocationMode, string> = {
-                exclude: 'Sem rateio',
-                distribute: `Dividir (÷${activeCount})`,
-                include: '100% custos',
-              };
-              const isActive = allocationMode === mode;
-              return (
-                <button
-                  key={mode}
-                  onClick={() => setAllocationMode(mode)}
-                  className="flex-1 text-xs font-medium py-2 rounded-lg transition-all"
-                  style={{
-                    background: isActive ? 'rgba(0,140,255,0.15)' : 'rgba(255,255,255,0.03)',
-                    border: `1px solid ${isActive ? 'rgba(0,160,255,0.4)' : 'rgba(255,255,255,0.07)'}`,
-                    color: isActive ? '#FFFFFF' : 'rgba(255,255,255,0.5)',
-                  }}
-                >
-                  {labels[mode]}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Result */}
+          {/* Resultado — destaque principal */}
           <div
             className="p-5 rounded-xl text-center"
             style={{
-              background: 'linear-gradient(135deg, rgba(0,130,255,0.08), rgba(0,200,255,0.04))',
-              border: '1px solid rgba(0,160,255,0.2)',
+              background: 'linear-gradient(135deg, hsl(210 100% 50% / 0.08), hsl(190 100% 50% / 0.04))',
+              border: '1px solid hsl(210 100% 50% / 0.2)',
             }}
           >
-            <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.45)' }}>
+            <p className="text-xs font-semibold uppercase tracking-wider mb-1 text-white/45">
               Preço Sugerido
             </p>
-            <p className="text-3xl font-bold" style={{ color: '#FFFFFF' }}>
+            <p className="text-3xl font-bold text-white">
               {formatCurrency(pricing.suggestedPrice)}
             </p>
             <div className="flex items-center justify-center gap-4 mt-3">
               <div>
-                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>Lucro</p>
-                <p className="text-sm font-semibold" style={{ color: '#22c55e' }}>
+                <p className="text-xs text-white/40">Lucro líquido</p>
+                <p className="text-sm font-semibold" style={{ color: 'hsl(142 71% 45%)' }}>
                   {formatCurrency(pricing.profitPerUnit)}
                 </p>
               </div>
-              <div style={{ width: '1px', height: '28px', background: 'rgba(255,255,255,0.1)' }} />
+              <div className="w-px h-7" style={{ background: 'hsl(220 20% 20%)' }} />
               <div>
-                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>Margem Final</p>
+                <p className="text-xs text-white/40">Margem final</p>
                 <p className="text-sm font-semibold" style={{ color: marginColor }}>
                   {pricing.realMargin.toFixed(1)}%
                 </p>
@@ -202,17 +150,72 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
             </div>
           </div>
 
-          {/* Apply button */}
+          {/* Avançado — seção recolhível */}
+          <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen}>
+            <CollapsibleTrigger className="flex items-center gap-2 w-full py-2 text-sm font-medium text-white/40 hover:text-white/70 transition-colors">
+              <Settings2 className="w-3.5 h-3.5" />
+              <span>Avançado</span>
+              <ChevronDown className={`w-3.5 h-3.5 ml-auto transition-transform duration-200 ${advancedOpen ? 'rotate-180' : ''}`} />
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-4 pt-2">
+              {/* Detalhamento de taxas */}
+              <div className="p-4 rounded-xl space-y-2" style={{ background: 'hsl(220 20% 9%)', border: '1px solid hsl(220 20% 14%)' }}>
+                <p className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">Detalhamento de taxas</p>
+                <Row label="Imposto sobre venda" value={`${taxConfig.salesTax}%`} />
+                <Row label="Taxa marketplace" value={`${taxConfig.marketplaceFee}%`} />
+                <Row label="Taxa cartão" value={`${taxConfig.cardFee}%`} />
+                {taxConfig.otherFees.map(f => (
+                  <Row key={f.id} label={f.name} value={`${f.percentage}%`} />
+                ))}
+              </div>
+
+              {/* Incluir despesas da empresa no preço */}
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-white/50">Incluir despesas da empresa no preço?</p>
+                <div className="flex gap-2">
+                  {(['exclude', 'distribute', 'include'] as FixedCostAllocationMode[]).map(mode => {
+                    const labels: Record<FixedCostAllocationMode, string> = {
+                      exclude: 'Não',
+                      distribute: `Dividir (÷${activeCount})`,
+                      include: 'Sim, 100%',
+                    };
+                    const isActive = allocationMode === mode;
+                    return (
+                      <button
+                        key={mode}
+                        onClick={() => setAllocationMode(mode)}
+                        className="flex-1 text-xs font-medium py-2 rounded-lg transition-all"
+                        style={{
+                          background: isActive ? 'hsl(210 100% 50% / 0.12)' : 'hsl(220 20% 9%)',
+                          border: `1px solid ${isActive ? 'hsl(210 100% 50% / 0.35)' : 'hsl(220 20% 14%)'}`,
+                          color: isActive ? '#FFFFFF' : 'rgba(255,255,255,0.5)',
+                        }}
+                      >
+                        {labels[mode]}
+                      </button>
+                    );
+                  })}
+                </div>
+                {allocationMode !== 'exclude' && (
+                  <div className="p-3 rounded-lg" style={{ background: 'hsl(220 20% 9%)', border: '1px solid hsl(220 20% 14%)' }}>
+                    <Row label="Despesas incluídas" value={formatCurrency(pricing.allocatedFixedCost)} />
+                  </div>
+                )}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+
+          {/* Botão aplicar */}
           <button
             onClick={handleApplyPrice}
             className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all duration-200"
             style={{
-              background: 'linear-gradient(135deg, rgba(0,130,255,0.2), rgba(0,200,255,0.12))',
-              border: '1px solid rgba(0,160,255,0.4)',
+              background: 'linear-gradient(135deg, hsl(210 100% 50% / 0.2), hsl(190 100% 50% / 0.12))',
+              border: '1px solid hsl(210 100% 50% / 0.4)',
               color: '#FFFFFF',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0,130,255,0.3), rgba(0,200,255,0.2))'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0,130,255,0.2), rgba(0,200,255,0.12))'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, hsl(210 100% 50% / 0.3), hsl(190 100% 50% / 0.2))'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, hsl(210 100% 50% / 0.2), hsl(190 100% 50% / 0.12))'; }}
           >
             Aplicar este preço
             <ArrowRight className="w-4 h-4" />
@@ -225,10 +228,10 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
 
 const Row = ({ label, value, bold }: { label: string; value: string; bold?: boolean }) => (
   <div className="flex items-center justify-between">
-    <span className="text-sm" style={{ color: bold ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.55)', fontWeight: bold ? 600 : 400 }}>
+    <span className={`text-sm ${bold ? 'text-white/90 font-semibold' : 'text-white/55'}`}>
       {label}
     </span>
-    <span className="text-sm tabular-nums" style={{ color: bold ? '#FFFFFF' : 'rgba(255,255,255,0.8)', fontWeight: bold ? 600 : 500 }}>
+    <span className={`text-sm tabular-nums ${bold ? 'text-white font-semibold' : 'text-white/80 font-medium'}`}>
       {value}
     </span>
   </div>
