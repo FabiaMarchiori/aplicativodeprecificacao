@@ -11,93 +11,57 @@ interface KPICardProps {
 }
 
 export const KPICard = ({ 
-  title, 
-  value, 
-  subtitle, 
-  trend, 
-  trendValue, 
-  icon: Icon,
-  variant = 'blue' 
+  title, value, subtitle, trend, trendValue, icon: Icon, variant = 'blue' 
 }: KPICardProps) => {
   const getTrendIcon = () => {
     switch (trend) {
-      case 'up':
-        return <TrendingUp className="w-3 h-3 md:w-4 md:h-4 text-white" />;
-      case 'down':
-        return <TrendingDown className="w-3 h-3 md:w-4 md:h-4 text-white" />;
-      default:
-        return <Minus className="w-3 h-3 md:w-4 md:h-4 text-white" />;
+      case 'up': return <TrendingUp className="w-3 h-3" />;
+      case 'down': return <TrendingDown className="w-3 h-3" />;
+      default: return <Minus className="w-3 h-3" />;
     }
   };
 
-  const getIconClass = () => {
-    switch (variant) {
-      case 'orange':
-        return 'icon-orange';
-      case 'green':
-        return 'icon-green';
-      case 'cyan':
-        return 'icon-cyan';
-      case 'pink':
-        return 'icon-pink';
-      case 'purple':
-        return 'icon-purple';
-      default:
-        return 'icon-blue';
-    }
+  const variantMap: Record<string, string> = {
+    blue: 'kpi-blue', cyan: 'kpi-cyan', green: 'kpi-green',
+    orange: 'kpi-orange', pink: 'kpi-pink', purple: 'kpi-purple',
   };
-
-  const getCardClass = () => {
-    switch (variant) {
-      case 'orange':
-        return 'kpi-orange';
-      case 'green':
-        return 'kpi-green';
-      case 'cyan':
-        return 'kpi-cyan';
-      case 'pink':
-        return 'kpi-pink';
-      case 'purple':
-        return 'kpi-purple';
-      default:
-        return 'kpi-blue';
-    }
+  const iconMap: Record<string, string> = {
+    blue: 'icon-blue', cyan: 'icon-cyan', green: 'icon-green',
+    orange: 'icon-orange', pink: 'icon-pink', purple: 'icon-purple',
   };
 
   return (
-    <div className={`kpi-card animate-fade-in ${getCardClass()}`}>
+    <div className={`kpi-card animate-fade-in ${variantMap[variant]}`}>
       <div className="relative z-10">
-        <div className="flex items-start justify-between mb-3 md:mb-4">
-          <div className={`kpi-icon ${getIconClass()}`}>
-            <Icon className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-white" />
+        <div className="flex items-start justify-between mb-4">
+          <div className={`kpi-icon ${iconMap[variant]}`}>
+            <Icon />
           </div>
           {trend && trendValue && (
-            <div className="flex items-center gap-1 md:gap-1.5 text-xs md:text-sm bg-white/20 backdrop-blur-sm px-2 py-1 md:px-3 md:py-1.5 rounded-full">
+            <div className="flex items-center gap-1 text-[11px] px-2 py-1 rounded-md"
+              style={{ 
+                background: trend === 'up' ? 'hsl(152 60% 48% / 0.1)' : trend === 'down' ? 'hsl(0 70% 55% / 0.1)' : 'hsl(225 14% 14%)',
+                color: trend === 'up' ? 'hsl(152 60% 48%)' : trend === 'down' ? 'hsl(0 70% 55%)' : 'hsl(215 10% 55%)',
+              }}
+            >
               {getTrendIcon()}
-              <span className="font-bold text-white">
-                {trendValue}
-              </span>
+              <span className="font-semibold tabular-nums">{trendValue}</span>
             </div>
           )}
         </div>
         
-        <h3 className="kpi-title mb-1 md:mb-2">{title}</h3>
-        <p 
-          className="kpi-value mono" 
-          title={value}
+        <p className="kpi-title mb-1.5">{title}</p>
+        <p className="kpi-value mono" title={value}
           style={{
-            wordBreak: 'break-word',
             lineHeight: '1.2',
-            fontSize: value.length > 14 
-              ? 'clamp(0.9rem, 2.5vw, 1.1rem)' 
-              : undefined
+            fontSize: value.length > 14 ? 'clamp(0.85rem, 2.5vw, 1rem)' : undefined,
           }}
         >
           {value}
         </p>
         
         {subtitle && (
-          <p className="kpi-subtitle mt-1 md:mt-2 truncate" title={subtitle}>{subtitle}</p>
+          <p className="kpi-subtitle mt-2 truncate" title={subtitle}>{subtitle}</p>
         )}
       </div>
     </div>
