@@ -151,22 +151,18 @@ export const Dashboard = () => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="backdrop-blur-lg rounded-xl p-3 md:p-4 shadow-lg"
+        <div className="rounded-lg p-3 shadow-lg"
           style={{
-            background: 'hsl(220 12% 10% / 0.95)',
-            border: '1px solid hsl(220 10% 25%)',
-            boxShadow: '0 0 12px rgba(10, 188, 232, 0.1)'
+            background: 'hsl(225 18% 8%)',
+            border: '1px solid hsl(225 14% 16%)',
           }}
         >
-          <p className="text-xs md:text-sm font-semibold text-foreground mb-2">{label}</p>
+          <p className="text-xs font-semibold text-white mb-1.5">{label}</p>
           {payload.map((entry: any, index: number) => (
-            <div key={index} className="flex items-center gap-2 text-xs md:text-sm">
-              <div 
-                className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full" 
-                style={{ backgroundColor: entry.color, boxShadow: `0 0 4px ${entry.color}50` }}
-              />
-              <span className="text-white">{entry.name}:</span>
-              <span className="font-semibold" style={{ color: entry.color, textShadow: `0 0 6px ${entry.color}40` }}>
+            <div key={index} className="flex items-center gap-2 text-xs">
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+              <span style={{ color: 'hsl(215 10% 55%)' }}>{entry.name}:</span>
+              <span className="font-semibold" style={{ color: entry.color }}>
                 {formatCurrency(entry.value)}
               </span>
             </div>
@@ -181,20 +177,16 @@ export const Dashboard = () => {
     if (active && payload && payload.length) {
       const color = payload[0].payload.fill;
       return (
-        <div className="backdrop-blur-lg rounded-xl p-2 md:p-3 shadow-lg"
+        <div className="rounded-lg p-2.5 shadow-lg"
           style={{
-            background: 'hsl(220 12% 10% / 0.95)',
-            border: `1px solid ${color}60`,
-            boxShadow: `0 0 10px ${color}20`
+            background: 'hsl(225 18% 8%)',
+            border: '1px solid hsl(225 14% 16%)',
           }}
         >
           <div className="flex items-center gap-2">
-            <div 
-              className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full" 
-              style={{ backgroundColor: color, boxShadow: `0 0 4px ${color}50` }}
-            />
-            <span className="text-foreground font-medium text-xs md:text-sm">{payload[0].name}</span>
-            <span className="font-bold text-xs md:text-sm" style={{ color: color, textShadow: `0 0 6px ${color}40` }}>
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
+            <span className="text-xs font-medium" style={{ color: 'hsl(215 10% 65%)' }}>{payload[0].name}</span>
+            <span className="font-bold text-xs" style={{ color }}>
               {payload[0].value}%
             </span>
           </div>
