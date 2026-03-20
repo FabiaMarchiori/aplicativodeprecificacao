@@ -158,7 +158,7 @@ export const ProductFormDialog = ({ isOpen, product, onClose }: ProductFormDialo
           <button
             onClick={onClose}
             className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors"
-            style={{ color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.1)' }}
+            style={{ color: '#FFFFFF', border: '1px solid rgba(255,255,255,0.1)' }}
           >
             Cancelar
           </button>
