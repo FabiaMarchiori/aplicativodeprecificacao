@@ -416,22 +416,15 @@ export const Dashboard = () => {
                   <BarChart data={productMargins} layout="vertical">
                     <defs>
                       <linearGradient id="marginGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#BC13FE" stopOpacity={1}/>
-                        <stop offset="100%" stopColor="#00D1FF" stopOpacity={1}/>
+                        <stop offset="0%" stopColor="hsl(210 80% 58%)" stopOpacity={0.8}/>
+                        <stop offset="100%" stopColor="hsl(200 80% 55%)" stopOpacity={1}/>
                       </linearGradient>
-                      <filter id="barHoverGlow" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
-                        <feMerge>
-                          <feMergeNode in="blur"/>
-                          <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                      </filter>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" horizontal={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(225 14% 12%)" horizontal={false} />
                     <XAxis 
                       type="number" 
-                      stroke="#FFFFFF"
-                      tick={{ fill: '#FFFFFF' }}
+                      stroke="hsl(215 10% 30%)"
+                      tick={{ fill: 'hsl(215 10% 45%)' }}
                       fontSize={10}
                       tickFormatter={(value) => `${value}%`}
                       tickLine={false}
@@ -439,37 +432,29 @@ export const Dashboard = () => {
                     <YAxis 
                       type="category" 
                       dataKey="name" 
-                      stroke="#FFFFFF"
+                      stroke="hsl(215 10% 30%)"
                       fontSize={9}
                       width={80}
                       tickLine={false}
                       axisLine={false}
-                      tick={{ fill: '#FFFFFF' }}
+                      tick={{ fill: 'hsl(215 10% 55%)' }}
                     />
                     <Tooltip 
                       formatter={(value: number) => [`${value}%`, 'Margem']}
                       contentStyle={{
-                        backgroundColor: 'hsl(234, 35%, 12%)',
-                        border: '1px solid hsl(234, 25%, 28%)',
-                        borderRadius: '12px',
-                        boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+                        backgroundColor: 'hsl(225 18% 8%)',
+                        border: '1px solid hsl(225 14% 16%)',
+                        borderRadius: '8px',
                       }}
-                      labelStyle={{ color: '#FFFFFF', fontWeight: 600 }}
-                      itemStyle={{ color: '#FFFFFF' }}
+                      labelStyle={{ color: 'hsl(0 0% 100%)', fontWeight: 600 }}
+                      itemStyle={{ color: 'hsl(0 0% 100%)' }}
                       cursor={false}
                     />
                     <Bar 
                       dataKey="margin" 
                       fill="url(#marginGradient)"
-                      radius={[0, 6, 6, 0]}
+                      radius={[0, 4, 4, 0]}
                       name="Margem"
-                      activeBar={{
-                        fill: "url(#marginGradient)",
-                        filter: "url(#barHoverGlow)",
-                        fillOpacity: 1,
-                        stroke: "rgba(0, 209, 255, 0.6)",
-                        strokeWidth: 1
-                      }}
                     />
                   </BarChart>
                 </ResponsiveContainer>
