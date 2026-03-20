@@ -108,7 +108,7 @@ export const ProductFormDialog = ({ isOpen, product, onClose }: ProductFormDialo
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px' }}>Custo do produto (R$)</Label>
+              <Label style={{ color: '#FFFFFF', fontSize: '13px' }}>Custo do produto (R$)</Label>
               <Input
                 type="number"
                 placeholder="0,00"
