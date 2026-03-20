@@ -391,7 +391,7 @@ export const Dashboard = () => {
                     <Tooltip content={<CustomPieTooltip />} />
                     <Legend 
                       wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
-                      formatter={(value) => <span style={{ color: '#FFFFFF', fontWeight: 500 }} className="text-xs md:text-sm">{value}</span>}
+                      formatter={(value) => <span style={{ color: 'hsl(215 10% 65%)', fontWeight: 500 }} className="text-xs">{value}</span>}
                     />
                   </PieChart>
                 </ResponsiveContainer>
