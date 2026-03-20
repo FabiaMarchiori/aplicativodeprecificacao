@@ -1,4 +1,1 @@
 project_id = "qymzornljeueqekjyxvm"
-
-[functions.validate-access-token]
-verify_jwt = false
