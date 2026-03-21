@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react';
-import { Plus, Pencil, Trash2, Search, Calculator, Package, Filter, TrendingUp, ArrowUpDown } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, Calculator, Package } from 'lucide-react';
 import { Product, calculatePricing, TaxConfig } from '@/data/mockData';
 import { DEFAULT_SALES_CHANNELS } from '@/data/salesChannels';
 import { useData } from '@/contexts/DataContext';
 import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { ProductFormDialog } from './ProductFormDialog';
 import { PricingSimulatorSheet } from './PricingSimulatorSheet';
+import { MarketplaceLogo } from './MarketplaceLogos';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const getProductChannel = (product: Product) =>
@@ -79,7 +80,7 @@ export const ProductsTable = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-[28px] font-bold text-white leading-tight tracking-tight">Meus Produtos</h1>
-            <p className="text-[14px] mt-1" style={{ color: 'hsl(215 10% 50%)' }}>
+            <p className="text-[14px] mt-1 text-white/70">
               Gerencie e precifique seus produtos de forma inteligente
             </p>
           </div>
@@ -101,12 +102,12 @@ export const ProductsTable = () => {
         {/* Search + Filters */}
         <div className="flex flex-col sm:flex-row gap-3 mb-6">
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'hsl(215 10% 35%)' }} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
             <input
               placeholder="Buscar por nome ou código..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full h-11 pl-11 pr-4 rounded-xl text-sm text-white placeholder:text-[hsl(215_10%_35%)] transition-all duration-200 focus:outline-none"
+              className="w-full h-11 pl-11 pr-4 rounded-xl text-sm text-white placeholder:text-white/35 transition-all duration-200 focus:outline-none"
               style={{
                 background: 'hsl(225 18% 7%)',
                 border: '1px solid hsl(225 14% 12%)',
@@ -126,7 +127,7 @@ export const ProductsTable = () => {
                   style={{
                     background: active ? 'hsl(var(--color-blue) / 0.1)' : 'transparent',
                     border: `1px solid ${active ? 'hsl(var(--color-blue) / 0.25)' : 'hsl(225 14% 12%)'}`,
-                    color: active ? 'hsl(var(--color-blue))' : 'hsl(215 10% 50%)',
+                    color: active ? 'hsl(var(--color-blue))' : 'white',
                   }}
                 >
                   {filterLabels[f]}
@@ -138,8 +139,8 @@ export const ProductsTable = () => {
 
         {/* Count */}
         <div className="flex items-center gap-2 mb-3">
-          <Package className="w-3.5 h-3.5" style={{ color: 'hsl(215 10% 35%)' }} />
-          <span className="text-xs font-medium" style={{ color: 'hsl(215 10% 42%)' }}>
+          <Package className="w-3.5 h-3.5 text-white/50" />
+          <span className="text-xs font-medium text-white/70">
             {filteredProducts.length} produto{filteredProducts.length !== 1 ? 's' : ''}
           </span>
         </div>
@@ -164,12 +165,12 @@ export const ProductsTable = () => {
                     { label: 'Preço Sugerido', align: 'right' as const },
                     { label: 'Lucro', align: 'right' as const },
                     { label: 'Margem', align: 'right' as const },
-                    { label: '', align: 'center' as const },
+                    { label: 'Ações', align: 'center' as const },
                   ].map((h, i) => (
                     <th
                       key={i}
-                      className="text-[10px] font-semibold uppercase tracking-[0.08em] py-3.5 px-5"
-                      style={{ color: 'hsl(215 10% 38%)', textAlign: h.align }}
+                      className="text-[10px] font-semibold uppercase tracking-[0.08em] py-3.5 px-5 text-white/80"
+                      style={{ textAlign: h.align }}
                     >
                       {h.label}
                     </th>
@@ -180,8 +181,8 @@ export const ProductsTable = () => {
                 {filteredProducts.length === 0 && (
                   <tr>
                     <td colSpan={7} className="text-center py-20">
-                      <Package className="w-10 h-10 mx-auto mb-3" style={{ color: 'hsl(215 10% 20%)' }} />
-                      <p className="text-sm font-medium" style={{ color: 'hsl(215 10% 35%)' }}>
+                      <Package className="w-10 h-10 mx-auto mb-3 text-white/20" />
+                      <p className="text-sm font-medium text-white/50">
                         {search ? 'Nenhum produto encontrado' : 'Nenhum produto cadastrado'}
                       </p>
                       {!search && (
@@ -220,14 +221,14 @@ export const ProductsTable = () => {
                           </div>
                           <div>
                             <p className="text-[13px] font-semibold text-white leading-tight">{product.name}</p>
-                            <p className="text-[10px] mt-0.5 font-medium" style={{ color: 'hsl(215 10% 35%)' }}>{product.code}</p>
+                            <p className="text-[10px] mt-0.5 font-medium text-white/50">{product.code}</p>
                           </div>
                         </div>
                       </td>
 
                       {/* Custo */}
                       <td className="py-4 px-5 text-right">
-                        <span className="text-[13px] font-medium tabular-nums" style={{ color: 'hsl(215 10% 65%)' }}>
+                        <span className="text-[13px] font-medium tabular-nums text-white">
                           {fmt(product.purchaseCost + product.variableCost)}
                         </span>
                       </td>
@@ -235,15 +236,15 @@ export const ProductsTable = () => {
                       {/* Canal */}
                       <td className="py-4 px-5 text-right">
                         <span
-                          className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg"
-                          style={{ background: 'hsl(225 16% 10%)', color: 'hsl(215 10% 60%)', border: '1px solid hsl(225 14% 13%)' }}
+                          className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg text-white"
+                          style={{ background: 'hsl(225 16% 10%)', border: '1px solid hsl(225 14% 13%)' }}
                         >
-                          <span className="text-sm leading-none">{channel.icon}</span>
+                          <MarketplaceLogo channelId={channel.id} size={14} />
                           <span className="hidden sm:inline">{channel.name}</span>
                         </span>
                       </td>
 
-                      {/* Preço Sugerido - HERO column */}
+                      {/* Preço Sugerido */}
                       <td className="py-4 px-5 text-right">
                         <span className="text-[15px] font-bold text-white tabular-nums tracking-tight">
                           {fmt(displayPrice)}
@@ -275,17 +276,15 @@ export const ProductsTable = () => {
                         </div>
                       </td>
 
-                      {/* Ações */}
+                      {/* Ações - ALWAYS VISIBLE */}
                       <td className="py-4 px-5">
-                        <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <div className="flex items-center justify-center gap-1.5">
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <button
                                 onClick={() => setSimulatorSheet({ isOpen: true, product })}
-                                className="p-2 rounded-lg transition-all duration-150"
-                                style={{ color: 'hsl(var(--color-blue))' }}
-                                onMouseEnter={e => { e.currentTarget.style.background = 'hsl(var(--color-blue) / 0.08)'; }}
-                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                                className="p-2 rounded-lg transition-all duration-150 hover:brightness-125"
+                                style={{ background: 'hsl(var(--color-blue) / 0.1)', color: 'hsl(var(--color-blue))' }}
                               >
                                 <Calculator className="w-4 h-4" />
                               </button>
@@ -296,10 +295,7 @@ export const ProductsTable = () => {
                             <TooltipTrigger asChild>
                               <button
                                 onClick={() => setFormDialog({ isOpen: true, product })}
-                                className="p-2 rounded-lg transition-all duration-150"
-                                style={{ color: 'hsl(215 10% 42%)' }}
-                                onMouseEnter={e => { e.currentTarget.style.background = 'hsl(225 16% 10%)'; e.currentTarget.style.color = '#fff'; }}
-                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'hsl(215 10% 42%)'; }}
+                                className="p-2 rounded-lg transition-all duration-150 text-white/80 hover:text-white hover:bg-white/10"
                               >
                                 <Pencil className="w-3.5 h-3.5" />
                               </button>
@@ -310,10 +306,7 @@ export const ProductsTable = () => {
                             <TooltipTrigger asChild>
                               <button
                                 onClick={() => setDeleteDialog({ isOpen: true, id: product.id, name: product.name })}
-                                className="p-2 rounded-lg transition-all duration-150"
-                                style={{ color: 'hsl(215 10% 42%)' }}
-                                onMouseEnter={e => { e.currentTarget.style.background = 'hsl(345 70% 50% / 0.08)'; e.currentTarget.style.color = 'hsl(345 70% 58%)'; }}
-                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'hsl(215 10% 42%)'; }}
+                                className="p-2 rounded-lg transition-all duration-150 text-white/80 hover:text-red-400 hover:bg-red-500/10"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>

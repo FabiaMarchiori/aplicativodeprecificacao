@@ -12,6 +12,7 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ArrowRight, ChevronDown, Settings2, Check, Sparkles, TrendingUp, DollarSign, Target, ShieldCheck } from 'lucide-react';
+import { MarketplaceLogo, getChannelColor } from './MarketplaceLogos';
 
 interface PricingSimulatorSheetProps {
   isOpen: boolean;
@@ -100,7 +101,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
               </div>
               <SheetTitle className="text-[17px] font-bold text-white">Simulador de Preço</SheetTitle>
             </div>
-            <SheetDescription className="text-[13px] pl-[42px]" style={{ color: 'hsl(215 10% 48%)' }}>
+            <SheetDescription className="text-[13px] pl-[42px] text-white/70">
               {product.name} · {product.code}
             </SheetDescription>
           </SheetHeader>
@@ -114,27 +115,28 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
               {DEFAULT_SALES_CHANNELS.filter(c => c.active).map(ch => {
                 const sel = ch.id === selectedChannelId;
                 const fees = ch.commissionPercent + ch.salesTax + ch.cardFee + ch.additionalCost;
+                const chColor = getChannelColor(ch.id);
                 return (
                   <button
                     key={ch.id}
                     onClick={() => setSelectedChannelId(ch.id)}
                     className="relative flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-left transition-all duration-200 active:scale-[0.97]"
                     style={{
-                      background: sel ? 'hsl(var(--color-blue) / 0.06)' : 'hsl(225 16% 7.5%)',
-                      border: `1px solid ${sel ? 'hsl(var(--color-blue) / 0.3)' : 'hsl(225 14% 11%)'}`,
-                      boxShadow: sel ? '0 0 12px hsl(var(--color-blue) / 0.06)' : 'none',
+                      background: sel ? `hsl(${chColor} / 0.08)` : 'hsl(225 16% 7.5%)',
+                      border: `1.5px solid ${sel ? `hsl(${chColor} / 0.35)` : 'hsl(225 14% 11%)'}`,
+                      boxShadow: sel ? `0 0 16px hsl(${chColor} / 0.08)` : 'none',
                     }}
                   >
-                    <span className="text-base leading-none">{ch.icon}</span>
+                    <MarketplaceLogo channelId={ch.id} size={22} />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold text-white truncate">{ch.name}</p>
-                      <p className="text-[10px] font-medium tabular-nums mt-0.5" style={{ color: 'hsl(215 10% 42%)' }}>
+                      <p className="text-[10px] font-medium tabular-nums mt-0.5 text-white/60">
                         {fees.toFixed(1)}% taxas
                       </p>
                     </div>
                     {sel && (
-                      <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'hsl(var(--color-blue) / 0.15)' }}>
-                        <Check className="w-3 h-3" style={{ color: 'hsl(var(--color-blue))' }} />
+                      <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: `hsl(${chColor} / 0.2)` }}>
+                        <Check className="w-3 h-3" style={{ color: `hsl(${chColor})` }} />
                       </div>
                     )}
                   </button>
@@ -169,7 +171,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
               <span className="text-xl font-bold tabular-nums mono" style={{ color: marginColor }}>{margin}%</span>
             </div>
             <Slider value={[margin]} onValueChange={v => setMargin(v[0])} min={5} max={80} step={1} className="w-full" />
-            <div className="flex justify-between text-[10px] font-medium mt-2" style={{ color: 'hsl(215 10% 35%)' }}>
+            <div className="flex justify-between text-[10px] font-medium mt-2 text-white/40">
               <span>5%</span><span>80%</span>
             </div>
           </div>
@@ -185,7 +187,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
           >
             {/* Preço hero */}
             <div className="px-5 pt-5 pb-4 text-center">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1.5" style={{ color: 'hsl(var(--color-blue) / 0.7)' }}>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1.5" style={{ color: 'hsl(var(--color-blue))' }}>
                 Preço Sugerido
               </p>
               <p
@@ -195,8 +197,8 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
                 {fmt(pricing.suggestedPrice)}
               </p>
               <div className="flex items-center justify-center gap-1.5 mt-2">
-                <span className="text-lg">{selectedChannel.icon}</span>
-                <span className="text-[11px] font-medium" style={{ color: 'hsl(215 10% 50%)' }}>{selectedChannel.name}</span>
+                <MarketplaceLogo channelId={selectedChannelId} size={16} />
+                <span className="text-[11px] font-medium text-white/70">{selectedChannel.name}</span>
               </div>
             </div>
 
@@ -224,7 +226,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
                 icon={ShieldCheck}
                 label="Preço mínimo"
                 value={fmt(minPrice)}
-                color="hsl(215 10% 55%)"
+                color="hsl(215 10% 70%)"
               />
             </div>
           </div>
@@ -232,11 +234,10 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
           {/* Avançado */}
           <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen}>
             <CollapsibleTrigger
-              className="flex items-center gap-2 w-full py-2.5 text-[13px] transition-colors group/adv"
-              style={{ color: 'hsl(215 10% 42%)' }}
+              className="flex items-center gap-2 w-full py-2.5 text-[13px] transition-colors group/adv text-white/70 hover:text-white"
             >
               <Settings2 className="w-3.5 h-3.5" />
-              <span className="font-medium group-hover/adv:text-white transition-colors">Avançado</span>
+              <span className="font-medium transition-colors">Avançado</span>
               <ChevronDown className={`w-3.5 h-3.5 ml-auto transition-transform duration-200 ${advancedOpen ? 'rotate-180' : ''}`} />
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-4 pt-2">
@@ -270,7 +271,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
                         style={{
                           background: isActive ? 'hsl(var(--color-blue) / 0.08)' : 'hsl(225 16% 7.5%)',
                           border: `1px solid ${isActive ? 'hsl(var(--color-blue) / 0.25)' : 'hsl(225 14% 11%)'}`,
-                          color: isActive ? 'hsl(var(--color-blue))' : 'hsl(215 10% 55%)',
+                          color: isActive ? 'hsl(var(--color-blue))' : 'white',
                         }}
                       >
                         {labels[mode]}
@@ -320,19 +321,19 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
 /* ─── Sub-components ─── */
 
 const SectionLabel = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <p className={`text-[10px] font-semibold uppercase tracking-[0.08em] ${className}`} style={{ color: 'hsl(215 10% 42%)' }}>
+  <p className={`text-[10px] font-semibold uppercase tracking-[0.08em] text-white/70 ${className}`}>
     {children}
   </p>
 );
 
 const Row = ({ label, value, bold, accent }: { label: string; value: string; bold?: boolean; accent?: boolean }) => (
   <div className="flex items-center justify-between py-0.5">
-    <span className={`text-[12px] ${bold ? 'font-semibold text-white' : ''}`} style={!bold ? { color: 'hsl(215 10% 52%)' } : undefined}>
+    <span className={`text-[12px] ${bold ? 'font-semibold text-white' : 'text-white/70'}`}>
       {label}
     </span>
     <span
       className={`text-[12px] tabular-nums ${bold ? 'font-bold text-white' : 'font-semibold'}`}
-      style={!bold ? { color: accent ? 'hsl(var(--color-blue))' : 'hsl(0 0% 90%)' } : undefined}
+      style={!bold ? { color: accent ? 'hsl(var(--color-blue))' : '#FFFFFF' } : undefined}
     >
       {value}
     </span>
@@ -341,8 +342,8 @@ const Row = ({ label, value, bold, accent }: { label: string; value: string; bol
 
 const ResultMetric = ({ icon: Icon, label, value, color }: { icon: React.ElementType; label: string; value: string; color: string }) => (
   <div className="py-3.5 px-3 text-center" style={{ borderColor: 'hsl(225 14% 10%)' }}>
-    <Icon className="w-3.5 h-3.5 mx-auto mb-1.5" style={{ color, opacity: 0.7 }} />
-    <p className="text-[10px] font-medium mb-0.5" style={{ color: 'hsl(215 10% 45%)' }}>{label}</p>
+    <Icon className="w-3.5 h-3.5 mx-auto mb-1.5" style={{ color }} />
+    <p className="text-[10px] font-medium mb-0.5 text-white/60">{label}</p>
     <p className="text-[13px] font-bold tabular-nums" style={{ color }}>{value}</p>
   </div>
 );
