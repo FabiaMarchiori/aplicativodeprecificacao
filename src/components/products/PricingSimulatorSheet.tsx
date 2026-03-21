@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Product, calculatePricing, FixedCostAllocationMode, TaxConfig } from '@/data/mockData';
-import { DEFAULT_SALES_CHANNELS, SalesChannel, getChannelFixedCosts } from '@/data/salesChannels';
+import { DEFAULT_SALES_CHANNELS, SalesChannel } from '@/data/salesChannels';
 import { useData } from '@/contexts/DataContext';
 import {
   Sheet,
@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/sheet';
 import { Slider } from '@/components/ui/slider';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ArrowRight, ChevronDown, Settings2, Check } from 'lucide-react';
+import { ArrowRight, ChevronDown, Settings2, Check, Sparkles, TrendingUp, DollarSign, Target, ShieldCheck } from 'lucide-react';
 
 interface PricingSimulatorSheetProps {
   isOpen: boolean;
@@ -25,6 +25,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
   const [allocationMode, setAllocationMode] = useState<FixedCostAllocationMode>('exclude');
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [selectedChannelId, setSelectedChannelId] = useState<string>('loja-propria');
+  const [applied, setApplied] = useState(false);
 
   const activeCount = useMemo(() => products.filter(p => p.status === 'active').length, [products]);
   const selectedChannel = useMemo(() => DEFAULT_SALES_CHANNELS.find(c => c.id === selectedChannelId) ?? DEFAULT_SALES_CHANNELS[0], [selectedChannelId]);
@@ -40,24 +41,25 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
 
   useEffect(() => {
     if (product && isOpen) {
-      const savedChannel = DEFAULT_SALES_CHANNELS.find(c => c.id === product.category);
-      setSelectedChannelId(savedChannel ? savedChannel.id : 'loja-propria');
+      const saved = DEFAULT_SALES_CHANNELS.find(c => c.id === product.category);
+      setSelectedChannelId(saved ? saved.id : 'loja-propria');
       setMargin(25);
       setAllocationMode('exclude');
       setAdvancedOpen(false);
+      setApplied(false);
     }
   }, [product, isOpen]);
 
   const pricing = useMemo(() => {
     if (!product) return null;
-    const productWithChannelCosts = selectedChannel.fixedFee > 0
+    const p = selectedChannel.fixedFee > 0
       ? { ...product, variableCost: product.variableCost + selectedChannel.fixedFee }
       : product;
-    return calculatePricing(productWithChannelCosts, fixedCosts, channelTaxConfig, margin, allocationMode, activeCount);
+    return calculatePricing(p, fixedCosts, channelTaxConfig, margin, allocationMode, activeCount);
   }, [product, fixedCosts, channelTaxConfig, margin, allocationMode, activeCount, selectedChannel]);
 
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+  const fmt = (v: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
   const handleApplyPrice = async () => {
     if (!product || !pricing) return;
@@ -65,153 +67,210 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
       currentPrice: pricing.suggestedPrice,
       category: selectedChannelId,
     });
-    onClose();
+    setApplied(true);
+    setTimeout(() => onClose(), 800);
   };
 
   if (!product || !pricing) return null;
 
   const marginColor = pricing.realMargin >= 25 ? 'hsl(152 60% 48%)' : pricing.realMargin >= 15 ? 'hsl(42 90% 55%)' : 'hsl(0 70% 55%)';
   const totalFeePercent = selectedChannel.commissionPercent + selectedChannel.salesTax + selectedChannel.cardFee + selectedChannel.additionalCost;
+  const minPrice = pricing.totalCost + pricing.taxAmount;
 
   return (
-    <Sheet open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+    <Sheet open={isOpen} onOpenChange={open => { if (!open) onClose(); }}>
       <SheetContent
         side="right"
-        className="w-full sm:max-w-md overflow-y-auto"
+        className="w-full sm:max-w-[440px] overflow-y-auto p-0"
         style={{
           background: 'hsl(225 20% 5%)',
           border: 'none',
-          borderLeft: '1px solid hsl(225 14% 10%)',
+          borderLeft: '1px solid hsl(225 14% 9%)',
         }}
       >
-        <SheetHeader className="pb-4">
-          <SheetTitle className="text-lg font-semibold text-white">
-            Simulador de Preço
-          </SheetTitle>
-          <SheetDescription className="text-sm" style={{ color: 'hsl(215 10% 50%)' }}>
-            {product.name}
-          </SheetDescription>
-        </SheetHeader>
+        {/* Header */}
+        <div className="px-6 pt-6 pb-4">
+          <SheetHeader className="p-0">
+            <div className="flex items-center gap-2.5 mb-1">
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ background: 'hsl(var(--color-blue) / 0.08)', border: '1px solid hsl(var(--color-blue) / 0.15)' }}
+              >
+                <Sparkles className="w-4 h-4" style={{ color: 'hsl(var(--color-blue))' }} />
+              </div>
+              <SheetTitle className="text-[17px] font-bold text-white">Simulador de Preço</SheetTitle>
+            </div>
+            <SheetDescription className="text-[13px] pl-[42px]" style={{ color: 'hsl(215 10% 48%)' }}>
+              {product.name} · {product.code}
+            </SheetDescription>
+          </SheetHeader>
+        </div>
 
-        <div className="space-y-5 mt-2">
-          {/* Canal de venda */}
+        <div className="px-6 pb-6 space-y-5">
+          {/* Canal */}
           <div>
-            <p className="text-[11px] font-medium uppercase tracking-wider mb-2.5" style={{ color: 'hsl(215 10% 45%)' }}>
-              Onde você vai vender?
-            </p>
-            <div className="grid grid-cols-2 gap-1.5">
-              {DEFAULT_SALES_CHANNELS.filter(c => c.active).map(channel => {
-                const isSelected = channel.id === selectedChannelId;
+            <SectionLabel>Onde você vai vender?</SectionLabel>
+            <div className="grid grid-cols-2 gap-2 mt-2.5">
+              {DEFAULT_SALES_CHANNELS.filter(c => c.active).map(ch => {
+                const sel = ch.id === selectedChannelId;
+                const fees = ch.commissionPercent + ch.salesTax + ch.cardFee + ch.additionalCost;
                 return (
                   <button
-                    key={channel.id}
-                    onClick={() => setSelectedChannelId(channel.id)}
-                    className="relative flex items-center gap-2 px-3 py-2.5 rounded-lg text-left transition-all duration-150"
+                    key={ch.id}
+                    onClick={() => setSelectedChannelId(ch.id)}
+                    className="relative flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-left transition-all duration-200 active:scale-[0.97]"
                     style={{
-                      background: isSelected ? 'hsl(var(--color-blue) / 0.08)' : 'hsl(225 16% 8%)',
-                      border: `1px solid ${isSelected ? 'hsl(var(--color-blue) / 0.25)' : 'hsl(225 14% 12%)'}`,
+                      background: sel ? 'hsl(var(--color-blue) / 0.06)' : 'hsl(225 16% 7.5%)',
+                      border: `1px solid ${sel ? 'hsl(var(--color-blue) / 0.3)' : 'hsl(225 14% 11%)'}`,
+                      boxShadow: sel ? '0 0 12px hsl(var(--color-blue) / 0.06)' : 'none',
                     }}
                   >
-                    <span className="text-sm leading-none">{channel.icon}</span>
+                    <span className="text-base leading-none">{ch.icon}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-white truncate">{channel.name}</p>
-                      <p className="text-[10px] tabular-nums" style={{ color: 'hsl(215 10% 45%)' }}>
-                        {(channel.commissionPercent + channel.salesTax + channel.cardFee + channel.additionalCost).toFixed(1)}% taxas
+                      <p className="text-xs font-semibold text-white truncate">{ch.name}</p>
+                      <p className="text-[10px] font-medium tabular-nums mt-0.5" style={{ color: 'hsl(215 10% 42%)' }}>
+                        {fees.toFixed(1)}% taxas
                       </p>
                     </div>
-                    {isSelected && <Check className="w-3 h-3 flex-shrink-0" style={{ color: 'hsl(var(--color-blue))' }} />}
+                    {sel && (
+                      <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'hsl(var(--color-blue) / 0.15)' }}>
+                        <Check className="w-3 h-3" style={{ color: 'hsl(var(--color-blue))' }} />
+                      </div>
+                    )}
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Custo resumo */}
-          <div className="p-4 rounded-lg space-y-2" style={{ background: 'hsl(225 16% 7%)', border: '1px solid hsl(225 14% 11%)' }}>
-            <Row label="Custo do produto" value={formatCurrency(product.purchaseCost)} />
-            <Row label="Frete" value={formatCurrency(product.variableCost)} />
-            {selectedChannel.fixedFee > 0 && <Row label="Taxa fixa" value={formatCurrency(selectedChannel.fixedFee)} />}
-            <div className="pt-2 mt-1" style={{ borderTop: '1px solid hsl(225 14% 11%)' }}>
-              <Row label="Custo total" value={formatCurrency(pricing.totalCost)} bold />
+          {/* Custo */}
+          <div
+            className="p-4 rounded-xl space-y-2"
+            style={{ background: 'hsl(225 16% 7%)', border: '1px solid hsl(225 14% 10%)' }}
+          >
+            <SectionLabel className="!mb-3">Composição de custo</SectionLabel>
+            <Row label="Custo do produto" value={fmt(product.purchaseCost)} />
+            <Row label="Custo variável / Frete" value={fmt(product.variableCost)} />
+            {selectedChannel.fixedFee > 0 && <Row label="Taxa fixa da plataforma" value={fmt(selectedChannel.fixedFee)} />}
+            <div className="pt-2.5 mt-1.5" style={{ borderTop: '1px solid hsl(225 14% 10%)' }}>
+              <Row label="Custo total" value={fmt(pricing.totalCost)} bold />
             </div>
-            <Row label={`Taxas ${selectedChannel.name}`} value={`${totalFeePercent.toFixed(1)}%`} />
-            <Row label="Total em taxas" value={formatCurrency(pricing.taxAmount)} />
+            <Row label={`Taxas ${selectedChannel.name}`} value={`${totalFeePercent.toFixed(1)}%`} accent />
+            <Row label="Valor das taxas" value={fmt(pricing.taxAmount)} />
           </div>
 
           {/* Margem */}
-          <div className="p-4 rounded-lg" style={{ background: 'hsl(225 16% 7%)', border: '1px solid hsl(225 14% 11%)' }}>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium text-white">Margem desejada</span>
-              <span className="text-lg font-bold tabular-nums" style={{ color: marginColor }}>{margin}%</span>
+          <div
+            className="p-4 rounded-xl"
+            style={{ background: 'hsl(225 16% 7%)', border: '1px solid hsl(225 14% 10%)' }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[13px] font-semibold text-white">Margem desejada</span>
+              <span className="text-xl font-bold tabular-nums mono" style={{ color: marginColor }}>{margin}%</span>
             </div>
-            <Slider value={[margin]} onValueChange={(v) => setMargin(v[0])} min={5} max={80} step={1} className="w-full" />
-            <div className="flex justify-between text-[10px] mt-1.5" style={{ color: 'hsl(215 10% 40%)' }}>
+            <Slider value={[margin]} onValueChange={v => setMargin(v[0])} min={5} max={80} step={1} className="w-full" />
+            <div className="flex justify-between text-[10px] font-medium mt-2" style={{ color: 'hsl(215 10% 35%)' }}>
               <span>5%</span><span>80%</span>
             </div>
           </div>
 
-          {/* Resultado */}
-          <div className="p-5 rounded-lg text-center"
+          {/* ═══ RESULTADO PREMIUM ═══ */}
+          <div
+            className="rounded-2xl overflow-hidden"
             style={{
-              background: 'hsl(var(--color-blue) / 0.04)',
-              border: '1px solid hsl(var(--color-blue) / 0.12)',
+              background: 'linear-gradient(160deg, hsl(225 18% 8%) 0%, hsl(var(--color-blue) / 0.04) 100%)',
+              border: '1px solid hsl(var(--color-blue) / 0.15)',
+              boxShadow: '0 4px 24px hsl(var(--color-blue) / 0.06)',
             }}
           >
-            <p className="text-[11px] font-medium uppercase tracking-wider mb-1" style={{ color: 'hsl(215 10% 50%)' }}>
-              Preço Sugerido
-            </p>
-            <p className="text-3xl font-bold text-white tabular-nums">{formatCurrency(pricing.suggestedPrice)}</p>
-            <div className="flex items-center justify-center gap-5 mt-3">
-              <ResultStat label="Lucro líquido" value={formatCurrency(pricing.profitPerUnit)} color="hsl(152 60% 48%)" />
-              <div className="w-px h-6" style={{ background: 'hsl(225 14% 14%)' }} />
-              <ResultStat label="Margem final" value={`${pricing.realMargin.toFixed(1)}%`} color={marginColor} />
-              <div className="w-px h-6" style={{ background: 'hsl(225 14% 14%)' }} />
-              <ResultStat label="Preço mínimo" value={formatCurrency(pricing.totalCost + pricing.taxAmount)} color="hsl(215 10% 55%)" />
+            {/* Preço hero */}
+            <div className="px-5 pt-5 pb-4 text-center">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1.5" style={{ color: 'hsl(var(--color-blue) / 0.7)' }}>
+                Preço Sugerido
+              </p>
+              <p
+                className="text-[36px] font-extrabold text-white tabular-nums tracking-tight leading-none"
+                style={{ textShadow: '0 0 30px hsl(var(--color-blue) / 0.15)' }}
+              >
+                {fmt(pricing.suggestedPrice)}
+              </p>
+              <div className="flex items-center justify-center gap-1.5 mt-2">
+                <span className="text-lg">{selectedChannel.icon}</span>
+                <span className="text-[11px] font-medium" style={{ color: 'hsl(215 10% 50%)' }}>{selectedChannel.name}</span>
+              </div>
+            </div>
+
+            {/* Métricas */}
+            <div
+              className="grid grid-cols-3 divide-x"
+              style={{
+                borderTop: '1px solid hsl(225 14% 10%)',
+                background: 'hsl(225 18% 6%)',
+              }}
+            >
+              <ResultMetric
+                icon={TrendingUp}
+                label="Lucro líquido"
+                value={fmt(pricing.profitPerUnit)}
+                color="hsl(152 60% 52%)"
+              />
+              <ResultMetric
+                icon={Target}
+                label="Margem final"
+                value={`${pricing.realMargin.toFixed(1)}%`}
+                color={marginColor}
+              />
+              <ResultMetric
+                icon={ShieldCheck}
+                label="Preço mínimo"
+                value={fmt(minPrice)}
+                color="hsl(215 10% 55%)"
+              />
             </div>
           </div>
 
           {/* Avançado */}
           <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen}>
-            <CollapsibleTrigger className="flex items-center gap-2 w-full py-2 text-sm transition-colors"
-              style={{ color: 'hsl(215 10% 45%)' }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = 'hsl(0 0% 100%)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = 'hsl(215 10% 45%)'; }}
+            <CollapsibleTrigger
+              className="flex items-center gap-2 w-full py-2.5 text-[13px] transition-colors group/adv"
+              style={{ color: 'hsl(215 10% 42%)' }}
             >
               <Settings2 className="w-3.5 h-3.5" />
-              <span className="font-medium">Avançado</span>
+              <span className="font-medium group-hover/adv:text-white transition-colors">Avançado</span>
               <ChevronDown className={`w-3.5 h-3.5 ml-auto transition-transform duration-200 ${advancedOpen ? 'rotate-180' : ''}`} />
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-4 pt-2">
-              <div className="p-4 rounded-lg space-y-2" style={{ background: 'hsl(225 16% 7%)', border: '1px solid hsl(225 14% 11%)' }}>
-                <p className="text-[11px] font-medium uppercase tracking-wider mb-2" style={{ color: 'hsl(215 10% 45%)' }}>
-                  Taxas de {selectedChannel.name}
-                </p>
+              <div
+                className="p-4 rounded-xl space-y-2"
+                style={{ background: 'hsl(225 16% 7%)', border: '1px solid hsl(225 14% 10%)' }}
+              >
+                <SectionLabel className="!mb-2.5">Taxas de {selectedChannel.name}</SectionLabel>
                 <Row label="Comissão" value={`${selectedChannel.commissionPercent}%`} />
                 <Row label="Imposto sobre venda" value={`${selectedChannel.salesTax}%`} />
                 {selectedChannel.cardFee > 0 && <Row label="Taxa do cartão" value={`${selectedChannel.cardFee}%`} />}
                 {selectedChannel.additionalCost > 0 && <Row label="Custo adicional" value={`${selectedChannel.additionalCost}%`} />}
-                {selectedChannel.fixedFee > 0 && <Row label="Taxa fixa por venda" value={formatCurrency(selectedChannel.fixedFee)} />}
+                {selectedChannel.fixedFee > 0 && <Row label="Taxa fixa por venda" value={fmt(selectedChannel.fixedFee)} />}
               </div>
 
-              <div className="space-y-2">
-                <p className="text-xs font-medium text-white">Incluir despesas da empresa no preço?</p>
+              <div className="space-y-2.5">
+                <p className="text-[13px] font-semibold text-white">Incluir despesas fixas no preço?</p>
                 <div className="flex gap-1.5">
                   {(['exclude', 'distribute', 'include'] as FixedCostAllocationMode[]).map(mode => {
                     const labels: Record<FixedCostAllocationMode, string> = {
-                      exclude: 'Não',
+                      exclude: 'Não incluir',
                       distribute: `Dividir (÷${activeCount})`,
-                      include: 'Sim, 100%',
+                      include: 'Incluir 100%',
                     };
                     const isActive = allocationMode === mode;
                     return (
                       <button
                         key={mode}
                         onClick={() => setAllocationMode(mode)}
-                        className="flex-1 text-xs font-medium py-2 rounded-md transition-all"
+                        className="flex-1 text-[11px] font-semibold py-2.5 rounded-lg transition-all duration-150"
                         style={{
-                          background: isActive ? 'hsl(var(--color-blue) / 0.08)' : 'hsl(225 16% 8%)',
-                          border: `1px solid ${isActive ? 'hsl(var(--color-blue) / 0.25)' : 'hsl(225 14% 12%)'}`,
-                          color: 'hsl(0 0% 100%)',
+                          background: isActive ? 'hsl(var(--color-blue) / 0.08)' : 'hsl(225 16% 7.5%)',
+                          border: `1px solid ${isActive ? 'hsl(var(--color-blue) / 0.25)' : 'hsl(225 14% 11%)'}`,
+                          color: isActive ? 'hsl(var(--color-blue))' : 'hsl(215 10% 55%)',
                         }}
                       >
                         {labels[mode]}
@@ -220,27 +279,37 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
                   })}
                 </div>
                 {allocationMode !== 'exclude' && (
-                  <div className="p-3 rounded-md" style={{ background: 'hsl(225 16% 8%)', border: '1px solid hsl(225 14% 12%)' }}>
-                    <Row label="Despesas incluídas" value={formatCurrency(pricing.allocatedFixedCost)} />
+                  <div className="p-3 rounded-lg" style={{ background: 'hsl(225 16% 7.5%)', border: '1px solid hsl(225 14% 11%)' }}>
+                    <Row label="Despesas incluídas" value={fmt(pricing.allocatedFixedCost)} />
                   </div>
                 )}
               </div>
             </CollapsibleContent>
           </Collapsible>
 
-          {/* Aplicar */}
+          {/* CTA */}
           <button
             onClick={handleApplyPrice}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold text-white transition-all duration-200"
+            disabled={applied}
+            className="w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl text-[14px] font-bold text-white transition-all duration-200 active:scale-[0.97] disabled:opacity-70"
             style={{
-              background: 'hsl(var(--color-blue))',
-              boxShadow: '0 2px 12px hsl(var(--color-blue) / 0.25)',
+              background: applied ? 'hsl(152 60% 38%)' : 'hsl(var(--color-blue))',
+              boxShadow: applied ? '0 2px 16px hsl(152 60% 38% / 0.3)' : '0 2px 16px hsl(var(--color-blue) / 0.3)',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.filter = 'brightness(1.12)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.filter = 'brightness(1)'; }}
+            onMouseEnter={e => { if (!applied) e.currentTarget.style.filter = 'brightness(1.12)'; }}
+            onMouseLeave={e => { e.currentTarget.style.filter = 'brightness(1)'; }}
           >
-            Aplicar este preço
-            <ArrowRight className="w-4 h-4" />
+            {applied ? (
+              <>
+                <Check className="w-4 h-4" />
+                Preço aplicado!
+              </>
+            ) : (
+              <>
+                Aplicar este preço
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
           </button>
         </div>
       </SheetContent>
@@ -248,16 +317,32 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
   );
 };
 
-const Row = ({ label, value, bold }: { label: string; value: string; bold?: boolean }) => (
-  <div className="flex items-center justify-between">
-    <span className={`text-sm ${bold ? 'text-white font-medium' : ''}`} style={!bold ? { color: 'hsl(215 10% 55%)' } : undefined}>{label}</span>
-    <span className={`text-sm tabular-nums ${bold ? 'text-white font-semibold' : 'text-white font-medium'}`}>{value}</span>
+/* ─── Sub-components ─── */
+
+const SectionLabel = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <p className={`text-[10px] font-semibold uppercase tracking-[0.08em] ${className}`} style={{ color: 'hsl(215 10% 42%)' }}>
+    {children}
+  </p>
+);
+
+const Row = ({ label, value, bold, accent }: { label: string; value: string; bold?: boolean; accent?: boolean }) => (
+  <div className="flex items-center justify-between py-0.5">
+    <span className={`text-[12px] ${bold ? 'font-semibold text-white' : ''}`} style={!bold ? { color: 'hsl(215 10% 52%)' } : undefined}>
+      {label}
+    </span>
+    <span
+      className={`text-[12px] tabular-nums ${bold ? 'font-bold text-white' : 'font-semibold'}`}
+      style={!bold ? { color: accent ? 'hsl(var(--color-blue))' : 'hsl(0 0% 90%)' } : undefined}
+    >
+      {value}
+    </span>
   </div>
 );
 
-const ResultStat = ({ label, value, color }: { label: string; value: string; color: string }) => (
-  <div className="text-center">
-    <p className="text-[10px]" style={{ color: 'hsl(215 10% 50%)' }}>{label}</p>
-    <p className="text-sm font-semibold tabular-nums" style={{ color }}>{value}</p>
+const ResultMetric = ({ icon: Icon, label, value, color }: { icon: React.ElementType; label: string; value: string; color: string }) => (
+  <div className="py-3.5 px-3 text-center" style={{ borderColor: 'hsl(225 14% 10%)' }}>
+    <Icon className="w-3.5 h-3.5 mx-auto mb-1.5" style={{ color, opacity: 0.7 }} />
+    <p className="text-[10px] font-medium mb-0.5" style={{ color: 'hsl(215 10% 45%)' }}>{label}</p>
+    <p className="text-[13px] font-bold tabular-nums" style={{ color }}>{value}</p>
   </div>
 );
