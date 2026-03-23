@@ -3,10 +3,8 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { Dashboard } from '@/components/dashboard/Dashboard';
 import { ProductsTable } from '@/components/products/ProductsTable';
 import { FinancialSettings } from '@/components/settings/FinancialSettings';
-import { RotateCcw, AlertTriangle, PanelLeftClose, PanelLeft } from 'lucide-react';
-import { useData } from '@/contexts/DataContext';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
+import { PanelLeftClose, PanelLeft } from 'lucide-react';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 type TabType = 'dashboard' | 'products' | 'financial-settings';
 
