@@ -10,8 +10,6 @@ type TabType = 'dashboard' | 'products' | 'financial-settings';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
-  const { resetToDefaults } = useData();
-  const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const handleResetConfirm = () => {
