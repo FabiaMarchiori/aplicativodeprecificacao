@@ -111,7 +111,7 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
           {/* Canal */}
           <div>
             <SectionLabel>Onde você vai vender?</SectionLabel>
-            <div className="grid grid-cols-2 gap-2 mt-2.5">
+            <div className="grid grid-cols-2 gap-2.5 mt-3">
               {DEFAULT_SALES_CHANNELS.filter(c => c.active).map(ch => {
                 const sel = ch.id === selectedChannelId;
                 const fees = ch.commissionPercent + ch.salesTax + ch.cardFee + ch.additionalCost;
@@ -120,22 +120,43 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
                   <button
                     key={ch.id}
                     onClick={() => setSelectedChannelId(ch.id)}
-                    className="relative flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-left transition-all duration-200 active:scale-[0.97]"
+                    className="relative flex items-center gap-3 px-3.5 py-3.5 rounded-xl text-left transition-all duration-200 active:scale-[0.97]"
                     style={{
-                      background: sel ? `hsl(${chColor} / 0.08)` : 'hsl(225 16% 7.5%)',
-                      border: `1.5px solid ${sel ? `hsl(${chColor} / 0.35)` : 'hsl(225 14% 11%)'}`,
-                      boxShadow: sel ? `0 0 16px hsl(${chColor} / 0.08)` : 'none',
+                      background: sel
+                        ? `linear-gradient(135deg, hsl(${chColor} / 0.1) 0%, hsl(${chColor} / 0.04) 100%)`
+                        : 'hsl(225 16% 7.5%)',
+                      border: `1.5px solid ${sel ? `hsl(${chColor} / 0.4)` : 'hsl(225 14% 11%)'}`,
+                      boxShadow: sel
+                        ? `0 0 20px hsl(${chColor} / 0.1), inset 0 1px 0 hsl(${chColor} / 0.08)`
+                        : 'inset 0 1px 0 hsl(225 14% 13%)',
+                    }}
+                    onMouseEnter={e => {
+                      if (!sel) {
+                        e.currentTarget.style.borderColor = `hsl(${chColor} / 0.25)`;
+                        e.currentTarget.style.background = `hsl(${chColor} / 0.04)`;
+                      }
+                    }}
+                    onMouseLeave={e => {
+                      if (!sel) {
+                        e.currentTarget.style.borderColor = 'hsl(225 14% 11%)';
+                        e.currentTarget.style.background = 'hsl(225 16% 7.5%)';
+                      }
                     }}
                   >
-                    <MarketplaceLogo channelId={ch.id} size={22} />
+                    <div className="w-7 h-7 flex items-center justify-center flex-shrink-0">
+                      <MarketplaceLogo channelId={ch.id} size={24} />
+                    </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-white truncate">{ch.name}</p>
-                      <p className="text-[10px] font-medium tabular-nums mt-0.5 text-white/60">
+                      <p className="text-[11px] font-semibold text-white truncate leading-tight">{ch.name}</p>
+                      <p className="text-[10px] font-medium tabular-nums mt-0.5 text-white">
                         {fees.toFixed(1)}% taxas
                       </p>
                     </div>
                     {sel && (
-                      <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: `hsl(${chColor} / 0.2)` }}>
+                      <div
+                        className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                        style={{ background: `hsl(${chColor} / 0.2)`, border: `1px solid hsl(${chColor} / 0.3)` }}
+                      >
                         <Check className="w-3 h-3" style={{ color: `hsl(${chColor})` }} />
                       </div>
                     )}
