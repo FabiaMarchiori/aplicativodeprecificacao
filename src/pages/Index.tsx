@@ -12,10 +12,6 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  const handleResetConfirm = () => {
-    resetToDefaults();
-    setResetDialogOpen(false);
-  };
 
   const renderContent = () => {
     switch (activeTab) {
