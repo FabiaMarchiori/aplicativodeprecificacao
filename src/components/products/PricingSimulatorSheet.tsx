@@ -120,42 +120,44 @@ export const PricingSimulatorSheet = ({ isOpen, product, onClose }: PricingSimul
                   <button
                     key={ch.id}
                     onClick={() => setSelectedChannelId(ch.id)}
-                    className="relative flex items-center gap-3 px-3.5 py-3.5 rounded-xl text-left transition-all duration-200 active:scale-[0.97]"
+                    className="relative flex items-center gap-3 px-4 py-4 rounded-xl text-left transition-all duration-200 active:scale-[0.97]"
                     style={{
                       background: sel
-                        ? `linear-gradient(135deg, hsl(${chColor} / 0.1) 0%, hsl(${chColor} / 0.04) 100%)`
-                        : 'hsl(225 16% 7.5%)',
-                      border: `1.5px solid ${sel ? `hsl(${chColor} / 0.4)` : 'hsl(225 14% 11%)'}`,
+                        ? `linear-gradient(145deg, hsl(${chColor} / 0.12) 0%, hsl(${chColor} / 0.04) 100%)`
+                        : `linear-gradient(145deg, hsl(${chColor} / 0.05) 0%, hsl(${chColor} / 0.02) 100%)`,
+                      border: `1.5px solid ${sel ? `hsl(${chColor} / 0.45)` : `hsl(${chColor} / 0.12)`}`,
                       boxShadow: sel
-                        ? `0 0 20px hsl(${chColor} / 0.1), inset 0 1px 0 hsl(${chColor} / 0.08)`
-                        : 'inset 0 1px 0 hsl(225 14% 13%)',
+                        ? `0 0 24px hsl(${chColor} / 0.12), inset 0 1px 0 hsl(${chColor} / 0.1)`
+                        : `inset 0 1px 0 hsl(${chColor} / 0.04)`,
                     }}
                     onMouseEnter={e => {
                       if (!sel) {
-                        e.currentTarget.style.borderColor = `hsl(${chColor} / 0.25)`;
-                        e.currentTarget.style.background = `hsl(${chColor} / 0.04)`;
+                        e.currentTarget.style.borderColor = `hsl(${chColor} / 0.3)`;
+                        e.currentTarget.style.background = `linear-gradient(145deg, hsl(${chColor} / 0.08) 0%, hsl(${chColor} / 0.03) 100%)`;
                       }
                     }}
                     onMouseLeave={e => {
                       if (!sel) {
-                        e.currentTarget.style.borderColor = 'hsl(225 14% 11%)';
-                        e.currentTarget.style.background = 'hsl(225 16% 7.5%)';
+                        e.currentTarget.style.borderColor = `hsl(${chColor} / 0.12)`;
+                        e.currentTarget.style.background = `linear-gradient(145deg, hsl(${chColor} / 0.05) 0%, hsl(${chColor} / 0.02) 100%)`;
                       }
                     }}
                   >
-                    <div className="w-7 h-7 flex items-center justify-center flex-shrink-0">
-                      <MarketplaceLogo channelId={ch.id} size={24} />
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                      style={{ background: `hsl(${chColor} / 0.08)` }}
+                    >
+                      <MarketplaceLogo channelId={ch.id} size={22} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-semibold text-white truncate leading-tight">{ch.name}</p>
-                      <p className="text-[10px] font-medium tabular-nums mt-0.5 text-white">
+                      <p className="text-[11.5px] font-semibold text-white truncate leading-tight">{ch.name}</p>
+                      <p className="text-[10px] font-medium tabular-nums mt-0.5 text-white/80">
                         {fees.toFixed(1)}% taxas
                       </p>
                     </div>
                     {sel && (
                       <div
                         className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-                        style={{ background: `hsl(${chColor} / 0.2)`, border: `1px solid hsl(${chColor} / 0.3)` }}
+                        style={{ background: `hsl(${chColor} / 0.25)`, border: `1.5px solid hsl(${chColor} / 0.4)` }}
                       >
                         <Check className="w-3 h-3" style={{ color: `hsl(${chColor})` }} />
                       </div>

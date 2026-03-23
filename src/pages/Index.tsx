@@ -3,23 +3,15 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { Dashboard } from '@/components/dashboard/Dashboard';
 import { ProductsTable } from '@/components/products/ProductsTable';
 import { FinancialSettings } from '@/components/settings/FinancialSettings';
-import { RotateCcw, AlertTriangle, PanelLeftClose, PanelLeft } from 'lucide-react';
-import { useData } from '@/contexts/DataContext';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
+import { PanelLeftClose, PanelLeft } from 'lucide-react';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 type TabType = 'dashboard' | 'products' | 'financial-settings';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
-  const { resetToDefaults } = useData();
-  const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  const handleResetConfirm = () => {
-    resetToDefaults();
-    setResetDialogOpen(false);
-  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -70,52 +62,7 @@ const Index = () => {
             {renderContent()}
           </div>
           
-          {/* Reset Button */}
-          <div className="fixed bottom-4 md:bottom-6 right-4 md:right-6 z-40">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button 
-                  onClick={() => setResetDialogOpen(true)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all duration-200"
-                  style={{
-                    background: 'hsl(225 18% 7%)',
-                    border: '1px solid hsl(225 14% 13%)',
-                    color: 'hsl(215 10% 50%)',
-                  }}
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Restaurar dados</span>
-                </button>
-              </TooltipTrigger>
-              <TooltipContent 
-                side="left" className="max-w-xs p-3"
-                style={{
-                  background: 'hsl(225 18% 7%)',
-                  border: '1px solid hsl(345 70% 45% / 0.3)',
-                }}
-              >
-                <div className="flex items-start gap-2.5">
-                  <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: 'hsl(345 70% 55%)' }} />
-                  <div>
-                    <p className="font-medium text-sm mb-1 text-white">Atenção</p>
-                    <p className="text-xs" style={{ color: 'hsl(215 10% 55%)' }}>
-                      Restaura todos os dados para os valores padrão. Alterações serão perdidas.
-                    </p>
-                  </div>
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </div>
         </main>
-
-        <DeleteConfirmDialog
-          isOpen={resetDialogOpen}
-          onClose={() => setResetDialogOpen(false)}
-          onConfirm={handleResetConfirm}
-          title="Restaurar Dados Padrão"
-          description="Tem certeza que deseja restaurar todos os dados para os valores padrão? Todas as suas alterações serão perdidas."
-          itemName="todos os dados customizados"
-        />
       </div>
 
       <style>{`
